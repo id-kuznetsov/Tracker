@@ -7,11 +7,25 @@
 
 import UIKit
 
-class StatisticViewController: UIViewController {
+final class StatisticViewController: UIViewController {
 
+    // MARK: - Constants
+
+    // MARK: - Public Properties
+
+    // MARK: - Private Properties
+
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
     }
+    
+    // MARK: - Public Methods
 
+    // MARK: - Private Methods
+    
 }
+
+// MARK: - Extensions
+

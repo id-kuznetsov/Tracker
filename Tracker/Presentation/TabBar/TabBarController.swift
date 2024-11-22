@@ -13,36 +13,35 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let trackerViewController = TrackerViewController()
 
-        trackerViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
-            image: UIImage(systemName: "record.circle.fill"),
-            selectedImage: nil
-        )
-        
-        let statisticViewController = StatisticViewController()
-
-        statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
-            image: UIImage(systemName: "hare.fill"),
-            selectedImage: nil
-        )
-        
-        self.viewControllers = [trackerViewController, statisticViewController]
-        
+        setTabs()
         setAppearance()
     }
     
     // MARK: - Private Methods
     
+    private func setTabs() {
+        let trackersViewController = TrackersViewController()
+        let trackerNavigationController = UINavigationController(rootViewController: trackersViewController)
+        trackersViewController.title = "Трекеры"
+        trackersViewController.tabBarItem.image = UIImage(systemName: "record.circle.fill")
+        trackersViewController.navigationController?.navigationBar.prefersLargeTitles = true
+
+        
+        let statisticViewController = StatisticViewController()
+        let statisticNavigationController = UINavigationController(rootViewController: statisticViewController)
+        statisticViewController.title = "Статистика"
+        statisticViewController.tabBarItem.image = UIImage(systemName: "hare.fill")
+        statisticViewController.navigationController?.navigationBar.prefersLargeTitles = true
+           
+        self.viewControllers = [trackerNavigationController, statisticNavigationController]
+    }
+    
     private func setAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .ypWhite
         appearance.stackedLayoutAppearance.selected.iconColor = .ypBlue
-
+        appearance.shadowColor = .ypGrey
         tabBar.standardAppearance = appearance
     }
 }
