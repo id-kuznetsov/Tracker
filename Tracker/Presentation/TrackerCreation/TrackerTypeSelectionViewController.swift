@@ -104,8 +104,8 @@ final class TrackerTypeSelectionViewController: UIViewController {
     }
 
     private func stackViewConstraints() -> [NSLayoutConstraint] {
-        [stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-         stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+        [stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+         stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
          stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
          stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ]

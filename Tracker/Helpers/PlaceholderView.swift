@@ -68,7 +68,9 @@ final class PlaceholderView: UIView {
         
         textLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
         textLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-        textLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8)
+        textLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
+        
+        heightAnchor.constraint(equalToConstant: 110)
     ]
     }
 }
