@@ -28,10 +28,19 @@ final class TrackersViewController: UIViewController {
         return datePicker
     }()
     
-    private lazy var placeholderView: PlaceholderView = {
+    private lazy var trackersIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Tracker Placeholder",
             message: "Что будем отслеживать?"
+        )
+        placeholderView.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderView
+    }()
+    
+    private lazy var searchIsEmptyPlaceholderView: PlaceholderView = {
+        let placeholderView = PlaceholderView(
+            imageName: "Search Placeholder",
+            message: "Ничего не найдено"
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
@@ -48,8 +57,9 @@ final class TrackersViewController: UIViewController {
     // MARK: - Actions
     
     @objc private func didTapPlusButton() {
-        print("Plus button tapped")
-        // TODO: plus button logic
+        let createNewTracker = TrackerTypeSelectionViewController()
+        let navigationController = UINavigationController(rootViewController: createNewTracker)
+        present(navigationController, animated: true)
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -65,11 +75,11 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        view.addSubview(placeholderView)
+        view.addSubview(trackersIsEmptyPlaceholderView)
         setupNavigationBar()
         NSLayoutConstraint.activate([
-            placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            placeholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            trackersIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            trackersIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -81,6 +91,10 @@ final class TrackersViewController: UIViewController {
             action: #selector(didTapPlusButton)
         )
         navigationItem.leftBarButtonItem?.tintColor = .ypBlack
+        
+        let searchController = UISearchController()
+        navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = "Поиск"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
