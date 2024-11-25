@@ -8,6 +8,12 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    // MARK: Constants
+    
+    enum Constants {
+        static let trackerTitle: String = "Трекеры"
+        static let statisticTitle: String = "Статистика"
+    }
     
     // MARK: - Lifecycle
     
@@ -23,14 +29,14 @@ final class TabBarController: UITabBarController {
     private func setTabs() {
         let trackersViewController = TrackersViewController()
         let trackerNavigationController = UINavigationController(rootViewController: trackersViewController)
-        trackersViewController.title = "Трекеры"
+        trackersViewController.title = Constants.trackerTitle
         trackersViewController.tabBarItem.image = UIImage(systemName: "record.circle.fill")
         trackersViewController.navigationController?.navigationBar.prefersLargeTitles = true
 
         
         let statisticViewController = StatisticViewController()
         let statisticNavigationController = UINavigationController(rootViewController: statisticViewController)
-        statisticViewController.title = "Статистика"
+        statisticViewController.title = Constants.statisticTitle
         statisticViewController.tabBarItem.image = UIImage(systemName: "hare.fill")
         statisticViewController.navigationController?.navigationBar.prefersLargeTitles = true
            

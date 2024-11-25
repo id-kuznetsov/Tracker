@@ -12,8 +12,21 @@ final class TrackersViewController: UIViewController {
     // MARK: - Constants
     
     // MARK: - Public Properties
-    
+
     // MARK: - Private Properties
+    
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = [] // TODO: ???
+    
+    private lazy var datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        return datePicker
+    }()
     
     private lazy var placeholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
@@ -38,6 +51,15 @@ final class TrackersViewController: UIViewController {
         print("Plus button tapped")
         // TODO: plus button logic
     }
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy"
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        print("Выбранная дата: \(formattedDate)")
+    }
+    
     // MARK: - Public Methods
     
     // MARK: - Private Methods
@@ -59,6 +81,8 @@ final class TrackersViewController: UIViewController {
             action: #selector(didTapPlusButton)
         )
         navigationItem.leftBarButtonItem?.tintColor = .ypBlack
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
 }
 
