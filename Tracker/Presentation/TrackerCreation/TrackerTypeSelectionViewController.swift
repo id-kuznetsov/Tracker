@@ -90,7 +90,6 @@ final class TrackerTypeSelectionViewController: UIViewController {
         
     }
     
-    
     // MARK: - Constraints
     
     private func newHabbitButtonConstraints() -> [NSLayoutConstraint] {
@@ -110,8 +109,4 @@ final class TrackerTypeSelectionViewController: UIViewController {
          stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ]
     }
-    
 }
-
-// MARK: - Extensions
-

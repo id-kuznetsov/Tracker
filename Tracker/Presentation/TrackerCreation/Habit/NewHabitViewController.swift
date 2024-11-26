@@ -11,6 +11,7 @@ final class NewHabitViewController: UIViewController {
     
     // MARK: - Private Properties
     private let tableViewSelections = ["Категория", "Расписание"]
+    private var selectedDays = [WeekDay]()
     
     private lazy var trackerNameTextField: TrackerTextField = {
         let textField = TrackerTextField(backgroundText: "Введите название трекера")
@@ -56,7 +57,7 @@ final class NewHabitViewController: UIViewController {
         return button
     }()
     
-    private lazy var buttonStackView: UIStackView = {
+    private lazy var buttonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [cancelButton, createTrackerButton])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
@@ -78,13 +79,17 @@ final class NewHabitViewController: UIViewController {
     
     @objc
     private func didTapCancelButton() {
-        dismiss(animated: true)
+        view.window?.rootViewController?.dismiss(animated: true)
     }
     
     @objc
     private func didTapCreateButton() {
         print("Create tracker")
+        
         // TODO: Create tracker logic
+        
+//        view.window?.rootViewController?.dismiss(animated: true)
+        
     }
     
     // MARK: - Private Methods
@@ -93,12 +98,12 @@ final class NewHabitViewController: UIViewController {
         title = "Новая привычка"
         view.backgroundColor = .ypWhite
         
-        view.addSubviews([trackerNameTextField, tableView, buttonStackView])
+        view.addSubviews([trackerNameTextField, tableView, buttonsStackView])
 
         NSLayoutConstraint.activate(
             trackerNameTextFieldConstraints() +
             tableViewSelectionsConstraints() +
-            buttonStackViewConstraints()
+            buttonsStackViewConstraints()
         )
     }
     
@@ -110,7 +115,6 @@ final class NewHabitViewController: UIViewController {
             createTrackerButton.backgroundColor = .ypGrey
             createTrackerButton.isEnabled = status
         }
-        
     }
     
     // MARK: Constraints
@@ -131,10 +135,10 @@ final class NewHabitViewController: UIViewController {
          ]
          }
     
-    private func buttonStackViewConstraints() -> [NSLayoutConstraint] {
-        [buttonStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-         buttonStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-         buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+    private func buttonsStackViewConstraints() -> [NSLayoutConstraint] {
+        [buttonsStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+         buttonsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+         buttonsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
          
          cancelButton.heightAnchor.constraint(equalToConstant: 60),
          createTrackerButton.heightAnchor.constraint(equalToConstant: 60)
@@ -152,7 +156,7 @@ extension NewHabitViewController: UITableViewDataSource  {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         cell.textLabel?.text = tableViewSelections[indexPath.row]
@@ -169,8 +173,27 @@ extension NewHabitViewController: UITableViewDelegate  {
         // TODO: переход к выбору категорий или расписания
         if tableViewSelections[indexPath.row] == "Расписание" {
             let scheduleViewController = ScheduleViewController()
+            scheduleViewController.selectedDaysInSchedule = selectedDays
             let navigationController = UINavigationController(rootViewController: scheduleViewController)
+            scheduleViewController.delegate = self
             present(navigationController, animated: true)
+        }
+    }
+}
+
+
+extension NewHabitViewController: ScheduleViewControllerDelegate {
+    func showSelectedDays(days: [WeekDay]) {
+        selectedDays = days
+        let receivedDays = days.map{ $0.shortName }
+        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0))  {
+            if receivedDays.count != 7 {
+                cell.detailTextLabel?.text = receivedDays.joined(separator: ", ")
+            } else {
+                cell.detailTextLabel?.text = "Каждый день"
+            }
+            cell.detailTextLabel?.textColor = .ypGrey
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
     }
 }

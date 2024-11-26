@@ -13,8 +13,12 @@ final class ScheduleViewController: UIViewController {
 
     // MARK: - Public Properties
 
+    weak var delegate: ScheduleViewControllerDelegate?
+    
     // MARK: - Private Properties
 
+    var selectedDaysInSchedule = [WeekDay]()
+    
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
         tableView.backgroundColor = .ypBackground
@@ -47,14 +51,19 @@ final class ScheduleViewController: UIViewController {
         setupUI()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+    }
+    
     // MARK: - Public Methods
 
     // MARK: - Private Methods
     
     @objc
     private func didTapDoneButton() {
-        print("Готово")
-        navigationController?.popViewController(animated: true)
+        let sortedDays = selectedDaysInSchedule.sorted { $0.rawValue < $1.rawValue }
+        delegate?.showSelectedDays(days: sortedDays)
+        dismiss(animated: true, completion: nil)
     }
     
     private func setupUI() {
@@ -106,7 +115,7 @@ extension ScheduleViewController: UITableViewDataSource  {
             return UITableViewCell()
         }
         
-//        scheduleCell.delegate = self TODO: delegate
+        scheduleCell.delegate = self
         
         scheduleCell.configCell(at: indexPath)
         return scheduleCell
@@ -118,7 +127,23 @@ extension ScheduleViewController: UITableViewDataSource  {
 
 extension ScheduleViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+// TODO: можно убрать?
+    }
+}
 
+// MARK: ScheduleViewCellDelegate
+
+extension ScheduleViewController: ScheduleViewCellDelegate {
+    func daySelected(cell: ScheduleViewCell) {
+        guard let index = tableView.indexPath(for: cell)?.row else { return }
+        selectedDaysInSchedule.append(WeekDay.allCases[index])
+    }
+    
+    func dayDeselected(cell: ScheduleViewCell) {
+        guard let index = tableView.indexPath(for: cell)?.row else { return }
+        if let removeWeekDayIndex = selectedDaysInSchedule.firstIndex(of: WeekDay.allCases[index]) {
+            selectedDaysInSchedule.remove(at: removeWeekDayIndex)
+        }
     }
 }
 

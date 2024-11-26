@@ -15,7 +15,7 @@ final class ScheduleViewCell: UITableViewCell {
     
     // MARK: - Public Properties
     
-        // TODO: delegate for chosen cells
+    weak var delegate: ScheduleViewCellDelegate?
     
     
     // MARK: - Private Properties
@@ -53,14 +53,20 @@ final class ScheduleViewCell: UITableViewCell {
     
     func configCell(at indexPath: IndexPath) {
         selectionStyle = .none
-        weekDayLabel.text = WeekDay.allCases[indexPath.row].rawValue
+        weekDayLabel.text = WeekDay.allCases[indexPath.row].fullName
     }
+    
     
     // MARK: - Private Methods
     
     @objc
     private func switcherValueChanged() {
-        print("switcherValueChanged")
+        if switcher.isOn {
+            delegate?.daySelected(cell: self)
+        } else {
+            delegate?.dayDeselected(cell: self)
+        }
+        
     }
     
     private func setCellUI() {
