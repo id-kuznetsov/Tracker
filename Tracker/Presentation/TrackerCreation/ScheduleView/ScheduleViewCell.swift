@@ -17,7 +17,6 @@ final class ScheduleViewCell: UITableViewCell {
     
     weak var delegate: ScheduleViewCellDelegate?
     
-    
     // MARK: - Private Properties
     
     private lazy var weekDayLabel: UILabel = {
@@ -55,7 +54,6 @@ final class ScheduleViewCell: UITableViewCell {
         selectionStyle = .none
         weekDayLabel.text = WeekDay.allCases[indexPath.row].fullName
     }
-    
     
     // MARK: - Private Methods
     
