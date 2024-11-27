@@ -13,9 +13,11 @@ class CategoryViewController: UIViewController {
 
     // MARK: - Public Properties
 
-//    weak var delegate: ?
+    weak var delegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
+    
+    private let trackerStorage = TrackerStorageService.shared
 
     
     private lazy var tableView: TrackerTableView = {
@@ -58,7 +60,10 @@ class CategoryViewController: UIViewController {
     @objc
     private func didTapDoneButton() {
         // TODO: add category logic
+        
+        
         dismiss(animated: true, completion: nil)
+        
     }
     
     private func setupUI() {
@@ -97,14 +102,13 @@ class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        1 // TODO: categories count
+        trackerStorage.getCategoriesCount()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
-        cell.accessoryType = .checkmark
         cell.selectionStyle = .none
-        cell.textLabel?.text = "Учеба"
+        cell.textLabel?.text = trackerStorage.trackersMock[indexPath.row].title
         cell.backgroundColor = .ypBackground
         return cell
     }
@@ -115,8 +119,8 @@ extension CategoryViewController: UITableViewDataSource  {
 
 extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: ставить галочку
-        
+        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        delegate?.showSelectedCategory(category: trackerStorage.trackersMock[indexPath.row].title)
     }
 }
 

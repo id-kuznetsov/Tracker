@@ -15,6 +15,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Private Properties
     
+    private var trackerIsDone = false
+    
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .medium)
@@ -52,6 +54,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         button.tintColor = .ypWhite
         button.layer.cornerRadius = 17
         button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(didTapTrackerButton), for: .touchUpInside)
         return button
     }()
     
@@ -76,6 +79,22 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        emojiLabel.text = nil
+        titleLabel.text = nil
+        colorTrackerBackground.backgroundColor = nil
+        trackerButton.backgroundColor = nil
+    }
+    
+    // MARK: - Actions
+    
+    @objc
+    private func didTapTrackerButton() {
+        trackerIsDone.toggle()
+        changeButtonIcon(isDone: trackerIsDone)
+    }
+    
     // MARK: - Public Methods
     
     func configureCell(with tracker: Tracker) {
@@ -84,10 +103,17 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         trackerButton.backgroundColor = tracker.color
-        trackerCountLabel.text = "0 дней" // TODO: счетчик
+        trackerCountLabel.text = "4 \(4.dayWord())"  // TODO: счетчик
     }
     
     // MARK: - Private Methods
+    
+    private func changeButtonIcon(isDone: Bool) {
+        let image = isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus")
+        trackerButton.setImage(image, for: .normal)
+        let newBackgroundColor = isDone ? trackerButton.backgroundColor?.withAlphaComponent(0.3) : trackerButton.backgroundColor?.withAlphaComponent(1)
+        trackerButton.backgroundColor = newBackgroundColor
+    }
     
     private func setCellUI() {
         let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton]

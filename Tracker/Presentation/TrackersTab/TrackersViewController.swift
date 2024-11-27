@@ -14,7 +14,11 @@ final class TrackersViewController: UIViewController {
     // MARK: - Public Properties
 
     // MARK: - Private Properties
-    private var trackerMock = TrackerMock().trackerCategory
+    private let date = Date()
+    private let calendar = Calendar.current
+    
+    private let trackerStorage = TrackerStorageService.shared
+    
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = [] // TODO: ???
     
@@ -69,9 +73,8 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        categories.append(trackerMock)
-        categories.append(trackerMock)// TODO: для теста коллекции, убрать перед ревью
+        let trackerMock = trackerStorage.trackersMock
+        categories = trackerMock// TODO: для теста коллекции, убрать перед ревью
         
         setupUI()
     }
@@ -86,24 +89,34 @@ final class TrackersViewController: UIViewController {
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy"
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
+        let weekday = calendar.component(.weekday, from: selectedDate)
+        let adjustedWeekday = weekday == 1 ? 7 : weekday - 1
+        print("Текущий день недели: \(adjustedWeekday)")
     }
 
     // MARK: - Private Methods
     
     private func setupUI() {
-        
         setupNavigationBar()
+        checkTrackersCategories()
+    }
+    
+    private func checkTrackersCategories() {
+        if categories.isEmpty {
+            showEmptyPlaceholderView(state: true)
+        } else {
+            showEmptyPlaceholderView(state: false)
+            setupCollectionView()
+        }
+    }
+    
+    private func setupCollectionView() {
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate(
             collectionViewConstraints()
         )
     }
-    
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
@@ -124,8 +137,8 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func showEmptyPlaceholder() {
-        if categories.isEmpty {
+    private func showEmptyPlaceholderView(state: Bool) {
+        if state {
             view.addSubview(trackersIsEmptyPlaceholderView)
             NSLayoutConstraint.activate(
                 placeholderViewConstraints()
@@ -193,7 +206,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let totalWidth = collectionView.bounds.width
         let availableWidth = totalWidth - Constants.cellSpacing - Constants.leftInset - Constants.rightInset
-        let width = availableWidth / 2
+        let width = availableWidth / CGFloat(Constants.cellCountForRow)
         return CGSize(width: width, height: Constants.cellHeight)
     }
     
@@ -225,12 +238,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController {
     enum Constants {
-        static let cellCount = 2
+        static let cellCountForRow = 2
         static let cellHeight: CGFloat = 148
         static let cellSpacing: CGFloat = 9
         static let leftInset: CGFloat = 16
         static let rightInset: CGFloat = 16
-        
     }
 }
 

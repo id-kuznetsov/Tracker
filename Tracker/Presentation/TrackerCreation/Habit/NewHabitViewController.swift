@@ -11,12 +11,14 @@ final class NewHabitViewController: UIViewController {
     
     // MARK: - Private Properties
     private let tableViewSelections = ["Категория", "Расписание"]
-    
-    private var selectedCategory: TrackerCategory?
+    private let trackerStorage = TrackerStorageService.shared
+    private var trackerTitle: String?
+    private var selectedCategory: String?
     private var selectedDays = [WeekDay]()
     
     private lazy var trackerNameTextField: TrackerTextField = {
         let textField = TrackerTextField(backgroundText: "Введите название трекера")
+        textField.delegate = self
         return textField
     }()
     
@@ -86,11 +88,21 @@ final class NewHabitViewController: UIViewController {
     
     @objc
     private func didTapCreateButton() {
-        print("Create tracker")
+        guard let trackerTitle, let selectedCategory else {
+            return print("Missing data")
+        }
         
-        // TODO: Create tracker logic
+        let newTracker = Tracker(
+            id: UUID(),
+            name: trackerTitle,
+            color: .ypSection2, // TODO: add random color
+            emoji: "🤔", // TODO: add random emoji
+            schedule: selectedDays
+        )
         
-        //        view.window?.rootViewController?.dismiss(animated: true)
+        trackerStorage.addTracker(newTracker, to: selectedCategory)
+        
+        view.window?.rootViewController?.dismiss(animated: true)
         
     }
     
@@ -107,6 +119,13 @@ final class NewHabitViewController: UIViewController {
             tableViewSelectionsConstraints() +
             buttonsStackViewConstraints()
         )
+    }
+    
+    private func checkFieldsNotEmpty() {
+        // TODO: check textField, category and schedule is not empty
+        if trackerTitle != nil && selectedCategory != nil && !selectedDays.isEmpty {
+            setCreateButtonEnabled(status: true)
+        }
     }
     
     private func setCreateButtonEnabled(status: Bool) {
@@ -166,20 +185,18 @@ extension NewHabitViewController: UITableViewDataSource  {
         cell.detailTextLabel?.textColor = .ypGrey
         return cell
     }
-    
 }
 
 // MARK: UITableViewDelegate
 
 extension NewHabitViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if tableViewSelections[indexPath.row] == "Категория" {
+        if indexPath.row == 0 {
             let categoryViewController = CategoryViewController()
+            categoryViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: categoryViewController)
             present(navigationController, animated: true)
-        }
-        if tableViewSelections[indexPath.row] == "Расписание" {
+        } else {
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.selectedDaysInSchedule = Set(selectedDays)
             let navigationController = UINavigationController(rootViewController: scheduleViewController)
@@ -189,6 +206,30 @@ extension NewHabitViewController: UITableViewDelegate  {
     }
 }
 
+extension NewHabitViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.endEditing(true)
+        trackerTitle = textField.text
+        textField.resignFirstResponder()
+        checkFieldsNotEmpty()
+        return true
+    }
+}
+
+// MARK: CategoryViewControllerDelegate
+
+extension NewHabitViewController: CategoryViewControllerDelegate {
+    func showSelectedCategory(category: String) {
+        selectedCategory = category
+        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))  {
+            cell.detailTextLabel?.text = selectedCategory
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        }
+        checkFieldsNotEmpty()
+    }
+}
+
+// MARK: ScheduleViewControllerDelegate
 
 extension NewHabitViewController: ScheduleViewControllerDelegate {
     func showSelectedDays(days: [WeekDay]) {
@@ -200,8 +241,9 @@ extension NewHabitViewController: ScheduleViewControllerDelegate {
             } else {
                 cell.detailTextLabel?.text = "Каждый день"
             }
-            
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
+        checkFieldsNotEmpty()
     }
 }
+
