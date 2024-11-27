@@ -15,7 +15,8 @@ class TrackerTableView: UITableView {
         rowHeight = 75
         isScrollEnabled = false
         showsVerticalScrollIndicator = false
-        backgroundColor = .ypBackground
+        showsHorizontalScrollIndicator = false
+        backgroundColor = .ypWhite
         translatesAutoresizingMaskIntoConstraints = false
         separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         separatorStyle = .singleLine

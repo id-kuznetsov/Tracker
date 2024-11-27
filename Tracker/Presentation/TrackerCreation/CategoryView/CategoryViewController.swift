@@ -1,32 +1,28 @@
 //
-//  ScheduleViewController.swift
+//  CategoryViewController.swift
 //  Tracker
 //
-//  Created by Ilya Kuznetsov on 25.11.2024.
+//  Created by Ilya Kuznetsov on 27.11.2024.
 //
 
 import UIKit
 
-final class ScheduleViewController: UIViewController {
+class CategoryViewController: UIViewController {
 
     // MARK: - Constants
 
     // MARK: - Public Properties
 
-    weak var delegate: ScheduleViewControllerDelegate?
+//    weak var delegate: ?
     
     // MARK: - Private Properties
 
-    var selectedDaysInSchedule =  Set<WeekDay>()
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
-        tableView.register(ScheduleViewCell.self, forCellReuseIdentifier: ScheduleViewCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.rowHeight = 75
-        tableView.tableFooterView = UIView()
         return tableView
     }()
     
@@ -61,8 +57,7 @@ final class ScheduleViewController: UIViewController {
     
     @objc
     private func didTapDoneButton() {
-        let sortedDays = selectedDaysInSchedule.sorted { $0.rawValue < $1.rawValue }
-        delegate?.showSelectedDays(days: sortedDays)
+        // TODO: add category logic
         dismiss(animated: true, completion: nil)
     }
     
@@ -70,7 +65,7 @@ final class ScheduleViewController: UIViewController {
         view.addSubviews([tableView, doneButton])
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
-        title = "Расписание"
+        title = "Категория"
         
         NSLayoutConstraint.activate(
             tableViewConstraints() +
@@ -82,7 +77,7 @@ final class ScheduleViewController: UIViewController {
         [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
          tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-         tableView.heightAnchor.constraint(equalToConstant: 525)
+         tableView.heightAnchor.constraint(equalToConstant: 75) // TODO: подобрать высоту под количество категорий?
         ]
     }
     
@@ -100,48 +95,32 @@ final class ScheduleViewController: UIViewController {
 
 // MARK: UITableViewDataSource
 
-extension ScheduleViewController: UITableViewDataSource  {
+extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        WeekDay.allCases.count
+        1 // TODO: categories count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: ScheduleViewCell.reuseIdentifier,
-            for: indexPath
-        )
-        
-        guard let scheduleCell = cell as? ScheduleViewCell else {
-            assertionFailure("Construct cell failed")
-            return UITableViewCell()
-        }
-        
-        scheduleCell.delegate = self
-        
-        let isSelected = selectedDaysInSchedule.contains(WeekDay.allCases[indexPath.row])
-        
-        scheduleCell.configCell(at: indexPath, isSelected: isSelected)
-        return scheduleCell
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
+        cell.accessoryType = .checkmark
+        cell.selectionStyle = .none
+        cell.textLabel?.text = "Учеба"
+        cell.backgroundColor = .ypBackground
+        return cell
     }
+    
 }
 
 // MARK: UITableViewDelegate
 
-extension ScheduleViewController: UITableViewDelegate  {}
-
-// MARK: ScheduleViewCellDelegate
-
-extension ScheduleViewController: ScheduleViewCellDelegate {
-    func daySelected(cell: ScheduleViewCell) {
-        guard let index = tableView.indexPath(for: cell)?.row else { return }
-        selectedDaysInSchedule.insert(WeekDay.allCases[index])
-    }
-    
-    func dayDeselected(cell: ScheduleViewCell) {
-        guard let index = tableView.indexPath(for: cell)?.row else { return }
-        if let removeWeekDayIndex = selectedDaysInSchedule.firstIndex(of: WeekDay.allCases[index]) {
-            selectedDaysInSchedule.remove(at: removeWeekDayIndex)
-        }
+extension CategoryViewController: UITableViewDelegate  {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // TODO: ставить галочку
+        
     }
 }
+
+// MARK: CategoryViewCellDelegate
+
+
 

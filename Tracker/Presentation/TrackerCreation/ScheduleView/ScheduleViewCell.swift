@@ -36,7 +36,7 @@ final class ScheduleViewCell: UITableViewCell {
         return switcher
     }()
     
-    // MARK: - Initializers
+    // MARK: - Initialisers
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -50,9 +50,10 @@ final class ScheduleViewCell: UITableViewCell {
         setCellUI()
     }
     
-    func configCell(at indexPath: IndexPath) {
+    func configCell(at indexPath: IndexPath, isSelected: Bool) {
         selectionStyle = .none
         weekDayLabel.text = WeekDay.allCases[indexPath.row].fullName
+        switcher.isOn = isSelected
     }
     
     // MARK: - Private Methods

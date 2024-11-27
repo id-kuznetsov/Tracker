@@ -10,10 +10,21 @@ import UIKit
 final class NewIrregularEventViewController: UIViewController {
     
     // MARK: - Private Properties
+    private let tableViewSelections = ["Категория"]
     
     private lazy var trackerNameTextField: TrackerTextField = {
         let textField = TrackerTextField(backgroundText: "Введите название трекера")
         return textField
+    }()
+    
+    private lazy var tableView: TrackerTableView = {
+        let tableView = TrackerTableView()
+        tableView.backgroundColor = .ypBackground
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.estimatedRowHeight = 75
+        return tableView
     }()
     
     private lazy var cancelButton: UIButton = {
@@ -67,7 +78,7 @@ final class NewIrregularEventViewController: UIViewController {
     
     @objc
     private func didTapCancelButton() {
-        dismiss(animated: true)
+        view.window?.rootViewController?.dismiss(animated: true)
     }
     
     @objc
@@ -82,16 +93,13 @@ final class NewIrregularEventViewController: UIViewController {
         title = "Новое нерегулярное событие"
         view.backgroundColor = .ypWhite
         
-        view.addSubviews([trackerNameTextField, buttonsStackView])
+        view.addSubviews([trackerNameTextField, buttonsStackView, tableView])
 
         NSLayoutConstraint.activate(
             trackerNameTextFieldConstraints() +
-            buttonsStackViewConstraints()
+            buttonsStackViewConstraints() +
+            tableViewSelectionsConstraints()
         )
-    }
-    
-    private func addFieldsInStackView() {
-        
     }
     
     private func trackerNameTextFieldConstraints() -> [NSLayoutConstraint] {
@@ -112,5 +120,42 @@ final class NewIrregularEventViewController: UIViewController {
          ]
     }
     
+    private func tableViewSelectionsConstraints() -> [NSLayoutConstraint] {
+        [tableView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24),
+         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+         tableView.heightAnchor.constraint(equalToConstant: 75)
+         ]
+         }
     
+    
+}
+
+
+// MARK: UITableViewDataSource
+
+extension NewIrregularEventViewController: UITableViewDataSource  {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tableViewSelections.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
+        cell.accessoryType = .disclosureIndicator
+        cell.selectionStyle = .none
+        cell.textLabel?.text = tableViewSelections[indexPath.row]
+        cell.backgroundColor = .ypBackground
+        return cell
+    }
+    
+}
+
+// MARK: UITableViewDelegate
+
+extension NewIrregularEventViewController: UITableViewDelegate  {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let categoryViewController = CategoryViewController()
+        let navigationController = UINavigationController(rootViewController: categoryViewController)
+        present(navigationController, animated: true)
+    }
 }

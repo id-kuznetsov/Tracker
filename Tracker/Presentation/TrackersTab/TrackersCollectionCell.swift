@@ -19,17 +19,22 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .ypWhite
-        label.backgroundColor = .ypWhite.withAlphaComponent(0.3)
-        label.frame.size = CGSize(width: 24, height: 24)
-        label.layer.cornerRadius = label.frame.size.width / 2
-        label.layer.masksToBounds = true
-        
         return label
+    }()
+    
+    private lazy var emojiBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .ypWhite.withAlphaComponent(0.3)
+        view.frame.size = CGSize(width: 24, height: 24)
+        view.layer.cornerRadius = view.frame.size.width / 2
+        view.layer.masksToBounds = true
+        return view
     }()
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.numberOfLines = 0
         label.textColor = .ypWhite
         return label
     }()
@@ -50,7 +55,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return button
     }()
     
-    private lazy var coloredTrackerBackground: UIView = {
+    private lazy var colorTrackerBackground: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
@@ -59,7 +64,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    // MARK: - Initializers
+    // MARK: - Initialisers
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,8 +76,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
+    
     func configureCell(with tracker: Tracker) {
-        coloredTrackerBackground.backgroundColor = tracker.color
+        colorTrackerBackground.backgroundColor = tracker.color
         
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
@@ -83,7 +90,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     // MARK: - Private Methods
     
     private func setCellUI() {
-        let subviews = [coloredTrackerBackground, emojiLabel, titleLabel, trackerCountLabel, trackerButton]
+        let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton]
         subviews.forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -91,7 +98,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         contentView.addSubviews(subviews)
         
         NSLayoutConstraint.activate(
-            coloredTrackerBackgroundConstraints() +
+            colorTrackerBackgroundConstraints() +
+            emojiBackgroundViewConstraints() +
             emojiLabelConstraints() +
             titleLabelConstraints() +
             trackerCountLabelConstraints() +
@@ -99,39 +107,58 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         )
     }
     
-    private func coloredTrackerBackgroundConstraints() -> [NSLayoutConstraint] {
-        [ coloredTrackerBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
-          coloredTrackerBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-          coloredTrackerBackground.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-          coloredTrackerBackground.heightAnchor.constraint(equalToConstant: 90)
+    private func colorTrackerBackgroundConstraints() -> [NSLayoutConstraint] {
+        [ colorTrackerBackground.topAnchor.constraint(equalTo: contentView.topAnchor),
+          colorTrackerBackground.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+          colorTrackerBackground.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+          colorTrackerBackground.heightAnchor.constraint(equalToConstant: Constraints.colorTrackerBackgroundHeight)
         ]
     }
     
+    private func emojiBackgroundViewConstraints() -> [NSLayoutConstraint] {
+        [ emojiBackgroundView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constraints.leading),
+          emojiBackgroundView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constraints.leading),
+          emojiBackgroundView.heightAnchor.constraint(equalToConstant: Constraints.emojiViewHeight),
+          emojiBackgroundView.widthAnchor.constraint(equalTo: emojiBackgroundView.heightAnchor)
+          ]
+    }
+    
     private func emojiLabelConstraints() -> [NSLayoutConstraint] {
-        [ emojiLabel.leadingAnchor.constraint(equalTo: coloredTrackerBackground.leadingAnchor, constant: 12),
-          emojiLabel.topAnchor.constraint(equalTo: coloredTrackerBackground.topAnchor, constant: 12),
-          emojiLabel.heightAnchor.constraint(equalToConstant: 24)
+        [ emojiLabel.centerXAnchor.constraint(equalTo: emojiBackgroundView.centerXAnchor),
+          emojiLabel.centerYAnchor.constraint(equalTo: emojiBackgroundView.centerYAnchor)
         ]
     }
     
     private func titleLabelConstraints() -> [NSLayoutConstraint] {
-        [ titleLabel.leadingAnchor.constraint(equalTo: coloredTrackerBackground.leadingAnchor, constant: 12),
-          titleLabel.bottomAnchor.constraint(equalTo: coloredTrackerBackground.bottomAnchor, constant: -12)
+        [ titleLabel.leadingAnchor.constraint(equalTo: colorTrackerBackground.leadingAnchor, constant: Constraints.leading),
+          titleLabel.trailingAnchor.constraint(equalTo: colorTrackerBackground.trailingAnchor, constant: Constraints.trailing),
+          titleLabel.bottomAnchor.constraint(equalTo: colorTrackerBackground.bottomAnchor, constant: Constraints.trailing)
         ]
     }
     
     private func trackerCountLabelConstraints() -> [NSLayoutConstraint] {
-        [ trackerCountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-          trackerCountLabel.topAnchor.constraint(equalTo: coloredTrackerBackground.bottomAnchor, constant: 16)
+        [ trackerCountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constraints.leading),
+          trackerCountLabel.centerYAnchor.constraint(equalTo: trackerButton.centerYAnchor)
         ]
     }
     
     private func trackerButtonConstraints() -> [NSLayoutConstraint] {
-        [ trackerButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-          trackerButton.centerYAnchor.constraint(equalTo: trackerCountLabel.centerYAnchor),
-          trackerButton.heightAnchor.constraint(equalToConstant: 34),
-          trackerButton.widthAnchor.constraint(equalToConstant: 34)
+        [ trackerButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Constraints.trailing),
+          trackerButton.topAnchor.constraint(equalTo: colorTrackerBackground.bottomAnchor, constant: Constraints.buttonTop),
+          trackerButton.heightAnchor.constraint(equalToConstant: Constraints.buttonHeight),
+          trackerButton.widthAnchor.constraint(equalTo: trackerButton.heightAnchor)
         ]
+    }
+}
+
+extension TrackersCollectionViewCell {
+    enum Constraints {
+        static let leading: CGFloat = 12
+        static let trailing: CGFloat = -12
+        static let emojiViewHeight: CGFloat = 24
+        static let colorTrackerBackgroundHeight: CGFloat = 90
+        static let buttonHeight: CGFloat = 34
+        static let buttonTop: CGFloat = 8
     }
 }
 
