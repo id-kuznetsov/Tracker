@@ -103,7 +103,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         trackerButton.backgroundColor = tracker.color
-        trackerCountLabel.text = "4 \(4.dayWord())"  // TODO: счетчик
+        trackerCountLabel.text = "4 \(4.dayWord())"  // TODO: счетчик дней
     }
     
     // MARK: - Private Methods

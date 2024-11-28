@@ -22,6 +22,23 @@ final class NewHabitViewController: UIViewController {
         return textField
     }()
     
+    private lazy var warningLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .ypRed
+        label.textAlignment = .center
+        label.text = "Ограничение 38 символов"
+        return label
+    }()
+    
+    private lazy var trackerNameStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [trackerNameTextField, warningLabel])
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
         tableView.backgroundColor = .ypBackground
@@ -103,7 +120,6 @@ final class NewHabitViewController: UIViewController {
         trackerStorage.addTracker(newTracker, to: selectedCategory)
         
         view.window?.rootViewController?.dismiss(animated: true)
-        
     }
     
     // MARK: - Private Methods
@@ -111,21 +127,24 @@ final class NewHabitViewController: UIViewController {
     private func setupUI() {
         title = "Новая привычка"
         view.backgroundColor = .ypWhite
-        
-        view.addSubviews([trackerNameTextField, tableView, buttonsStackView])
-        
+        view.addSubviews([trackerNameStackView, tableView, buttonsStackView])
+        showWarningLabel(false)
         NSLayoutConstraint.activate(
-            trackerNameTextFieldConstraints() +
+            trackerNameStackViewConstraints() +
             tableViewSelectionsConstraints() +
             buttonsStackViewConstraints()
         )
     }
     
     private func checkFieldsNotEmpty() {
-        // TODO: check textField, category and schedule is not empty
-        if trackerTitle != nil && selectedCategory != nil && !selectedDays.isEmpty {
+        guard let trackerTitle else { return }
+        if !trackerTitle.isEmpty && selectedCategory != nil && !selectedDays.isEmpty {
             setCreateButtonEnabled(status: true)
         }
+    }
+    
+    private func showWarningLabel(_ status:Bool) {
+        warningLabel.isHidden = !status
     }
     
     private func setCreateButtonEnabled(status: Bool) {
@@ -140,16 +159,16 @@ final class NewHabitViewController: UIViewController {
     
     // MARK: Constraints
     
-    private func trackerNameTextFieldConstraints() -> [NSLayoutConstraint] {
-        [trackerNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-         trackerNameTextField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-         trackerNameTextField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-         trackerNameTextField.heightAnchor.constraint(equalToConstant: 75)
+    private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
+        [ trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
+            trackerNameStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+         trackerNameStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+         trackerNameStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ]
     }
     
     private func tableViewSelectionsConstraints() -> [NSLayoutConstraint] {
-        [tableView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24),
+        [tableView.topAnchor.constraint(equalTo: trackerNameStackView.bottomAnchor, constant: 24),
          tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
          tableView.heightAnchor.constraint(equalToConstant: 150)
@@ -206,13 +225,32 @@ extension NewHabitViewController: UITableViewDelegate  {
     }
 }
 
+// MARK: UITextFieldDelegate
+
 extension NewHabitViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let text = textField.text ?? ""
+        let newText = text.count + string.count - range.length
+
+        if newText > 38 {
+            showWarningLabel(true)
+            return false
+        } else {
+            showWarningLabel(false)
+        }
+        return true
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
-        trackerTitle = textField.text
-        textField.resignFirstResponder()
-        checkFieldsNotEmpty()
-        return true
+        if let text = textField.text {
+            trackerTitle = text
+            textField.resignFirstResponder()
+            checkFieldsNotEmpty()
+            return true
+        } else {
+            return false
+        }
     }
 }
 

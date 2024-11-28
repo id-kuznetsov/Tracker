@@ -76,6 +76,20 @@ final class TrackersViewController: UIViewController {
         let trackerMock = trackerStorage.trackersMock
         categories = trackerMock// TODO: для теста коллекции, убрать перед ревью
         
+        NotificationCenter.default.addObserver(
+            forName: TrackerStorageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            // TODO: код ниже, переписать через performBatchUpdates и вынести в отдельный метод updateCollectionView()
+            self.checkTrackersCategories()
+            let trackerMock = self.trackerStorage.trackersMock
+            self.categories = trackerMock
+            self.collectionView.reloadData()
+            //
+        }
+
         setupUI()
     }
     

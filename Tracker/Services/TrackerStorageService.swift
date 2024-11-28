@@ -12,33 +12,51 @@ final class TrackerStorageService {
     // MARK: - Constants
     
     static let shared = TrackerStorageService()
+    static let didChangeNotification = Notification.Name(rawValue: "TrackerStorageServiceDidChange")
     
     // MARK: - Public Properties
-    
-    var trackersMock = [TrackerCategory(title: "Учеба", trackers: [
-        Tracker(
-            id: UUID(),
-            name: "Изучить collection view",
-            color: .ypSection10,
-            emoji: "🥇",
-            schedule: [.monday, .tuesday, .wednesday, .thursday]
-        ),
-        Tracker(
-            id: UUID(),
-            name: "Моя очень длинная и детализированная категория",
-            color: .ypSection1,
-            emoji: "🤔",
-            schedule: [.friday, .wednesday, .thursday]
-        ),
-        Tracker(
-            id: UUID(),
-            name: "Изучить search bar",
-            color: .ypSection8,
-            emoji: "🥇",
-            schedule: [.monday, .tuesday, .wednesday, .saturday, .sunday]
-        )
+//    var trackersMock = [TrackerCategory]() TODO: для теста плейсхолдера
+    var trackersMock = [
+        TrackerCategory(title: "Учеба", trackers: [
+            Tracker(
+                id: UUID(),
+                name: "Изучить collection view",
+                color: .ypSection10,
+                emoji: "🥇",
+                schedule: [.monday, .tuesday, .wednesday, .thursday]
+            ),
+            Tracker(
+                id: UUID(),
+                name: "Эта строка для теста: 38 символов!",
+                color: .ypSection1,
+                emoji: "🤔",
+                schedule: [.friday, .wednesday, .thursday]
+            ),
+            Tracker(
+                id: UUID(),
+                name: "Изучить search bar",
+                color: .ypSection8,
+                emoji: "🥇",
+                schedule: [.monday, .tuesday, .wednesday, .saturday, .sunday]
+            )
+        ]),
+        TrackerCategory(title: "Спорт", trackers: [
+            Tracker(
+                id: UUID(),
+                name: "Утренний бег",
+                color: .ypSection5,
+                emoji: "🏃",
+                schedule: [.monday, .wednesday, .friday]
+            ),
+            Tracker(
+                id: UUID(),
+                name: "Йога",
+                color: .ypSection7,
+                emoji: "🧘",
+                schedule: [.tuesday, .thursday, .saturday]
+            )
+        ])
     ]
-                                              )]
     
     // MARK: - Private Properties
     
@@ -60,14 +78,19 @@ final class TrackerStorageService {
     
     func addTracker(_ tracker: Tracker, to categoryTittle: String) {
         if let index = trackersMock.firstIndex(where: { $0.title == categoryTittle }) {
-            let existingCategory = trackersMock[index]
+            let oldCategory = trackersMock[index]
             
-            let updatedCategory = TrackerCategory(
-                title: existingCategory.title,
-                trackers: existingCategory.trackers + [tracker]
+            let newCategory = TrackerCategory(
+                title: oldCategory.title,
+                trackers: oldCategory.trackers + [tracker]
             )
             
-            trackersMock[index] = updatedCategory
+            trackersMock[index] = newCategory
+            
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
         }
     }
     
