@@ -111,8 +111,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private func changeButtonIcon(isDone: Bool) {
         let image = isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus")
         trackerButton.setImage(image, for: .normal)
-        let newBackgroundColor = isDone ? trackerButton.backgroundColor?.withAlphaComponent(0.3) : trackerButton.backgroundColor?.withAlphaComponent(1)
-        trackerButton.backgroundColor = newBackgroundColor
+        trackerButton.alpha = isDone ? 0.3 : 1
     }
     
     private func setCellUI() {

@@ -24,7 +24,7 @@ final class PlaceholderView: UIView {
         label.textColor = .label
         label.font = .systemFont(ofSize: 12)
         label.textAlignment = .center
-        label.numberOfLines = 1
+        label.numberOfLines = 0
         return label
     }()
     

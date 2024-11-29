@@ -1,17 +1,18 @@
 //
-//  NewHabitViewController.swift
+//  NewEventViewController.swift
 //  Tracker
 //
-//  Created by Ilya Kuznetsov on 25.11.2024.
+//  Created by Ilya Kuznetsov on 30.11.2024.
 //
 
 import UIKit
 
-final class NewHabitViewController: UIViewController {
-    
+final class NewEventViewController: UIViewController {
+        
     // MARK: - Private Properties
     private let tableViewSelections = ["Категория", "Расписание"]
     private let trackerStorage = TrackerStorageService.shared
+    private var isHabitEvent: Bool
     private var trackerTitle: String?
     private var selectedCategory: String?
     private var selectedDays = [WeekDay]()
@@ -87,6 +88,16 @@ final class NewHabitViewController: UIViewController {
         return stackView
     }()
     
+    // MARK: - Initialisers
+    
+    init (isHabit: Bool) {
+        self.isHabitEvent = isHabit
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
     
@@ -114,7 +125,7 @@ final class NewHabitViewController: UIViewController {
             name: trackerTitle,
             color: .ypSection2, // TODO: add random color
             emoji: "🤔", // TODO: add random emoji
-            schedule: selectedDays
+            schedule: isHabitEvent ? WeekDay.allCases : selectedDays
         )
         
         trackerStorage.addTracker(newTracker, to: selectedCategory)
@@ -125,7 +136,7 @@ final class NewHabitViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = "Новая привычка"
+        title = isHabitEvent ? "Новая привычка" : "Новое нерегулярное событие"
         view.backgroundColor = .ypWhite
         view.addSubviews([trackerNameStackView, tableView, buttonsStackView])
         showWarningLabel(false)
@@ -137,9 +148,22 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func checkFieldsNotEmpty() {
-        guard let trackerTitle else { return }
-        if !trackerTitle.isEmpty && selectedCategory != nil && !selectedDays.isEmpty {
-            setCreateButtonEnabled(status: true)
+        guard let trackerTitle = trackerTitle, !trackerTitle.isEmpty else {
+            setCreateButtonEnabled(status: false)
+            return
+        }
+        if isHabitEvent {
+            if let selectedCategory, !selectedDays.isEmpty {
+                setCreateButtonEnabled(status: true)
+            } else {
+                setCreateButtonEnabled(status: false)
+            }
+        } else {
+            if selectedCategory != nil {
+                setCreateButtonEnabled(status: true)
+            } else {
+                setCreateButtonEnabled(status: false)
+            }
         }
     }
     
@@ -160,8 +184,8 @@ final class NewHabitViewController: UIViewController {
     // MARK: Constraints
     
     private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
-        [ trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
-            trackerNameStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+        [trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
+         trackerNameStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
          trackerNameStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
          trackerNameStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ]
@@ -171,7 +195,7 @@ final class NewHabitViewController: UIViewController {
         [tableView.topAnchor.constraint(equalTo: trackerNameStackView.bottomAnchor, constant: 24),
          tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-         tableView.heightAnchor.constraint(equalToConstant: 150)
+         tableView.heightAnchor.constraint(equalToConstant: isHabitEvent ? 150 : 75)
         ]
     }
     
@@ -190,9 +214,9 @@ final class NewHabitViewController: UIViewController {
 
 // MARK: UITableViewDataSource
 
-extension NewHabitViewController: UITableViewDataSource  {
+extension NewEventViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableViewSelections.count
+        isHabitEvent ? tableViewSelections.count : tableViewSelections.count - 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -208,9 +232,10 @@ extension NewHabitViewController: UITableViewDataSource  {
 
 // MARK: UITableViewDelegate
 
-extension NewHabitViewController: UITableViewDelegate  {
+extension NewEventViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
+            // TODO: if categories is no exist yet, redirection to createNewCategory
             let categoryViewController = CategoryViewController()
             categoryViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: categoryViewController)
@@ -227,11 +252,11 @@ extension NewHabitViewController: UITableViewDelegate  {
 
 // MARK: UITextFieldDelegate
 
-extension NewHabitViewController: UITextFieldDelegate {
+extension NewEventViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = textField.text ?? ""
         let newText = text.count + string.count - range.length
-
+        
         if newText > 38 {
             showWarningLabel(true)
             return false
@@ -256,7 +281,7 @@ extension NewHabitViewController: UITextFieldDelegate {
 
 // MARK: CategoryViewControllerDelegate
 
-extension NewHabitViewController: CategoryViewControllerDelegate {
+extension NewEventViewController: CategoryViewControllerDelegate {
     func showSelectedCategory(category: String) {
         selectedCategory = category
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))  {
@@ -269,7 +294,7 @@ extension NewHabitViewController: CategoryViewControllerDelegate {
 
 // MARK: ScheduleViewControllerDelegate
 
-extension NewHabitViewController: ScheduleViewControllerDelegate {
+extension NewEventViewController: ScheduleViewControllerDelegate {
     func showSelectedDays(days: [WeekDay]) {
         selectedDays = days
         let receivedDays = days.map{ $0.shortName }
@@ -284,4 +309,5 @@ extension NewHabitViewController: ScheduleViewControllerDelegate {
         checkFieldsNotEmpty()
     }
 }
+
 

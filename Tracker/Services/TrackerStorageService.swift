@@ -15,7 +15,8 @@ final class TrackerStorageService {
     static let didChangeNotification = Notification.Name(rawValue: "TrackerStorageServiceDidChange")
     
     // MARK: - Public Properties
-//    var trackersMock = [TrackerCategory]() TODO: для теста плейсхолдера
+    //    MARK: для теста плейсхолдера ⬇️⬇️⬇️
+//    var trackersMock = [TrackerCategory]()
     var trackersMock = [
         TrackerCategory(title: "Учеба", trackers: [
             Tracker(
@@ -73,7 +74,8 @@ final class TrackerStorageService {
     }
     
     func addCategory(_ category: TrackerCategory) {
-        trackers.append(category)
+        trackersMock.append(category)
+//        trackers.append(category)
     }
     
     func addTracker(_ tracker: Tracker, to categoryTittle: String) {

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CategoryViewController: UIViewController {
+final class CategoryViewController: UIViewController {
 
     // MARK: - Constants
 
@@ -31,7 +31,7 @@ class CategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Готово", for: .normal)
+        button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -59,9 +59,6 @@ class CategoryViewController: UIViewController {
     
     @objc
     private func didTapDoneButton() {
-        // TODO: add category logic
-        
-        
         dismiss(animated: true, completion: nil)
         
     }
@@ -82,7 +79,7 @@ class CategoryViewController: UIViewController {
         [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
          tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-         tableView.heightAnchor.constraint(equalToConstant: 75) // TODO: подобрать высоту под количество категорий?
+         tableView.heightAnchor.constraint(equalToConstant: CGFloat(trackerStorage.getCategoriesCount() * 75)) // TODO: подобрать высоту под количество категорий?
         ]
     }
     
@@ -120,7 +117,12 @@ extension CategoryViewController: UITableViewDataSource  {
 extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        tableView.allowsSelection = false
         delegate?.showSelectedCategory(category: trackerStorage.trackersMock[indexPath.row].title)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.dismiss(animated: true)
+        }
     }
 }
 
