@@ -79,7 +79,7 @@ final class CategoryViewController: UIViewController {
         [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
          tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-         tableView.heightAnchor.constraint(equalToConstant: CGFloat(trackerStorage.getCategoriesCount() * 75)) // TODO: подобрать высоту под количество категорий?
+         tableView.heightAnchor.constraint(equalToConstant: CGFloat(trackerStorage.getCategoriesCount() * 75))
         ]
     }
     

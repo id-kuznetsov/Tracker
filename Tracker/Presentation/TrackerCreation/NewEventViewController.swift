@@ -152,18 +152,11 @@ final class NewEventViewController: UIViewController {
             setCreateButtonEnabled(status: false)
             return
         }
+        
         if isHabitEvent {
-            if let selectedCategory, !selectedDays.isEmpty {
-                setCreateButtonEnabled(status: true)
-            } else {
-                setCreateButtonEnabled(status: false)
-            }
+            setCreateButtonEnabled(status: !selectedDays.isEmpty)
         } else {
-            if selectedCategory != nil {
-                setCreateButtonEnabled(status: true)
-            } else {
-                setCreateButtonEnabled(status: false)
-            }
+            setCreateButtonEnabled(status: selectedCategory != nil)
         }
     }
     
@@ -235,7 +228,7 @@ extension NewEventViewController: UITableViewDataSource  {
 extension NewEventViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            // TODO: if categories is no exist yet, redirection to createNewCategory
+            // TODO: if categories is not exist yet, redirection to createNewCategory
             let categoryViewController = CategoryViewController()
             categoryViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: categoryViewController)
