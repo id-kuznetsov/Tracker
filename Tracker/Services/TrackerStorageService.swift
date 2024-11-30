@@ -24,7 +24,7 @@ final class TrackerStorageService {
                 name: "Изучить collection view",
                 color: .ypSection10,
                 emoji: "🥇",
-                schedule: [.monday, .wednesday, .friday]
+                schedule: [.monday, .wednesday]
             ),
             Tracker(
                 id: UUID(),
@@ -38,7 +38,7 @@ final class TrackerStorageService {
                 name: "Изучить search bar",
                 color: .ypSection8,
                 emoji: "🥇",
-                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
             )
         ]),
         TrackerCategory(title: "Спорт", trackers: [
@@ -47,7 +47,7 @@ final class TrackerStorageService {
                 name: "Утренний бег",
                 color: .ypSection5,
                 emoji: "🏃",
-                schedule: [.monday, .wednesday, .friday]
+                schedule: [.monday, .wednesday]
             ),
             Tracker(
                 id: UUID(),
@@ -97,10 +97,23 @@ final class TrackerStorageService {
     }
     
     func getTrackersForDate(_ date: Date) -> [TrackerCategory] {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        let selectedWeekday = weekday == 1 ? 7 : weekday - 1
         
+        guard let selectedWeekday = WeekDay(rawValue: selectedWeekday) else {
+            return []
+        }
         
-        return []
+        let filteredCategories = trackersMock.map { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                tracker.schedule.contains(selectedWeekday)
+            }
+            
+            return TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }
         
+        return filteredCategories.filter { !$0.trackers.isEmpty }
     }
     
 }

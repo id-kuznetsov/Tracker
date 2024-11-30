@@ -19,7 +19,7 @@ final class TrackersViewController: UIViewController {
 
     private let calendar = Calendar.current
     private var selectedDate = Date()
-    private var selectedWeekday: Int?
+    private var selectedWeekday: WeekDay?
    
     
     private var categories: [TrackerCategory] = []
@@ -95,11 +95,9 @@ final class TrackersViewController: UIViewController {
     private func datePickerValueChanged(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         self.selectedDate = selectedDate
-        let weekday = calendar.component(.weekday, from: selectedDate)
-        selectedWeekday = weekday == 1 ? 7 : weekday - 1
-        guard let selectedWeekday else { return }
-        print("Текущий день недели: \(selectedWeekday)")
-        // TODO: может и проверить на отсутствие
+        
+        updateCollectionForSelectedDate(date: selectedDate)
+        
     }
 
     // MARK: - Private Methods
@@ -122,13 +120,10 @@ final class TrackersViewController: UIViewController {
     }
     
     private func updateCollectionForSelectedDate(date: Date) {
-        // TODO: change collection view then change date
         
+        categories = trackerStorage.getTrackersForDate(date)
         
-        
-        
-        
-        
+        updateCollectionView()
     }
     
     private func setupUI() {
@@ -138,16 +133,19 @@ final class TrackersViewController: UIViewController {
     
     private func checkTrackersCategories() {
         let hasTrackers = categories.contains { !$0.trackers.isEmpty }
+        
         if hasTrackers {
             showEmptyPlaceholderView(state: false)
             setupCollectionView()
+            collectionView.isHidden = false
         } else {
             showEmptyPlaceholderView(state: true)
+            collectionView.isHidden = true
         }
     }
     
     private func setupCollectionView() {
-        view.addSubview(collectionView)
+        view.addSubviews([collectionView, trackersIsEmptyPlaceholderView])
         
         NSLayoutConstraint.activate(
             collectionViewConstraints()
@@ -179,6 +177,7 @@ final class TrackersViewController: UIViewController {
             NSLayoutConstraint.activate(
                 placeholderViewConstraints()
             )
+            print("Placeholder view is shown")
         } else {
             trackersIsEmptyPlaceholderView.isHidden = true
         }
@@ -262,17 +261,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        // TODO: переписать на менее костыльный способ 
-        let stubHeader = TrackersCollectionHeader()
-        stubHeader.configure(with: categories[section].title)
-        
-        let targetSize = CGSize(width: collectionView.frame.width, height: UIView.layoutFittingCompressedSize.height)
-        let fittingSize = stubHeader.systemLayoutSizeFitting(
-            targetSize,
-            withHorizontalFittingPriority: .required,
-            verticalFittingPriority: .fittingSizeLevel
-        )
-        return CGSize(width: fittingSize.width, height: fittingSize.height)
+        return CGSize(width: collectionView.frame.width, height: 39)
     }
 }
 
@@ -295,6 +284,11 @@ extension TrackersViewController: UISearchResultsUpdating {
 extension TrackersViewController: TrackerCellDelegate {
     func didTapTrackerButton(_ cell: TrackersCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        if selectedDate > Date() {
+            cell.enableTrackerButton(false)
+            return
+        }
+        cell.enableTrackerButton(true)
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         
         let trackerRecord = TrackerRecord(id: tracker.id, date: selectedDate)

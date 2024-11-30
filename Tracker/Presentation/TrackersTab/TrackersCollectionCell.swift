@@ -117,6 +117,11 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         trackerCountLabel.text = "\(doneCount) \(doneCount.dayWord())"  // TODO: счетчик дней
     }
     
+    func enableTrackerButton(_ state: Bool) {
+        trackerButton.isEnabled = state ? true : false
+        changeButtonIcon(isDone: trackerIsDone)
+    }
+    
     // MARK: - Private Methods
     
     private func changeButtonIcon(isDone: Bool) {
