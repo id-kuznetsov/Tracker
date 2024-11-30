@@ -14,10 +14,13 @@ final class TrackersViewController: UIViewController {
     // MARK: - Public Properties
 
     // MARK: - Private Properties
-    private let date = Date()
-    private let calendar = Calendar.current
     
     private let trackerStorage = TrackerStorageService.shared
+
+    private let calendar = Calendar.current
+    private var selectedDate = Date()
+    private var selectedWeekday: Int?
+   
     
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = [] // TODO: ???
@@ -73,42 +76,60 @@ final class TrackersViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let trackerMock = trackerStorage.trackersMock
-        categories = trackerMock// TODO: для теста коллекции, убрать перед ревью
         
+        categories = trackerStorage.trackersMock// TODO: для теста коллекции, убрать перед ревью
+        addNotificationObserver()
+        setupUI()
+    }
+    
+    // MARK: - Actions
+    
+    @objc
+    private func didTapPlusButton() {
+        let createNewTracker = TrackerTypeSelectionViewController()
+        let navigationController = UINavigationController(rootViewController: createNewTracker)
+        present(navigationController, animated: true)
+    }
+    
+    @objc
+    private func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        self.selectedDate = selectedDate
+        let weekday = calendar.component(.weekday, from: selectedDate)
+        selectedWeekday = weekday == 1 ? 7 : weekday - 1
+        guard let selectedWeekday else { return }
+        print("Текущий день недели: \(selectedWeekday)")
+        // TODO: может и проверить на отсутствие
+    }
+
+    // MARK: - Private Methods
+    
+    private func addNotificationObserver() {
         NotificationCenter.default.addObserver(
             forName: TrackerStorageService.didChangeNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            // TODO: код ниже, переписать через performBatchUpdates и вынести в отдельный метод updateCollectionView()
-            self.checkTrackersCategories()
-            let trackerMock = self.trackerStorage.trackersMock
-            self.categories = trackerMock
-            self.collectionView.reloadData()
-            //
+            self.categories = self.trackerStorage.trackersMock
+            self.updateCollectionView()
         }
-
-        setupUI()
     }
     
-    // MARK: - Actions
-    
-    @objc private func didTapPlusButton() {
-        let createNewTracker = TrackerTypeSelectionViewController()
-        let navigationController = UINavigationController(rootViewController: createNewTracker)
-        present(navigationController, animated: true)
+    private func updateCollectionView() {
+        checkTrackersCategories()
+        collectionView.reloadData()
     }
     
-    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        let weekday = calendar.component(.weekday, from: selectedDate)
-        let adjustedWeekday = weekday == 1 ? 7 : weekday - 1
-        print("Текущий день недели: \(adjustedWeekday)")
+    private func updateCollectionForSelectedDate(date: Date) {
+        // TODO: change collection view then change date
+        
+        
+        
+        
+        
+        
     }
-
-    // MARK: - Private Methods
     
     private func setupUI() {
         setupNavigationBar()
@@ -116,11 +137,12 @@ final class TrackersViewController: UIViewController {
     }
     
     private func checkTrackersCategories() {
-        if categories.isEmpty {
-            showEmptyPlaceholderView(state: true)
-        } else {
+        let hasTrackers = categories.contains { !$0.trackers.isEmpty }
+        if hasTrackers {
             showEmptyPlaceholderView(state: false)
             setupCollectionView()
+        } else {
+            showEmptyPlaceholderView(state: true)
         }
     }
     
@@ -192,8 +214,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackersCollectionViewCell.reuseIdentifier, for: indexPath) as? TrackersCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
-        cell.configureCell(with: categories[indexPath.section].trackers[indexPath.row])
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        let isDone = completedTrackers.contains { $0.id == tracker.id }
+        let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
+        cell.delegate = self
+        cell.configureCell(with: tracker, isDone: isDone, doneCount: doneCount)
         return cell
     }
     
@@ -237,6 +262,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        // TODO: переписать на менее костыльный способ 
         let stubHeader = TrackersCollectionHeader()
         stubHeader.configure(with: categories[section].title)
         
@@ -264,6 +290,23 @@ extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         // TODO: search settings
     }
-    
-    
 }
+
+extension TrackersViewController: TrackerCellDelegate {
+    func didTapTrackerButton(_ cell: TrackersCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        
+        let trackerRecord = TrackerRecord(id: tracker.id, date: selectedDate)
+  
+        if completedTrackers.contains(trackerRecord) {
+            completedTrackers.remove(trackerRecord)
+        } else {
+            completedTrackers.insert(trackerRecord)
+        }
+        
+        let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
+        cell.configureCellCounter(doneCount: doneCount)
+    }
+}
+

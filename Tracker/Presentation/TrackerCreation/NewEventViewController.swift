@@ -119,12 +119,12 @@ final class NewEventViewController: UIViewController {
         guard let trackerTitle, let selectedCategory else {
             return print("Missing data")
         }
-        
+    
         let newTracker = Tracker(
             id: UUID(),
             name: trackerTitle,
-            color: .ypSection2, // TODO: add random color
-            emoji: "🤔", // TODO: add random emoji
+            color: .ypSection18, // TODO: add color collection view
+            emoji: Emojies.emojies.randomElement() ?? "😎", // TODO: add emoji collection view
             schedule: isHabitEvent ? WeekDay.allCases : selectedDays
         )
         

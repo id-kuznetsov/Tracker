@@ -16,7 +16,7 @@ final class TrackerStorageService {
     
     // MARK: - Public Properties
     //    MARK: для теста плейсхолдера ⬇️⬇️⬇️
-//    var trackersMock = [TrackerCategory]()
+//    var trackersMock = [TrackerCategory(title: "Спорт", trackers: [])]
     var trackersMock = [
         TrackerCategory(title: "Учеба", trackers: [
             Tracker(
@@ -24,21 +24,21 @@ final class TrackerStorageService {
                 name: "Изучить collection view",
                 color: .ypSection10,
                 emoji: "🥇",
-                schedule: [.monday, .tuesday, .wednesday, .thursday]
+                schedule: [.monday, .wednesday, .friday]
             ),
             Tracker(
                 id: UUID(),
                 name: "Эта строка для теста: 38 символов!",
                 color: .ypSection1,
                 emoji: "🤔",
-                schedule: [.friday, .wednesday, .thursday]
+                schedule: [.tuesday, .thursday]
             ),
             Tracker(
                 id: UUID(),
                 name: "Изучить search bar",
                 color: .ypSection8,
                 emoji: "🥇",
-                schedule: [.monday, .tuesday, .wednesday, .saturday, .sunday]
+                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
             )
         ]),
         TrackerCategory(title: "Спорт", trackers: [
@@ -94,6 +94,13 @@ final class TrackerStorageService {
                 object: nil
             )
         }
+    }
+    
+    func getTrackersForDate(_ date: Date) -> [TrackerCategory] {
+        
+        
+        return []
+        
     }
     
 }

@@ -13,8 +13,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     static let reuseIdentifier = "TrackersCollectionViewCell"
     
-    // MARK: - Private Properties
+    // MARK: - Public Properties
     
+    weak var delegate: TrackerCellDelegate?
+    
+    // MARK: - Private Properties
+
     private var trackerIsDone = false
     
     private lazy var emojiLabel: UILabel = {
@@ -93,17 +97,24 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private func didTapTrackerButton() {
         trackerIsDone.toggle()
         changeButtonIcon(isDone: trackerIsDone)
+        delegate?.didTapTrackerButton(self)
     }
     
     // MARK: - Public Methods
     
-    func configureCell(with tracker: Tracker) {
+    func configureCell(with tracker: Tracker, isDone: Bool, doneCount: Int) {
         colorTrackerBackground.backgroundColor = tracker.color
         
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         trackerButton.backgroundColor = tracker.color
-        trackerCountLabel.text = "4 \(4.dayWord())"  // TODO: счетчик дней
+        
+        changeButtonIcon(isDone: isDone)
+        configureCellCounter(doneCount: doneCount)
+    }
+    
+    func configureCellCounter(doneCount: Int) {
+        trackerCountLabel.text = "\(doneCount) \(doneCount.dayWord())"  // TODO: счетчик дней
     }
     
     // MARK: - Private Methods
