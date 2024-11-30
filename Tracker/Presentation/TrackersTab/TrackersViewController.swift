@@ -145,7 +145,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        view.addSubviews([collectionView, trackersIsEmptyPlaceholderView])
+        view.addSubviews([collectionView])
         
         NSLayoutConstraint.activate(
             collectionViewConstraints()
@@ -177,7 +177,7 @@ final class TrackersViewController: UIViewController {
             NSLayoutConstraint.activate(
                 placeholderViewConstraints()
             )
-            print("Placeholder view is shown")
+            trackersIsEmptyPlaceholderView.isHidden = false
         } else {
             trackersIsEmptyPlaceholderView.isHidden = true
         }
