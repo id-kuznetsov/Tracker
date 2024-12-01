@@ -13,14 +13,12 @@ final class PlaceholderView: UIView {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
     private let textLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .label
         label.font = .systemFont(ofSize: 12)
         label.textAlignment = .center
@@ -28,7 +26,7 @@ final class PlaceholderView: UIView {
         return label
     }()
     
-    // MARK: - Initializer
+    // MARK: - Initialiser
     
     init(imageName: String, message: String) {
         super.init(frame: .zero)
@@ -54,7 +52,9 @@ final class PlaceholderView: UIView {
     
     private func setupUI() {
         addSubviews([imageView, textLabel])
-        
+        [imageView, textLabel].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate(
             setupConstraints()
         )

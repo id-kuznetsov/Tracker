@@ -125,7 +125,7 @@ final class NewEventViewController: UIViewController {
             name: trackerTitle,
             color: .ypSection18, // TODO: add color collection view
             emoji: Emojies.emojies.randomElement() ?? "😎", // TODO: add emoji collection view
-            schedule: isHabitEvent ? WeekDay.allCases : selectedDays
+            schedule: isHabitEvent ? selectedDays : WeekDay.allCases
         )
         
         trackerStorage.addTracker(newTracker, to: selectedCategory)

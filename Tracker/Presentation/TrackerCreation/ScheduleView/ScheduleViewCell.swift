@@ -21,7 +21,6 @@ final class ScheduleViewCell: UITableViewCell {
     
     private lazy var weekDayLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypBlack
         return label
@@ -29,7 +28,6 @@ final class ScheduleViewCell: UITableViewCell {
     
     private lazy var switcher: UISwitch = {
         let switcher = UISwitch()
-        switcher.translatesAutoresizingMaskIntoConstraints = false
         switcher.onTintColor = .ypBlue
         switcher.isOn = false
         switcher.addTarget(self, action: #selector(switcherValueChanged), for: .valueChanged)
@@ -70,7 +68,9 @@ final class ScheduleViewCell: UITableViewCell {
     
     private func setCellUI() {
         contentView.addSubviews([weekDayLabel, switcher])
-        
+        [weekDayLabel, switcher].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         contentView.backgroundColor = .ypBackground
         contentView.clipsToBounds = true
         

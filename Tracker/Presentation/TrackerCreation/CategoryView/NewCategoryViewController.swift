@@ -32,13 +32,11 @@ final class NewCategoryViewController: UIViewController {
         let stackView = UIStackView(arrangedSubviews: [categoryNameTextField, warningLabel])
         stackView.axis = .vertical
         stackView.spacing = 8
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -80,6 +78,9 @@ final class NewCategoryViewController: UIViewController {
         showWarningLabel(false)
         setCreateButtonEnabled(status: false)
         view.addSubviews([categoryNameStackView, doneButton])
+        [categoryNameStackView, doneButton].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate(
             trackerNameStackViewConstraints() +

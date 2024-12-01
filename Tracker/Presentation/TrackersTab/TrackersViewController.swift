@@ -235,7 +235,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 }
 
 extension TrackersViewController: UICollectionViewDelegate {
-    
+    // TODO: contextMenu
 }
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {

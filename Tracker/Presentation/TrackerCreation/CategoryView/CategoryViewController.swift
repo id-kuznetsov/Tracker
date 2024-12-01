@@ -52,15 +52,12 @@ final class CategoryViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-    
-    // MARK: - Public Methods
 
     // MARK: - Private Methods
     
     @objc
     private func didTapDoneButton() {
         dismiss(animated: true, completion: nil)
-        
     }
     
     private func setupUI() {
@@ -109,7 +106,6 @@ extension CategoryViewController: UITableViewDataSource  {
         cell.backgroundColor = .ypBackground
         return cell
     }
-    
 }
 
 // MARK: UITableViewDelegate

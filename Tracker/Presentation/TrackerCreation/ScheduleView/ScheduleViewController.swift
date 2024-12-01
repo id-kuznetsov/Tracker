@@ -9,8 +9,6 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
 
-    // MARK: - Constants
-
     // MARK: - Public Properties
 
     weak var delegate: ScheduleViewControllerDelegate?
@@ -24,7 +22,6 @@ final class ScheduleViewController: UIViewController {
         tableView.register(ScheduleViewCell.self, forCellReuseIdentifier: ScheduleViewCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = 75
         tableView.tableFooterView = UIView()
         return tableView
@@ -32,7 +29,6 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Готово", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -68,6 +64,9 @@ final class ScheduleViewController: UIViewController {
     
     private func setupUI() {
         view.addSubviews([tableView, doneButton])
+        [tableView, doneButton].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
         title = "Расписание"

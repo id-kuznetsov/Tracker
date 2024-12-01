@@ -8,11 +8,12 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    
     // MARK: Constants
     
     enum Constants {
-        static let trackerTitle: String = "Трекеры"
-        static let statisticTitle: String = "Статистика"
+        static let trackerTitle = "Трекеры"
+        static let statisticTitle = "Статистика"
     }
     
     // MARK: - Lifecycle
