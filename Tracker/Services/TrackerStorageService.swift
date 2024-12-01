@@ -13,11 +13,10 @@ final class TrackerStorageService {
     
     static let shared = TrackerStorageService()
     static let didChangeNotification = Notification.Name(rawValue: "TrackerStorageServiceDidChange")
+
+    // MARK: - Private Properties
     
-    // MARK: - Public Properties
-    //    MARK: для теста плейсхолдера ⬇️⬇️⬇️
-//    var trackersMock = [TrackerCategory(title: "Спорт", trackers: [])]
-    var trackersMock = [
+    private(set) var trackers: [TrackerCategory] = [
         TrackerCategory(title: "Учеба", trackers: [
             Tracker(
                 id: UUID(),
@@ -55,13 +54,16 @@ final class TrackerStorageService {
                 color: .ypSection7,
                 emoji: "🧘",
                 schedule: [.tuesday, .thursday, .saturday]
+            ),
+            Tracker(
+                id: UUID(),
+                name: "Футбол",
+                color: .ypSection8,
+                emoji: "⚽️",
+                schedule: [.sunday]
             )
         ])
     ]
-    
-    // MARK: - Private Properties
-    
-    private(set) var trackers: [TrackerCategory] = []
     
     // MARK: - Initialisers
     
@@ -70,30 +72,37 @@ final class TrackerStorageService {
     // MARK: - Private Methods
     
     func getCategoriesCount() -> Int {
-        trackersMock.count
+        trackers.count
     }
     
     func addCategory(_ category: TrackerCategory) {
-        trackersMock.append(category)
-//        trackers.append(category)
+        trackers.append(category)
+    }
+    
+    func deleteCategory(_ category: TrackerCategory) {
+        // TODO: delete category
     }
     
     func addTracker(_ tracker: Tracker, to categoryTittle: String) {
-        if let index = trackersMock.firstIndex(where: { $0.title == categoryTittle }) {
-            let oldCategory = trackersMock[index]
+        if let index = trackers.firstIndex(where: { $0.title == categoryTittle }) {
+            let oldCategory = trackers[index]
             
             let newCategory = TrackerCategory(
                 title: oldCategory.title,
                 trackers: oldCategory.trackers + [tracker]
             )
             
-            trackersMock[index] = newCategory
+            trackers[index] = newCategory
             
             NotificationCenter.default.post(
                 name: TrackerStorageService.didChangeNotification,
                 object: nil
             )
         }
+    }
+    
+    func deleteTracker(_ tracker: Tracker, from categoryTittle: String) {
+        // TODO: delete tracker
     }
     
     func getTrackersForDate(_ date: Date) -> [TrackerCategory] {
@@ -105,7 +114,7 @@ final class TrackerStorageService {
             return []
         }
         
-        let filteredCategories = trackersMock.map { category in
+        let filteredCategories = trackers.map { category in 
             let filteredTrackers = category.trackers.filter { tracker in
                 tracker.schedule.contains(selectedWeekday)
             }
@@ -115,5 +124,6 @@ final class TrackerStorageService {
         
         return filteredCategories.filter { !$0.trackers.isEmpty }
     }
+    
     
 }

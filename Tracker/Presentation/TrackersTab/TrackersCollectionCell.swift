@@ -102,32 +102,32 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Public Methods
     
-    func configureCell(with tracker: Tracker, isDone: Bool, doneCount: Int) {
+    func configureCell(with tracker: Tracker, isDone: Bool, doneCount: Int, selectedDate: Date) {
         colorTrackerBackground.backgroundColor = tracker.color
         
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         trackerButton.backgroundColor = tracker.color
-        
+        trackerIsDone = isDone
         changeButtonIcon(isDone: isDone)
         configureCellCounter(doneCount: doneCount)
+        hideTrackerButtonThenDateInFuture(selectedDate)
     }
     
     func configureCellCounter(doneCount: Int) {
-        trackerCountLabel.text = "\(doneCount) \(doneCount.dayWord())"  // TODO: счетчик дней
-    }
-    
-    func enableTrackerButton(_ state: Bool) {
-        trackerButton.isEnabled = state ? true : false
-        changeButtonIcon(isDone: trackerIsDone)
+        trackerCountLabel.text = "\(doneCount) \(doneCount.dayWord())"
     }
     
     // MARK: - Private Methods
     
     private func changeButtonIcon(isDone: Bool) {
-        let image = isDone ? UIImage(systemName: "checkmark") : UIImage(systemName: "plus")
+        let image = isDone ? UIImage(named: "Done") : UIImage(systemName: "plus")
         trackerButton.setImage(image, for: .normal)
         trackerButton.alpha = isDone ? 0.3 : 1
+    }
+    
+    private func hideTrackerButtonThenDateInFuture(_ date: Date) {
+        trackerButton.isHidden = date > Date() ? true : false
     }
     
     private func setCellUI() {

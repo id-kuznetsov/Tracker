@@ -23,7 +23,7 @@ final class TrackersViewController: UIViewController {
    
     
     private var categories: [TrackerCategory] = []
-    private var completedTrackers: Set<TrackerRecord> = [] // TODO: ???
+    private var completedTrackers: Set<TrackerRecord> = []
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -77,7 +77,7 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        categories = trackerStorage.trackersMock// TODO: для теста коллекции, убрать перед ревью
+        updateCollectionForSelectedDate(date: selectedDate)
         addNotificationObserver()
         setupUI()
     }
@@ -109,25 +109,19 @@ final class TrackersViewController: UIViewController {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            self.categories = self.trackerStorage.trackersMock
-            self.updateCollectionView()
+            self.updateCollectionForSelectedDate(date: selectedDate)
         }
     }
-    
-    private func updateCollectionView() {
+
+    private func updateCollectionForSelectedDate(date: Date) {
+        categories = trackerStorage.getTrackersForDate(date)
         checkTrackersCategories()
         collectionView.reloadData()
     }
     
-    private func updateCollectionForSelectedDate(date: Date) {
-        
-        categories = trackerStorage.getTrackersForDate(date)
-        
-        updateCollectionView()
-    }
-    
     private func setupUI() {
         setupNavigationBar()
+        setupCollectionView()
         checkTrackersCategories()
     }
     
@@ -136,7 +130,6 @@ final class TrackersViewController: UIViewController {
         
         if hasTrackers {
             showEmptyPlaceholderView(state: false)
-            setupCollectionView()
             collectionView.isHidden = false
         } else {
             showEmptyPlaceholderView(state: true)
@@ -145,7 +138,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        view.addSubviews([collectionView])
+        view.addSubview(collectionView)
         
         NSLayoutConstraint.activate(
             collectionViewConstraints()
@@ -214,10 +207,15 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         let tracker = categories[indexPath.section].trackers[indexPath.row]
-        let isDone = completedTrackers.contains { $0.id == tracker.id }
+        
+        let isDone = completedTrackers.contains { record in
+            record.id == tracker.id && calendar.isDate(record.date, inSameDayAs: selectedDate)
+        }
+        
+        
         let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
         cell.delegate = self
-        cell.configureCell(with: tracker, isDone: isDone, doneCount: doneCount)
+        cell.configureCell(with: tracker, isDone: isDone, doneCount: doneCount, selectedDate: selectedDate)
         return cell
     }
     
@@ -285,10 +283,9 @@ extension TrackersViewController: TrackerCellDelegate {
     func didTapTrackerButton(_ cell: TrackersCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
         if selectedDate > Date() {
-            cell.enableTrackerButton(false)
             return
         }
-        cell.enableTrackerButton(true)
+        
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         
         let trackerRecord = TrackerRecord(id: tracker.id, date: selectedDate)

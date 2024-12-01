@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NewCategoryViewController: UIViewController {
+final class NewCategoryViewController: UIViewController {
 
     // MARK: - Private Properties
     private let trackerStorage = TrackerStorageService.shared
