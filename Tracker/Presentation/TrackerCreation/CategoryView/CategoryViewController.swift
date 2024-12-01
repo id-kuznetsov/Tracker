@@ -8,17 +8,17 @@
 import UIKit
 
 final class CategoryViewController: UIViewController {
-
+    
     // MARK: - Constants
-
+    
     // MARK: - Public Properties
-
+    
     weak var delegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
-
+    
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
@@ -52,7 +52,7 @@ final class CategoryViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-
+    
     // MARK: - Private Methods
     
     @objc

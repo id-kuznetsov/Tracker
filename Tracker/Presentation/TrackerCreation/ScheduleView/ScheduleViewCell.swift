@@ -87,6 +87,6 @@ final class ScheduleViewCell: UITableViewCell {
         switcher.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
     ]
     }
-        
-
+    
+    
 }

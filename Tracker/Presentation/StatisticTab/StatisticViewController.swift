@@ -8,13 +8,13 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
-
+    
     // MARK: - Constants
-
+    
     // MARK: - Public Properties
-
+    
     // MARK: - Private Properties
-
+    
     private lazy var placeholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Statictic Placeholder",
@@ -33,7 +33,7 @@ final class StatisticViewController: UIViewController {
     }
     
     // MARK: - Public Methods
-
+    
     // MARK: - Private Methods
     
     private func setupUI() {

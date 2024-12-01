@@ -8,7 +8,7 @@
 import UIKit
 
 final class AddCategoryViewController: UIViewController {
-
+    
     // MARK: - Private Properties
     
     private lazy var placeholderView: PlaceholderView = {
@@ -52,7 +52,7 @@ final class AddCategoryViewController: UIViewController {
         let navigationController = UINavigationController(rootViewController: newCategoryViewController)
         present(navigationController, animated: true)
     }
-
+    
     // MARK: - Private Methods
     
     private func setupUI() {

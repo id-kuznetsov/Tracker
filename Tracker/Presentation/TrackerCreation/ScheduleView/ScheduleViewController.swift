@@ -8,13 +8,13 @@
 import UIKit
 
 final class ScheduleViewController: UIViewController {
-
+    
     // MARK: - Public Properties
-
+    
     weak var delegate: ScheduleViewControllerDelegate?
     
     // MARK: - Private Properties
-
+    
     var selectedDaysInSchedule =  Set<WeekDay>()
     
     private lazy var tableView: TrackerTableView = {
@@ -23,6 +23,9 @@ final class ScheduleViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 75
+        tableView.isScrollEnabled = true
+        let tableCount : CGFloat = CGFloat(WeekDay.allCases.count)
+        tableView.heightAnchor.constraint(equalToConstant: tableView.rowHeight * tableCount).isActive = true
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -52,7 +55,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     // MARK: - Public Methods
-
+    
     // MARK: - Private Methods
     
     @objc
@@ -80,8 +83,7 @@ final class ScheduleViewController: UIViewController {
     private func tableViewConstraints() -> [NSLayoutConstraint] {
         [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-         tableView.heightAnchor.constraint(equalToConstant: 525)
+         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16)
         ]
     }
     

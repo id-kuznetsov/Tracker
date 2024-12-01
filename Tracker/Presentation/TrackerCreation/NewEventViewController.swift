@@ -8,7 +8,7 @@
 import UIKit
 
 final class NewEventViewController: UIViewController {
-        
+    
     // MARK: - Private Properties
     private let tableViewSelections = ["Категория", "Расписание"]
     private let trackerStorage = TrackerStorageService.shared
@@ -119,7 +119,7 @@ final class NewEventViewController: UIViewController {
         guard let trackerTitle, let selectedCategory else {
             return print("Missing data")
         }
-    
+        
         let newTracker = Tracker(
             id: UUID(),
             name: trackerTitle,

@@ -13,55 +13,32 @@ final class TrackerStorageService {
     
     static let shared = TrackerStorageService()
     static let didChangeNotification = Notification.Name(rawValue: "TrackerStorageServiceDidChange")
-
+    
     // MARK: - Private Properties
     
     private(set) var trackers: [TrackerCategory] = [
         TrackerCategory(title: "Учеба", trackers: [
-            Tracker(
-                id: UUID(),
-                name: "Изучить collection view",
-                color: .ypSection10,
-                emoji: "🥇",
-                schedule: [.monday, .wednesday]
-            ),
-            Tracker(
-                id: UUID(),
-                name: "Эта строка для теста: 38 символов!",
-                color: .ypSection1,
-                emoji: "🤔",
-                schedule: [.tuesday, .thursday]
-            ),
-            Tracker(
-                id: UUID(),
-                name: "Изучить search bar",
-                color: .ypSection8,
-                emoji: "🥇",
-                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
-            )
-        ]),
-        TrackerCategory(title: "Спорт", trackers: [
-            Tracker(
-                id: UUID(),
-                name: "Утренний бег",
-                color: .ypSection5,
-                emoji: "🏃",
-                schedule: [.monday, .wednesday]
-            ),
-            Tracker(
-                id: UUID(),
-                name: "Йога",
-                color: .ypSection7,
-                emoji: "🧘",
-                schedule: [.tuesday, .thursday, .saturday]
-            ),
-            Tracker(
-                id: UUID(),
-                name: "Футбол",
-                color: .ypSection8,
-                emoji: "⚽️",
-                schedule: [.sunday]
-            )
+            //            Tracker(
+            //                id: UUID(),
+            //                name: "Изучить collection view",
+            //                color: .ypSection10,
+            //                emoji: "🥇",
+            //                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+            //            ),
+            //            Tracker(
+            //                id: UUID(),
+            //                name: "Эта строка для теста: 38 символов!",
+            //                color: .ypSection1,
+            //                emoji: "🤔",
+            //                schedule: [.tuesday, .thursday]
+            //            ),
+            //            Tracker(
+            //                id: UUID(),
+            //                name: "Изучить search bar",
+            //                color: .ypSection8,
+            //                emoji: "🙌",
+            //                schedule: [.monday, .tuesday, .wednesday]
+            //            )
         ])
     ]
     

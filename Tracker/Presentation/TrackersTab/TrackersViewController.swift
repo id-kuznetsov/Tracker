@@ -12,15 +12,15 @@ final class TrackersViewController: UIViewController {
     // MARK: - Constants
     
     // MARK: - Public Properties
-
+    
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
-
+    
     private let calendar = Calendar.current
     private var selectedDate = Date()
     private var selectedWeekday: WeekDay?
-   
+    
     
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
@@ -99,7 +99,7 @@ final class TrackersViewController: UIViewController {
         updateCollectionForSelectedDate(date: selectedDate)
         
     }
-
+    
     // MARK: - Private Methods
     
     private func addNotificationObserver() {
@@ -112,7 +112,7 @@ final class TrackersViewController: UIViewController {
             self.updateCollectionForSelectedDate(date: selectedDate)
         }
     }
-
+    
     private func updateCollectionForSelectedDate(date: Date) {
         categories = trackerStorage.getTrackersForDate(date)
         checkTrackersCategories()
@@ -178,8 +178,8 @@ final class TrackersViewController: UIViewController {
     
     private func placeholderViewConstraints() -> [NSLayoutConstraint] {
         [trackersIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        trackersIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-         ]
+         trackersIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ]
     }
     
     private func collectionViewConstraints() -> [NSLayoutConstraint] {
@@ -191,7 +191,7 @@ final class TrackersViewController: UIViewController {
     }
 }
 
-    // MARK: - Extensions
+// MARK: - Extensions
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -220,13 +220,13 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-         guard let header = collectionView.dequeueReusableSupplementaryView(
+        guard let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: TrackersCollectionHeader.reuseIdentifier,
             for: indexPath
-         ) as? TrackersCollectionHeader else {
-             return UICollectionReusableView()
-         }
+        ) as? TrackersCollectionHeader else {
+            return UICollectionReusableView()
+        }
         
         header.configure(with: categories[indexPath.section].title)
         
@@ -257,7 +257,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 4, left: 16, bottom: 8, right: 16)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 39)
     }
@@ -289,7 +289,7 @@ extension TrackersViewController: TrackerCellDelegate {
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         
         let trackerRecord = TrackerRecord(id: tracker.id, date: selectedDate)
-  
+        
         if completedTrackers.contains(trackerRecord) {
             completedTrackers.remove(trackerRecord)
         } else {

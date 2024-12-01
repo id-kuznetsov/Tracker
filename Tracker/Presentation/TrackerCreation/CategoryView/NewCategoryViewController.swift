@@ -8,7 +8,7 @@
 import UIKit
 
 final class NewCategoryViewController: UIViewController {
-
+    
     // MARK: - Private Properties
     private let trackerStorage = TrackerStorageService.shared
     private var categoryName: String?
@@ -81,7 +81,7 @@ final class NewCategoryViewController: UIViewController {
         [categoryNameStackView, doneButton].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        
         NSLayoutConstraint.activate(
             trackerNameStackViewConstraints() +
             doneButtonConstraints()

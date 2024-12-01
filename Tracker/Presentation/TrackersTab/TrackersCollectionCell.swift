@@ -18,7 +18,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     weak var delegate: TrackerCellDelegate?
     
     // MARK: - Private Properties
-
+    
     private var trackerIsDone = false
     
     private lazy var emojiLabel: UILabel = {
@@ -161,7 +161,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
           emojiBackgroundView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constraints.leading),
           emojiBackgroundView.heightAnchor.constraint(equalToConstant: Constraints.emojiViewHeight),
           emojiBackgroundView.widthAnchor.constraint(equalTo: emojiBackgroundView.heightAnchor)
-          ]
+        ]
     }
     
     private func emojiLabelConstraints() -> [NSLayoutConstraint] {

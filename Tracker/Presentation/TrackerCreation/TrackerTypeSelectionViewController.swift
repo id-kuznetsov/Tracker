@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackerTypeSelectionViewController: UIViewController {
-
+    
     // MARK: - Private Properties
     
     private lazy var newHabitButton: UIButton = {
@@ -68,7 +68,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
         let navigationController = UINavigationController(rootViewController: createNewIrregularEvent)
         present(navigationController, animated: true)
     }
-
+    
     // MARK: - Private Methods
     
     private func setupUI() {
@@ -101,7 +101,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
         [newIrregularEventButton.heightAnchor.constraint(equalToConstant: 60)
         ]
     }
-
+    
     private func stackViewConstraints() -> [NSLayoutConstraint] {
         [stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
          stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),

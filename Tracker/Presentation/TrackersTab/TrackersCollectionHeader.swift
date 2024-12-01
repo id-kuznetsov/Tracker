@@ -29,9 +29,9 @@ final class TrackersCollectionHeader: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+        
         addSubview(titleLabel)
-
+        
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
@@ -39,13 +39,13 @@ final class TrackersCollectionHeader: UICollectionReusableView {
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -28)
         ])
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Public Methods
-        
+    
     func configure(with title: String) {
         titleLabel.text = title
     }

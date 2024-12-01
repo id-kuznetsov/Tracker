@@ -20,7 +20,7 @@ final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setTabs()
         setAppearance()
     }
@@ -33,14 +33,13 @@ final class TabBarController: UITabBarController {
         trackersViewController.title = Constants.trackerTitle
         trackersViewController.tabBarItem.image = UIImage(systemName: "record.circle.fill")
         trackersViewController.navigationController?.navigationBar.prefersLargeTitles = true
-
         
         let statisticViewController = StatisticViewController()
         let statisticNavigationController = UINavigationController(rootViewController: statisticViewController)
         statisticViewController.title = Constants.statisticTitle
         statisticViewController.tabBarItem.image = UIImage(systemName: "hare.fill")
         statisticViewController.navigationController?.navigationBar.prefersLargeTitles = true
-           
+        
         self.viewControllers = [trackerNavigationController, statisticNavigationController]
     }
     
