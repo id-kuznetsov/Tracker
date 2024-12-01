@@ -93,13 +93,11 @@ final class TrackerTypeSelectionViewController: UIViewController {
     // MARK: - Constraints
     
     private func newHabbitButtonConstraints() -> [NSLayoutConstraint] {
-        [newHabitButton.heightAnchor.constraint(equalToConstant: 60)
-        ]
+        [newHabitButton.heightAnchor.constraint(equalToConstant: 60)]
     }
     
     private func newIrregularEventButtonConstraints() -> [NSLayoutConstraint] {
-        [newIrregularEventButton.heightAnchor.constraint(equalToConstant: 60)
-        ]
+        [newIrregularEventButton.heightAnchor.constraint(equalToConstant: 60)]
     }
     
     private func stackViewConstraints() -> [NSLayoutConstraint] {

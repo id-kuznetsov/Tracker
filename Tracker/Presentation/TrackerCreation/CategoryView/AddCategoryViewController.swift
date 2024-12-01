@@ -19,13 +19,11 @@ final class AddCategoryViewController: UIViewController {
                 объединить по смыслу
                 """
         )
-        placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
     }()
     
     private lazy var addNewCategoryButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -59,6 +57,7 @@ final class AddCategoryViewController: UIViewController {
         title = "Категория"
         view.backgroundColor = .ypWhite
         view.addSubviews([placeholderView, addNewCategoryButton])
+        [placeholderView, addNewCategoryButton].forEach{$0.translatesAutoresizingMaskIntoConstraints = false}
         
         NSLayoutConstraint.activate(
             placeholderViewConstraints() +

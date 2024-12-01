@@ -36,7 +36,6 @@ final class NewEventViewController: UIViewController {
         let stackView = UIStackView(arrangedSubviews: [trackerNameTextField, warningLabel])
         stackView.axis = .vertical
         stackView.spacing = 8
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -45,7 +44,6 @@ final class NewEventViewController: UIViewController {
         tableView.backgroundColor = .ypBackground
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.estimatedRowHeight = 75
         return tableView
     }()
@@ -81,7 +79,6 @@ final class NewEventViewController: UIViewController {
     
     private lazy var buttonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [cancelButton, createTrackerButton])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 8
@@ -139,6 +136,9 @@ final class NewEventViewController: UIViewController {
         title = isHabitEvent ? "Новая привычка" : "Новое нерегулярное событие"
         view.backgroundColor = .ypWhite
         view.addSubviews([trackerNameStackView, tableView, buttonsStackView])
+        [trackerNameStackView, tableView, buttonsStackView].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         showWarningLabel(false)
         NSLayoutConstraint.activate(
             trackerNameStackViewConstraints() +

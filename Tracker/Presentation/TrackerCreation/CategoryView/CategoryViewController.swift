@@ -24,13 +24,11 @@ final class CategoryViewController: UIViewController {
         let tableView = TrackerTableView()
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -62,6 +60,9 @@ final class CategoryViewController: UIViewController {
     
     private func setupUI() {
         view.addSubviews([tableView, doneButton])
+        [tableView, doneButton].forEach{
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
         title = "Категория"
