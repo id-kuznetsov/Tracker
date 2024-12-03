@@ -117,8 +117,8 @@ extension CategoryViewController: UITableViewDelegate  {
         tableView.allowsSelection = false
         delegate?.showSelectedCategory(category: trackerStorage.trackers[indexPath.row].title)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.dismiss(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.dismiss(animated: true)
         }
     }
 }

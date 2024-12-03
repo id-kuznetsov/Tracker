@@ -219,6 +219,10 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.textLabel?.text = tableViewSelections[indexPath.row]
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
+       
+        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        }
         return cell
     }
 }
