@@ -18,27 +18,30 @@ final class TrackerStorageService {
     
     private(set) var trackers: [TrackerCategory] = [
         TrackerCategory(title: "Учеба", trackers: [
-            //            Tracker(
-            //                id: UUID(),
-            //                name: "Изучить collection view",
-            //                color: .ypSection10,
-            //                emoji: "🥇",
-            //                schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-            //            ),
-            //            Tracker(
-            //                id: UUID(),
-            //                name: "Эта строка для теста: 38 символов!",
-            //                color: .ypSection1,
-            //                emoji: "🤔",
-            //                schedule: [.tuesday, .thursday]
-            //            ),
-            //            Tracker(
-            //                id: UUID(),
-            //                name: "Изучить search bar",
-            //                color: .ypSection8,
-            //                emoji: "🙌",
-            //                schedule: [.monday, .tuesday, .wednesday]
-            //            )
+                        Tracker(
+                            id: UUID(),
+                            name: "Изучить collection view",
+                            color: .ypSection10,
+                            emoji: "🥇",
+                            schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+                            isHabit: false
+                        ),
+                        Tracker(
+                            id: UUID(),
+                            name: "Эта строка для теста: 38 символов!",
+                            color: .ypSection1,
+                            emoji: "🤔",
+                            schedule: [.tuesday, .thursday],
+                            isHabit: true
+                        ),
+                        Tracker(
+                            id: UUID(),
+                            name: "Изучить search bar",
+                            color: .ypSection8,
+                            emoji: "🙌",
+                            schedule: [.monday, .tuesday, .wednesday],
+                            isHabit: true
+                        )
         ])
     ]
     
@@ -82,7 +85,7 @@ final class TrackerStorageService {
         // TODO: delete tracker
     }
     
-    func getTrackersForDate(_ date: Date) -> [TrackerCategory] {
+    func getTrackersForDate(_ date: Date, completedTrackers: Set<TrackerRecord>) -> [TrackerCategory] {
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: date)
         let selectedWeekday = weekday == 1 ? 7 : weekday - 1
@@ -91,12 +94,22 @@ final class TrackerStorageService {
             return []
         }
         
-        let filteredCategories = trackers.map { category in 
+        let filteredCategories = trackers.map { category in
             let filteredTrackers = category.trackers.filter { tracker in
                 tracker.schedule.contains(selectedWeekday)
             }
             
-            return TrackerCategory(title: category.title, trackers: filteredTrackers)
+            let filteredCompletedTrackers = filteredTrackers.filter { tracker in
+                if !completedTrackers.isEmpty, !tracker.isHabit {
+                    return completedTrackers.contains { trackerRecord in
+                        return calendar.isDate(trackerRecord.date, inSameDayAs: date)
+                    }
+                }
+                return true
+            }
+         
+            
+            return TrackerCategory(title: category.title, trackers: filteredCompletedTrackers)
         }
         
         return filteredCategories.filter { !$0.trackers.isEmpty }

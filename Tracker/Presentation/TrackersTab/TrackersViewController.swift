@@ -8,11 +8,7 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-    
-    // MARK: - Constants
-    
-    // MARK: - Public Properties
-    
+
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
@@ -82,6 +78,10 @@ final class TrackersViewController: UIViewController {
         setupUI()
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     // MARK: - Actions
     
     @objc
@@ -114,7 +114,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func updateCollectionForSelectedDate(date: Date) {
-        categories = trackerStorage.getTrackersForDate(date)
+        categories = trackerStorage.getTrackersForDate(date, completedTrackers: completedTrackers)
         checkTrackersCategories()
         collectionView.reloadData()
     }
@@ -212,7 +212,6 @@ extension TrackersViewController: UICollectionViewDataSource {
             record.id == tracker.id && calendar.isDate(record.date, inSameDayAs: selectedDate)
         }
         
-        
         let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
         cell.delegate = self
         cell.configureCell(with: tracker, isDone: isDone, doneCount: doneCount, selectedDate: selectedDate)
@@ -278,6 +277,8 @@ extension TrackersViewController: UISearchResultsUpdating {
         // TODO: search settings
     }
 }
+
+// MARK: TrackerCellDelegate
 
 extension TrackersViewController: TrackerCellDelegate {
     func didTapTrackerButton(_ cell: TrackersCollectionViewCell) {

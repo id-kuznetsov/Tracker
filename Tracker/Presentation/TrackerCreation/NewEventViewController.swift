@@ -120,9 +120,10 @@ final class NewEventViewController: UIViewController {
         let newTracker = Tracker(
             id: UUID(),
             name: trackerTitle,
-            color: .ypSection18, // TODO: add color collection view
+            color: ColorPicker.Colors.randomElement() ?? .ypSection8, // TODO: add color collection view
             emoji: Emojies.emojies.randomElement() ?? "😎", // TODO: add emoji collection view
-            schedule: isHabitEvent ? selectedDays : WeekDay.allCases
+            schedule: isHabitEvent ? selectedDays : WeekDay.allCases,
+            isHabit: isHabitEvent
         )
         
         trackerStorage.addTracker(newTracker, to: selectedCategory)
@@ -254,7 +255,7 @@ extension NewEventViewController: UITextFieldDelegate {
         let text = textField.text ?? ""
         let newText = text.count + string.count - range.length
         
-        if newText > 38 {
+        if newText > Constants.maxEventNameLength {
             showWarningLabel(true)
             return false
         } else {
@@ -304,6 +305,14 @@ extension NewEventViewController: ScheduleViewControllerDelegate {
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
         checkFieldsNotEmpty()
+    }
+}
+
+// MARK: Constants
+
+private extension NewEventViewController {
+    struct Constants {
+        static let maxEventNameLength = 38
     }
 }
 
