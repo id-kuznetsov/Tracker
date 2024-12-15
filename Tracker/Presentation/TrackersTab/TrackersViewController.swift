@@ -192,6 +192,7 @@ final class TrackersViewController: UIViewController {
 }
 
 // MARK: - Extensions
+// MARK: UICollectionViewDataSource
 
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -233,9 +234,13 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: UICollectionViewDelegate
+
 extension TrackersViewController: UICollectionViewDelegate {
     // TODO: contextMenu
 }
+
+// MARK: UICollectionViewDelegateFlowLayout
 
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
