@@ -202,9 +202,11 @@ final class NewEventViewController: UIViewController {
     }
     
     private func checkFieldsNotEmpty() {
-        guard let trackerTitle = trackerTitle, !trackerTitle.isEmpty
-                && selectedEmoji != nil
-                && selectedColor != nil else {
+        guard
+            let trackerTitle = trackerTitle, !trackerTitle.isEmpty,
+            selectedEmoji != nil,
+            selectedColor != nil
+        else {
             setCreateButtonEnabled(status: false)
             return
         }
@@ -430,7 +432,7 @@ extension NewEventViewController: UICollectionViewDataSource {
             return UICollectionReusableView()
         }
 
-        let title = SectionInCollection(rawValue: indexPath.section) == .emoji ? "Emoji" : "Цвет"
+        let title = SectionInCollection(rawValue: indexPath.section) == .emoji ? SectionInCollection.emoji.title : SectionInCollection.colors.title
         header.configure(with: title)
         return header
     }
@@ -494,8 +496,6 @@ extension NewEventViewController: ScheduleViewControllerDelegate {
     }
 }
 
-
-
 // MARK: Constants
 
 private extension NewEventViewController {
@@ -518,7 +518,7 @@ private extension NewEventViewController {
             case .emoji:
                 return "Emoji"
             case .colors:
-                return "Цвета"
+                return "Цвет"
             }
         }
     }

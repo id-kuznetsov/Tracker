@@ -12,12 +12,7 @@ final class NewEventCollectionCell: UICollectionViewCell {
     
     static let reuseIdentifier = "NewEventCollectionCell"
     
-    // MARK: - Public Properties
-    
-//    weak var delegate TODO: передача выбранной ячейки
-    
     // MARK: - Private Properties
-    
     
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
@@ -84,7 +79,6 @@ final class NewEventCollectionCell: UICollectionViewCell {
         }
 
     }
- 
     
     // MARK: - Private Methods
 
@@ -113,11 +107,9 @@ final class NewEventCollectionCell: UICollectionViewCell {
     }
 }
 
-
 extension NewEventCollectionCell {
     enum Constraints {
         static let colorViewSideSize: CGFloat = 40
-        
     }
 }
 

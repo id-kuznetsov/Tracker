@@ -114,7 +114,8 @@ final class TrackersViewController: UIViewController {
     }
     
     private func updateCollectionForSelectedDate(date: Date) {
-        categories = trackerStorage.getTrackersForDate(date, completedTrackers: completedTrackers)
+        let startOfDay = calendar.startOfDay(for: date)
+        categories = trackerStorage.getTrackersForDate(startOfDay, completedTrackers: completedTrackers)
         checkTrackersCategories()
         collectionView.reloadData()
     }
@@ -210,7 +211,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         
         let isDone = completedTrackers.contains { record in
-            record.id == tracker.id && calendar.isDate(record.date, inSameDayAs: selectedDate)
+            record.id == tracker.id && calendar.isDate(record.date, inSameDayAs: calendar.startOfDay(for: selectedDate))
         }
         
         let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
@@ -293,8 +294,8 @@ extension TrackersViewController: TrackerCellDelegate {
         }
         
         let tracker = categories[indexPath.section].trackers[indexPath.row]
-        
-        let trackerRecord = TrackerRecord(id: tracker.id, date: selectedDate)
+        let startOfDay = calendar.startOfDay(for: selectedDate)
+        let trackerRecord = TrackerRecord(id: tracker.id, date: startOfDay)
         
         if completedTrackers.contains(trackerRecord) {
             completedTrackers.remove(trackerRecord)
