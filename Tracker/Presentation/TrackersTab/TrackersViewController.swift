@@ -17,7 +17,6 @@ final class TrackersViewController: UIViewController {
     private var selectedDate = Date()
     private var selectedWeekday: WeekDay?
     
-    
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
     
@@ -97,7 +96,6 @@ final class TrackersViewController: UIViewController {
         self.selectedDate = selectedDate
         
         updateCollectionForSelectedDate(date: selectedDate)
-        
     }
     
     // MARK: - Private Methods
@@ -145,6 +143,7 @@ final class TrackersViewController: UIViewController {
             collectionViewConstraints()
         )
     }
+    
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),

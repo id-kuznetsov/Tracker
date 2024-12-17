@@ -301,9 +301,9 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
        
-//        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
-//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-//        } TODO: крашит иерархию
+        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
+        }
         return cell
     }
 }
@@ -445,7 +445,7 @@ extension NewEventViewController: UICollectionViewDelegateFlowLayout {
         let totalWidth = collectionView.bounds.width - Constants.leftInset - Constants.rightInset - Constants.cellSpacing * (CGFloat(Constants.cellCountForRow) - 1)
         let cellWidth = totalWidth / CGFloat(Constants.cellCountForRow)
         
-        return CGSize(width: cellWidth, height: cellWidth) // TODO: need to math here
+        return CGSize(width: cellWidth, height: cellWidth)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -461,7 +461,7 @@ extension NewEventViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 23) // TODO: check height???
+        return CGSize(width: collectionView.frame.width, height: 23)
     }
 }
 
@@ -505,7 +505,7 @@ private extension NewEventViewController {
         static let cellCountForRow = 6
         static let cellHeight: CGFloat = 52
         static let cellSpacing: CGFloat = 5
-        static let leftInset: CGFloat = 18 // TODO: check???
+        static let leftInset: CGFloat = 18
         static let rightInset: CGFloat = 18
     }
     
