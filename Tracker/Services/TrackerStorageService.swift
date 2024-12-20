@@ -18,30 +18,30 @@ final class TrackerStorageService {
     
     private(set) var trackers: [TrackerCategory] = [
         TrackerCategory(title: "Учеба", trackers: [
-                        Tracker(
-                            id: UUID(),
-                            name: "Изучить collection view",
-                            color: .ypSection10,
-                            emoji: "🥇",
-                            schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-                            isHabit: false
-                        ),
-                        Tracker(
-                            id: UUID(),
-                            name: "Эта строка для теста: 38 символов!",
-                            color: .ypSection1,
-                            emoji: "🤔",
-                            schedule: [.tuesday, .thursday],
-                            isHabit: true
-                        ),
-                        Tracker(
-                            id: UUID(),
-                            name: "Изучить search bar",
-                            color: .ypSection8,
-                            emoji: "🙌",
-                            schedule: [.monday, .tuesday, .wednesday],
-                            isHabit: true
-                        )
+//                        Tracker(
+//                            id: UUID(),
+//                            name: "Изучить collection view",
+//                            color: .ypSection10,
+//                            emoji: "🥇",
+//                            schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
+//                            isHabit: false
+//                        ),
+//                        Tracker(
+//                            id: UUID(),
+//                            name: "Эта строка для теста: 38 символов!",
+//                            color: .ypSection1,
+//                            emoji: "🤔",
+//                            schedule: [.tuesday, .thursday],
+//                            isHabit: true
+//                        ),
+//                        Tracker(
+//                            id: UUID(),
+//                            name: "Изучить search bar",
+//                            color: .ypSection8,
+//                            emoji: "🙌",
+//                            schedule: [.monday, .tuesday, .wednesday],
+//                            isHabit: true
+//                        )
         ])
     ]
     
@@ -49,7 +49,7 @@ final class TrackerStorageService {
     
     private init() {}
     
-    // MARK: - Private Methods
+    // MARK: - Public Methods
     
     func getCategoriesCount() -> Int {
         trackers.count
@@ -64,20 +64,28 @@ final class TrackerStorageService {
     }
     
     func addTracker(_ tracker: Tracker, to categoryTittle: String) {
-        if let index = trackers.firstIndex(where: { $0.title == categoryTittle }) {
-            let oldCategory = trackers[index]
+        
+        do {
+            try TrackerStore().addTracker(tracker)
             
-            let newCategory = TrackerCategory(
-                title: oldCategory.title,
-                trackers: oldCategory.trackers + [tracker]
-            )
             
-            trackers[index] = newCategory
-            
-            NotificationCenter.default.post(
-                name: TrackerStorageService.didChangeNotification,
-                object: nil
-            )
+            if let index = trackers.firstIndex(where: { $0.title == categoryTittle }) {
+                let oldCategory = trackers[index]
+                
+                let newCategory = TrackerCategory(
+                    title: oldCategory.title,
+                    trackers: oldCategory.trackers + [tracker]
+                )
+                
+                trackers[index] = newCategory
+                
+                NotificationCenter.default.post(
+                    name: TrackerStorageService.didChangeNotification,
+                    object: nil
+                )
+            }
+        } catch {
+            print("Error adding tracker: \(error)")
         }
     }
     

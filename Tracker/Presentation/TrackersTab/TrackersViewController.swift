@@ -15,7 +15,6 @@ final class TrackersViewController: UIViewController {
     
     private let calendar = Calendar.current
     private var selectedDate = Date()
-    private var selectedWeekday: WeekDay?
     
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []

@@ -10,6 +10,7 @@ import UIKit
 final class NewEventViewController: UIViewController {
     
     // MARK: - Private Properties
+    
     private let tableViewSelections = ["Категория", "Расписание"]
     private let trackerStorage = TrackerStorageService.shared
     private let emojis = Emojis.emojis
@@ -103,6 +104,7 @@ final class NewEventViewController: UIViewController {
         )
         collectionView.allowsMultipleSelection = true
         collectionView.allowsSelection = true
+        collectionView.isScrollEnabled = false
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .ypWhite
@@ -231,6 +233,11 @@ final class NewEventViewController: UIViewController {
         }
     }
     
+    private func cellWidthCalculate() -> CGFloat {
+        let totalWidth = view.frame.width - Constants.leftInset - Constants.rightInset - Constants.cellSpacing * (CGFloat(Constants.cellCountForRow) - 1)
+        return totalWidth / CGFloat(Constants.cellCountForRow)
+    }
+    
     // MARK: Constraints
     
     private func scrollViewConstraints() -> [NSLayoutConstraint] {
@@ -265,21 +272,23 @@ final class NewEventViewController: UIViewController {
     
     private func buttonsStackViewConstraints() -> [NSLayoutConstraint] {
         [buttonsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-         buttonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-         buttonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+         buttonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.leadingButtonInset),
+         buttonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Constants.trailingButtonInset),
          
-         cancelButton.heightAnchor.constraint(equalToConstant: 60),
-         createTrackerButton.heightAnchor.constraint(equalToConstant: 60)
+         cancelButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
+         createTrackerButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight)
         ]
     }
     
     private func emojiAndColorCollectionViewConstraints() -> [NSLayoutConstraint] {
-        [emojiAndColorCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 24),
-         emojiAndColorCollectionView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor),
-         emojiAndColorCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-         emojiAndColorCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-         emojiAndColorCollectionView.heightAnchor.constraint(equalToConstant: 480) // TODO: ???
-
+        let cellWidth = cellWidthCalculate()
+        let sectionHeight = Constants.headerHeight + CGFloat(Constants.rowCountForSection) * cellWidth + Constants.topInset + Constants.bottomInset
+        let collectionHeight = sectionHeight * CGFloat(SectionInCollection.allCases.count)
+        return [emojiAndColorCollectionView.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 16),
+                emojiAndColorCollectionView.bottomAnchor.constraint(equalTo: buttonsStackView.topAnchor, constant: -16),
+                emojiAndColorCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                emojiAndColorCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                emojiAndColorCollectionView.heightAnchor.constraint(equalToConstant: collectionHeight)
         ]
     }
 }
@@ -301,9 +310,9 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
        
-        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
-        }
+//        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
+//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
+//        }
         return cell
     }
 }
@@ -442,9 +451,7 @@ extension NewEventViewController: UICollectionViewDataSource {
 
 extension NewEventViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let totalWidth = collectionView.bounds.width - Constants.leftInset - Constants.rightInset - Constants.cellSpacing * (CGFloat(Constants.cellCountForRow) - 1)
-        let cellWidth = totalWidth / CGFloat(Constants.cellCountForRow)
-        
+        let cellWidth = cellWidthCalculate()
         return CGSize(width: cellWidth, height: cellWidth)
     }
     
@@ -457,11 +464,16 @@ extension NewEventViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 24, left: 18, bottom: 24, right: 18)
+        return UIEdgeInsets(
+            top: Constants.topInset,
+            left: Constants.leftInset,
+            bottom: Constants.bottomInset,
+            right: Constants.rightInset
+        )
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 23)
+        return CGSize(width: collectionView.frame.width, height: Constants.headerHeight)
     }
 }
 
@@ -502,11 +514,18 @@ private extension NewEventViewController {
     struct Constants {
         static let maxEventNameLength = 38
         
+        static let buttonHeight: CGFloat = 60
+        static let leadingButtonInset: CGFloat = 20
+        static let trailingButtonInset: CGFloat = -20
+        
         static let cellCountForRow = 6
-        static let cellHeight: CGFloat = 52
+        static let rowCountForSection = 3
+        static let headerHeight: CGFloat = 39
         static let cellSpacing: CGFloat = 5
         static let leftInset: CGFloat = 18
         static let rightInset: CGFloat = 18
+        static let topInset: CGFloat = 24
+        static let bottomInset: CGFloat = 24
     }
     
     enum SectionInCollection: Int, CaseIterable {
