@@ -5,9 +5,9 @@
 //  Created by Ilya Kuznetsov on 26.11.2024.
 //
 
-import Foundation
+import CoreData
 
-final class TrackerStorageService {
+final class TrackerStorageService: NSObject {
     
     // MARK: - Constants
     
@@ -16,111 +16,156 @@ final class TrackerStorageService {
     
     // MARK: - Private Properties
     
-    private(set) var trackers: [TrackerCategory] = [
-        TrackerCategory(title: "Учеба", trackers: [
-//                        Tracker(
-//                            id: UUID(),
-//                            name: "Изучить collection view",
-//                            color: .ypSection10,
-//                            emoji: "🥇",
-//                            schedule: [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday],
-//                            isHabit: false
-//                        ),
-//                        Tracker(
-//                            id: UUID(),
-//                            name: "Эта строка для теста: 38 символов!",
-//                            color: .ypSection1,
-//                            emoji: "🤔",
-//                            schedule: [.tuesday, .thursday],
-//                            isHabit: true
-//                        ),
-//                        Tracker(
-//                            id: UUID(),
-//                            name: "Изучить search bar",
-//                            color: .ypSection8,
-//                            emoji: "🙌",
-//                            schedule: [.monday, .tuesday, .wednesday],
-//                            isHabit: true
-//                        )
-        ])
-    ]
+    private let context: NSManagedObjectContext
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
+    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        
+        let controller = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category.title",
+            cacheName: nil
+        )
+        controller.delegate = self
+        try? controller.performFetch()
+        return controller
+    }()
     
     // MARK: - Initialisers
     
-    private init() {}
+    private override init() {
+        self.context = CoreDataManager.shared.viewContext
+        super.init()
+    }
     
     // MARK: - Public Methods
     
     func getCategoriesCount() -> Int {
-        trackers.count
+        fetchedResultsController.sections?.count ?? 0
     }
     
-    func addCategory(_ category: TrackerCategory) {
-        trackers.append(category)
+    func getCategory(at indexPath: IndexPath) -> String? {
+        trackerCategoryStore.fetchCategories()[indexPath.row].title
+    }
+    
+    func createCategory(_ category: TrackerCategory) {
+        do {
+            let trackerCategoryCoreData = try trackerCategoryStore.fetchOrCreateCategory(by: category.title)
+            print("Category created: \(trackerCategoryCoreData)")
+        } catch {
+            print("Error creating category: \(error) in file: \(#file), \(#line)")
+        }
     }
     
     func deleteCategory(_ category: TrackerCategory) {
         // TODO: delete category
     }
     
-    func addTracker(_ tracker: Tracker, to categoryTittle: String) {
-        
+    func addTracker(_ tracker: Tracker, to categoryTitle: String) {
         do {
-            try TrackerStore().addTracker(tracker)
+            try trackerStore.addTracker(tracker, to: categoryTitle)
             
-            
-            if let index = trackers.firstIndex(where: { $0.title == categoryTittle }) {
-                let oldCategory = trackers[index]
-                
-                let newCategory = TrackerCategory(
-                    title: oldCategory.title,
-                    trackers: oldCategory.trackers + [tracker]
-                )
-                
-                trackers[index] = newCategory
-                
-                NotificationCenter.default.post(
-                    name: TrackerStorageService.didChangeNotification,
-                    object: nil
-                )
-            }
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
         } catch {
-            print("Error adding tracker: \(error)")
+            print("Error adding tracker: \(error) in file: \(#file), \(#line)")
         }
     }
     
-    func deleteTracker(_ tracker: Tracker, from categoryTittle: String) {
-        // TODO: delete tracker
+    func deleteTracker(_ tracker: Tracker, from categoryTitle: String) {
+        trackerStore.deleteTracker(tracker, from: categoryTitle)
     }
     
     func getTrackersForDate(_ date: Date, completedTrackers: Set<TrackerRecord>) -> [TrackerCategory] {
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: date)
         let selectedWeekday = weekday == 1 ? 7 : weekday - 1
-        
         guard let selectedWeekday = WeekDay(rawValue: selectedWeekday) else {
             return []
         }
         
-        let filteredCategories = trackers.map { category in
-            let filteredTrackers = category.trackers.filter { tracker in
-                tracker.schedule.contains(selectedWeekday)
-            }
-            
-            let filteredCompletedTrackers = filteredTrackers.filter { tracker in
-                if !completedTrackers.isEmpty, !tracker.isHabit {
-                    return completedTrackers.contains { trackerRecord in
-                        return calendar.isDate(trackerRecord.date, inSameDayAs: date)
-                    }
-                }
-                return true
-            }
-         
-            
-            return TrackerCategory(title: category.title, trackers: filteredCompletedTrackers)
+        guard let sections = fetchedResultsController.sections else {
+            return []
         }
+        return sections.compactMap { section in
+            let trackers = (section.objects as? [TrackerCoreData] ?? []).map { Tracker(from: $0) }
+            let filteredTrackers = filterTrackers(
+                trackers,
+                for: date,
+                completedTrackers: completedTrackers,
+                weekday: selectedWeekday
+            )
+            return filteredTrackers.isEmpty ? nil : TrackerCategory(
+                title: section.name,
+                trackers: filteredTrackers
+            )
+        }
+    }
+    
+    func addRecord(_ trackerRecord: TrackerRecord) {
+        do {
+            try trackerRecordStore.addRecord(trackerRecord)
+        } catch {
+            print("Error adding record: \(error) in file: \(#file), \(#line)")
+        }
+    }
+    
+    func removeRecord(_ trackerRecord: TrackerRecord) {
+        do {
+            try trackerRecordStore.removeRecord(trackerRecord)
+        } catch {
+            print("Error removing record: \(error) in file: \(#file), \(#line)")
+        }
+    }
+    
+    func getAllRecords() -> Set<TrackerRecord> {
+        do {
+            return try trackerRecordStore.getAllRecords()
+        } catch {
+            print("Error get records: \(error) in file: \(#file), \(#line)")
+            return []
+        }
+    }
+    
+    private func filterTrackers(
+        _ trackers: [Tracker],
+        for date: Date,
+        completedTrackers: Set<TrackerRecord>,
+        weekday: WeekDay
+    ) -> [Tracker] {
+        let calendar = Calendar.current
+        return trackers.filter { tracker in
+            guard tracker.schedule.contains(weekday) else { return false }
+            if tracker.isHabit { return true }
+            let isCompletedOnDate = completedTrackers.contains { record in
+                record.id == tracker.id && calendar.isDate(record.date, inSameDayAs: date)
+            }
+            return isCompletedOnDate || completedTrackers.allSatisfy { $0.id != tracker.id }
+        }
+    }
+}
+
+extension TrackerStorageService: NSFetchedResultsControllerDelegate {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
-        return filteredCategories.filter { !$0.trackers.isEmpty }
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        NotificationCenter.default.post(
+            name: TrackerStorageService.didChangeNotification,
+            object: nil
+        )
+    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
     }
     
     

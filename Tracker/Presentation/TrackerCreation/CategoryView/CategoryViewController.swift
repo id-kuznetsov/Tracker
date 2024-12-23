@@ -103,7 +103,9 @@ extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
-        cell.textLabel?.text = trackerStorage.trackers[indexPath.row].title
+        
+        cell.textLabel?.text = trackerStorage.getCategory(at: indexPath)
+
         cell.backgroundColor = .ypBackground
         return cell
     }
@@ -115,7 +117,10 @@ extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
-        delegate?.showSelectedCategory(category: trackerStorage.trackers[indexPath.row].title)
+        
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        
+        delegate?.showSelectedCategory(category: cell.textLabel?.text ?? "Без категории")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)

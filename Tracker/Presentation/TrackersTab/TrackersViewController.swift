@@ -112,6 +112,7 @@ final class TrackersViewController: UIViewController {
     
     private func updateCollectionForSelectedDate(date: Date) {
         let startOfDay = calendar.startOfDay(for: date)
+        completedTrackers = trackerStorage.getAllRecords()
         categories = trackerStorage.getTrackersForDate(startOfDay, completedTrackers: completedTrackers)
         checkTrackersCategories()
         collectionView.reloadData()
@@ -296,11 +297,11 @@ extension TrackersViewController: TrackerCellDelegate {
         let trackerRecord = TrackerRecord(id: tracker.id, date: startOfDay)
         
         if completedTrackers.contains(trackerRecord) {
-            completedTrackers.remove(trackerRecord)
+            trackerStorage.removeRecord(trackerRecord)
         } else {
-            completedTrackers.insert(trackerRecord)
+            trackerStorage.addRecord(trackerRecord)
         }
-        
+        completedTrackers = trackerStorage.getAllRecords()
         let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
         cell.configureCellCounter(doneCount: doneCount)
     }
