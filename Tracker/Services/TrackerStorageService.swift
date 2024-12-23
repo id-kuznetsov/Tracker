@@ -46,7 +46,7 @@ final class TrackerStorageService: NSObject {
     // MARK: - Public Methods
     
     func getCategoriesCount() -> Int {
-        fetchedResultsController.sections?.count ?? 0
+        1 // TODO: fetchedResultsController.sections?.count ?? 0
     }
     
     func getCategory(at indexPath: IndexPath) -> String? {
@@ -55,8 +55,7 @@ final class TrackerStorageService: NSObject {
     
     func createCategory(_ category: TrackerCategory) {
         do {
-            let trackerCategoryCoreData = try trackerCategoryStore.fetchOrCreateCategory(by: category.title)
-            print("Category created: \(trackerCategoryCoreData)")
+            let _ = try trackerCategoryStore.fetchOrCreateCategory(by: category.title)
         } catch {
             print("Error creating category: \(error) in file: \(#file), \(#line)")
         }
@@ -134,6 +133,8 @@ final class TrackerStorageService: NSObject {
         }
     }
     
+    // MARK: - Private Methods
+    
     private func filterTrackers(
         _ trackers: [Tracker],
         for date: Date,
@@ -151,6 +152,8 @@ final class TrackerStorageService: NSObject {
         }
     }
 }
+
+// MARK: - Extensions
 
 extension TrackerStorageService: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {

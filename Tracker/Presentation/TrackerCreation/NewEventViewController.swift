@@ -310,9 +310,9 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
        
-//        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
-//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
-//        }
+        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
+        }
         return cell
     }
 }
@@ -322,7 +322,6 @@ extension NewEventViewController: UITableViewDataSource  {
 extension NewEventViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            // TODO: if categories is not exist yet, redirection to createNewCategory
             let categoryViewController = CategoryViewController()
             categoryViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: categoryViewController)

@@ -19,6 +19,17 @@ final class CategoryViewController: UIViewController {
     
     private let trackerStorage = TrackerStorageService.shared
     
+    private lazy var categoriesIsEmptyPlaceholderView: PlaceholderView = {
+        let placeholderView = PlaceholderView(
+            imageName: "Tracker Placeholder",
+            message: """
+                Привычки и события можно
+                объединить по смыслу
+                """
+        )
+        placeholderView.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderView
+    }()
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
@@ -50,12 +61,41 @@ final class CategoryViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-    
-    // MARK: - Private Methods
+
+    // MARK: - Actions
     
     @objc
     private func didTapDoneButton() {
-        dismiss(animated: true, completion: nil)
+        let newCategoryViewController = NewCategoryViewController()
+        let navigationController = UINavigationController(rootViewController: newCategoryViewController)
+        present(navigationController, animated: true)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func checkCategories() {
+        let categories = trackerStorage.getCategoriesCount()
+        let hasCategories = categories != 0
+        
+        if hasCategories {
+            showEmptyPlaceholderView(state: false)
+            tableView.isHidden = false
+        } else {
+            showEmptyPlaceholderView(state: true)
+            tableView.isHidden = true
+        }
+    }
+    
+    private func showEmptyPlaceholderView(state: Bool) {
+        if state {
+            view.addSubview(categoriesIsEmptyPlaceholderView)
+            NSLayoutConstraint.activate(
+                placeholderViewConstraints()
+            )
+            categoriesIsEmptyPlaceholderView.isHidden = false
+        } else {
+            categoriesIsEmptyPlaceholderView.isHidden = true
+        }
     }
     
     private func setupUI() {
@@ -89,6 +129,12 @@ final class CategoryViewController: UIViewController {
          doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ]
     }
+    
+    private func placeholderViewConstraints() -> [NSLayoutConstraint] {
+        [categoriesIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+         categoriesIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ]
+    }
 }
 
 // MARK: - Extensions
@@ -104,7 +150,7 @@ extension CategoryViewController: UITableViewDataSource  {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
         
-        cell.textLabel?.text = trackerStorage.getCategory(at: indexPath)
+        cell.textLabel?.text = "Важное" // TODO: trackerStorage.getCategory(at: indexPath)
 
         cell.backgroundColor = .ypBackground
         return cell
