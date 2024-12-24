@@ -22,10 +22,9 @@ final class ScheduleViewController: UIViewController {
         tableView.register(ScheduleViewCell.self, forCellReuseIdentifier: ScheduleViewCell.reuseIdentifier)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 75
+        tableView.rowHeight = 75.2
         tableView.isScrollEnabled = true
-        let tableCount : CGFloat = CGFloat(WeekDay.allCases.count)
-        tableView.heightAnchor.constraint(equalToConstant: tableView.rowHeight * tableCount).isActive = true
+        tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -71,7 +70,7 @@ final class ScheduleViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         view.backgroundColor = .ypWhite
-        tableView.backgroundColor = .ypBackground
+        tableView.backgroundColor = .ypWhite
         title = "Расписание"
         
         NSLayoutConstraint.activate(
@@ -81,9 +80,17 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func tableViewConstraints() -> [NSLayoutConstraint] {
-        [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 524)
+        heightConstraint.priority = .defaultHigh
+        
+        let bottomConstraint = tableView.bottomAnchor.constraint(greaterThanOrEqualTo: doneButton.topAnchor, constant: -24)
+        bottomConstraint.priority = .fittingSizeLevel
+        
+        return [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
          tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16)
+         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                heightConstraint,
+                bottomConstraint
         ]
     }
     

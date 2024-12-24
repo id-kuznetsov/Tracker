@@ -63,7 +63,7 @@ final class NewCategoryViewController: UIViewController {
         
         let newCategory = TrackerCategory(title: categoryName, trackers: [])
         
-        trackerStorage.addCategory(newCategory)
+        trackerStorage.createCategory(newCategory)
         
         let categoryViewController = CategoryViewController()
         let navigationController = UINavigationController(rootViewController: categoryViewController)

@@ -20,11 +20,12 @@ final class PlaceholderView: UIView {
     private let textLabel: UILabel = {
         let label = UILabel()
         label.textColor = .label
-        label.font = .systemFont(ofSize: 12)
+        label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
     }()
+    
     
     // MARK: - Initialiser
     
@@ -61,8 +62,8 @@ final class PlaceholderView: UIView {
     }
     
     private func setupConstraints() -> [NSLayoutConstraint] {[
+        imageView.topAnchor.constraint(equalTo: topAnchor),
         imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-        imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
         imageView.widthAnchor.constraint(equalToConstant: 80),
         imageView.heightAnchor.constraint(equalToConstant: 80),
         

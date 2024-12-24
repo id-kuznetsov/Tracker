@@ -19,11 +19,24 @@ final class CategoryViewController: UIViewController {
     
     private let trackerStorage = TrackerStorageService.shared
     
+    private lazy var categoriesIsEmptyPlaceholderView: PlaceholderView = {
+        let placeholderView = PlaceholderView(
+            imageName: "Tracker Placeholder",
+            message: """
+                Привычки и события можно
+                объединить по смыслу
+                """
+        )
+        placeholderView.translatesAutoresizingMaskIntoConstraints = false
+        return placeholderView
+    }()
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.rowHeight = 75.5
+        tableView.tableHeaderView = UIView()
         return tableView
     }()
     
@@ -50,12 +63,41 @@ final class CategoryViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-    
-    // MARK: - Private Methods
+
+    // MARK: - Actions
     
     @objc
     private func didTapDoneButton() {
-        dismiss(animated: true, completion: nil)
+        let newCategoryViewController = NewCategoryViewController()
+        let navigationController = UINavigationController(rootViewController: newCategoryViewController)
+        present(navigationController, animated: true)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func checkCategories() {
+        let categories = trackerStorage.getCategoriesCount()
+        let hasCategories = categories != 0
+        
+        if hasCategories {
+            isShownEmptyPlaceholderView(false)
+            tableView.isHidden = false
+        } else {
+            isShownEmptyPlaceholderView(true)
+            tableView.isHidden = true
+        }
+    }
+    
+    private func isShownEmptyPlaceholderView(_ isShown: Bool) {
+        if isShown {
+            view.addSubview(categoriesIsEmptyPlaceholderView)
+            NSLayoutConstraint.activate(
+                placeholderViewConstraints()
+            )
+            categoriesIsEmptyPlaceholderView.isHidden = false
+        } else {
+            categoriesIsEmptyPlaceholderView.isHidden = true
+        }
     }
     
     private func setupUI() {
@@ -89,6 +131,12 @@ final class CategoryViewController: UIViewController {
          doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ]
     }
+    
+    private func placeholderViewConstraints() -> [NSLayoutConstraint] {
+        [categoriesIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+         categoriesIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ]
+    }
 }
 
 // MARK: - Extensions
@@ -103,7 +151,9 @@ extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
-        cell.textLabel?.text = trackerStorage.trackers[indexPath.row].title
+        
+        cell.textLabel?.text = "Важное" // TODO: trackerStorage.getCategory(at: indexPath)
+
         cell.backgroundColor = .ypBackground
         return cell
     }
@@ -115,7 +165,10 @@ extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
-        delegate?.showSelectedCategory(category: trackerStorage.trackers[indexPath.row].title)
+        
+        guard let cell = tableView.cellForRow(at: indexPath) else { return }
+        
+        delegate?.showSelectedCategory(category: cell.textLabel?.text ?? "Без категории")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
