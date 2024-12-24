@@ -32,7 +32,11 @@ final class TrackerStorageService: NSObject {
             cacheName: nil
         )
         controller.delegate = self
-        try? controller.performFetch()
+        do {
+            try controller.performFetch()
+        } catch {
+            print("Failed to fetch data: \(error.localizedDescription)")
+        }
         return controller
     }()
     

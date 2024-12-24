@@ -35,6 +35,8 @@ final class CategoryViewController: UIViewController {
         let tableView = TrackerTableView()
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.rowHeight = 75.5
+        tableView.tableHeaderView = UIView()
         return tableView
     }()
     
@@ -78,16 +80,16 @@ final class CategoryViewController: UIViewController {
         let hasCategories = categories != 0
         
         if hasCategories {
-            showEmptyPlaceholderView(state: false)
+            isShownEmptyPlaceholderView(false)
             tableView.isHidden = false
         } else {
-            showEmptyPlaceholderView(state: true)
+            isShownEmptyPlaceholderView(true)
             tableView.isHidden = true
         }
     }
     
-    private func showEmptyPlaceholderView(state: Bool) {
-        if state {
+    private func isShownEmptyPlaceholderView(_ isShown: Bool) {
+        if isShown {
             view.addSubview(categoriesIsEmptyPlaceholderView)
             NSLayoutConstraint.activate(
                 placeholderViewConstraints()

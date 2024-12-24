@@ -128,10 +128,10 @@ final class TrackersViewController: UIViewController {
         let hasTrackers = categories.contains { !$0.trackers.isEmpty }
         
         if hasTrackers {
-            showEmptyPlaceholderView(state: false)
+            isShownEmptyPlaceholderView(false)
             collectionView.isHidden = false
         } else {
-            showEmptyPlaceholderView(state: true)
+            isShownEmptyPlaceholderView(true)
             collectionView.isHidden = true
         }
     }
@@ -164,8 +164,8 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func showEmptyPlaceholderView(state: Bool) {
-        if state {
+    private func isShownEmptyPlaceholderView(_ isShown: Bool) {
+        if isShown {
             view.addSubview(trackersIsEmptyPlaceholderView)
             NSLayoutConstraint.activate(
                 placeholderViewConstraints()

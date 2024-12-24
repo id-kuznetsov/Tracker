@@ -51,7 +51,7 @@ final class NewEventViewController: UIViewController {
         tableView.backgroundColor = .ypBackground
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.estimatedRowHeight = 75
+        tableView.rowHeight = 76
         return tableView
     }()
     
@@ -310,9 +310,6 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
        
-        if indexPath.row == tableViewSelections.count - (isHabitEvent ? 0 : 1) - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude) //TODO: крашит иерархию
-        }
         return cell
     }
 }

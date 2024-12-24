@@ -15,7 +15,7 @@ final class TrackerCategoryStore {
     }
     
     private let context: NSManagedObjectContext
-
+    
     convenience init() {
         let context = CoreDataManager.shared.viewContext
         self.init(context: context)
@@ -24,7 +24,7 @@ final class TrackerCategoryStore {
     private init(context: NSManagedObjectContext) {
         self.context = context
     }
-
+    
     func fetchCategories() -> [TrackerCategory] {
         let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
@@ -36,7 +36,7 @@ final class TrackerCategoryStore {
                     trackers: []
                 )
             }
-            } catch {
+        } catch {
             print("Error fetching categories: \(error)")
             return []
         }
