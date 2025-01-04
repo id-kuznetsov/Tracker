@@ -9,15 +9,13 @@ import UIKit
 
 final class CategoryViewController: UIViewController {
     
-    // MARK: - Constants
-    
     // MARK: - Public Properties
     
     weak var delegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
     
-    private let trackerStorage = TrackerStorageService.shared
+    private var viewModel: CategoryViewModelProtocol
     
     private lazy var categoriesIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
@@ -37,10 +35,11 @@ final class CategoryViewController: UIViewController {
         tableView.delegate = self
         tableView.rowHeight = 75.5
         tableView.tableHeaderView = UIView()
+        tableView.isScrollEnabled = true
         return tableView
     }()
     
-    private lazy var doneButton: UIButton = {
+    private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
         button.setTitle("Добавить категорию", for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
@@ -48,9 +47,23 @@ final class CategoryViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
         button.backgroundColor = .ypBlack
-        button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
         return button
     }()
+    
+    // MARK: - Initialisers
+    
+    init (viewModel: CategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        setupBindings()
+        viewModel.loadCategories()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     // MARK: - Lifecycle
     
@@ -60,32 +73,29 @@ final class CategoryViewController: UIViewController {
         setupUI()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-    }
-
     // MARK: - Actions
     
     @objc
-    private func didTapDoneButton() {
+    private func didTapAddCategoryButton() {
         let newCategoryViewController = NewCategoryViewController()
+        newCategoryViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: newCategoryViewController)
         present(navigationController, animated: true)
     }
     
     // MARK: - Private Methods
     
-    private func checkCategories() {
-        let categories = trackerStorage.getCategoriesCount()
-        let hasCategories = categories != 0
-        
-        if hasCategories {
-            isShownEmptyPlaceholderView(false)
-            tableView.isHidden = false
-        } else {
-            isShownEmptyPlaceholderView(true)
-            tableView.isHidden = true
+    private func setupBindings() {
+        viewModel.categoriesDidChange = { [weak self] categories in
+            self?.tableView.reloadData()
+            self?.checkCategories()
         }
+    }
+    
+    private func checkCategories() {
+        let hasCategories = viewModel.getCategoriesCount() > 0
+        tableView.isHidden = !hasCategories
+        isShownEmptyPlaceholderView(!hasCategories)
     }
     
     private func isShownEmptyPlaceholderView(_ isShown: Bool) {
@@ -101,13 +111,15 @@ final class CategoryViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.addSubviews([tableView, doneButton])
-        [tableView, doneButton].forEach{
+        view.addSubviews([tableView, addCategoryButton])
+        [tableView, addCategoryButton].forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
         title = "Категория"
+        
+        checkCategories()
         
         NSLayoutConstraint.activate(
             tableViewConstraints() +
@@ -115,20 +127,29 @@ final class CategoryViewController: UIViewController {
         )
     }
     
+    // MARK: Constraints
+    
     private func tableViewConstraints() -> [NSLayoutConstraint] {
-        [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-         tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-         tableView.heightAnchor.constraint(equalToConstant: CGFloat(trackerStorage.getCategoriesCount() * 75))
+        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 75 * CGFloat(viewModel.getCategoriesCount()))
+        heightConstraint.priority = .defaultLow
+        
+        let bottomConstraint = tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24)
+        bottomConstraint.priority = .fittingSizeLevel
+        
+        return [tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+                heightConstraint,
+                bottomConstraint
         ]
     }
     
     private func doneButtonConstraints() -> [NSLayoutConstraint] {
-        [doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-         doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-         doneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-         doneButton.heightAnchor.constraint(equalToConstant: 60),
-         doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+        [addCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+         addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+         addCategoryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+         addCategoryButton.heightAnchor.constraint(equalToConstant: 60),
+         addCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ]
     }
     
@@ -136,6 +157,13 @@ final class CategoryViewController: UIViewController {
         [categoriesIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
          categoriesIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ]
+    }
+    
+    private func updateTableViewHeight() {
+        if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height }) {
+            heightConstraint.constant = CGFloat(viewModel.getCategoriesCount()) * 75
+        }
+        view.layoutIfNeeded()
     }
 }
 
@@ -145,15 +173,15 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        trackerStorage.getCategoriesCount()
+        viewModel.getCategoriesCount()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
         
-        cell.textLabel?.text = "Важное" // TODO: trackerStorage.getCategory(at: indexPath)
-
+        cell.textLabel?.text = viewModel.getCategoryTitle(at: indexPath)
+        
         cell.backgroundColor = .ypBackground
         return cell
     }
@@ -176,7 +204,13 @@ extension CategoryViewController: UITableViewDelegate  {
     }
 }
 
-// MARK: CategoryViewCellDelegate
-
-
-
+extension CategoryViewController: NewCategoryViewControllerDelegate {
+    func didTapDoneButton(categoryTitle: String) {
+        
+        let newCategory = TrackerCategory(title: categoryTitle, trackers: [])
+        viewModel.addCategory(newCategory)
+        
+        checkCategories()
+        updateTableViewHeight()
+    }
+}

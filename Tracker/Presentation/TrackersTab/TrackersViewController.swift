@@ -306,4 +306,3 @@ extension TrackersViewController: TrackerCellDelegate {
         cell.configureCellCounter(doneCount: doneCount)
     }
 }
-

@@ -17,11 +17,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private var isFirstLaunch: Bool {
         get {
-            print("Getting return \(!UserDefaults.standard.bool(forKey: Keys.isFirstLaunch.rawValue))")
             return !UserDefaults.standard.bool(forKey: Keys.isFirstLaunch.rawValue)
         }
         set {
-            print("Setting isFirstLaunch to: \(!newValue)")
             UserDefaults.standard.set(!newValue, forKey: Keys.isFirstLaunch.rawValue)
         }
     }
@@ -32,6 +30,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = TabBarController()
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
+//        UserDefaults.standard.removeObject(forKey: Keys.isFirstLaunch.rawValue)
         
         if isFirstLaunch {
             isFirstLaunch = false

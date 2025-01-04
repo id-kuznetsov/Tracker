@@ -319,7 +319,8 @@ extension NewEventViewController: UITableViewDataSource  {
 extension NewEventViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let categoryViewController = CategoryViewController()
+            let viewModel = CategoryViewModel()
+            let categoryViewController = CategoryViewController(viewModel: viewModel)
             categoryViewController.delegate = self
             let navigationController = UINavigationController(rootViewController: categoryViewController)
             present(navigationController, animated: true)

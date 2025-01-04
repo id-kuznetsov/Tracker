@@ -77,9 +77,6 @@ final class TrackerStore {
             print("Error deleting tracker: \(error)")
         }
     }
-    
-    
-    
 }
 
 
