@@ -54,7 +54,6 @@ final class OnboardingViewController: UIPageViewController {
         return button
     }()
     
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -113,8 +112,6 @@ final class OnboardingViewController: UIPageViewController {
          onboardingButton.heightAnchor.constraint(equalToConstant: 60)
         ]
     }
-    
-    
 }
 
 // MARK: - Extensions

@@ -19,7 +19,6 @@ final class TrackerStore {
     private let colorMarshaller = UIColorMarshalling()
     private let weekDayConverter = WeekDayConverter()
     
-    
     convenience init() {
         let context = CoreDataManager.shared.viewContext
         self.init(context: context)
@@ -55,7 +54,6 @@ final class TrackerStore {
         trackerCoreData.isHabit = tracker.isHabit
         trackerCoreData.category = trackerCategoryCoreData
         
-        
         do {
             try context.save()
         } catch {
@@ -78,5 +76,3 @@ final class TrackerStore {
         }
     }
 }
-
-

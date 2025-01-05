@@ -14,7 +14,7 @@ final class NewCategoryViewController: UIViewController {
     weak var delegate: NewCategoryViewControllerDelegate?
     
     // MARK: - Private Properties
-
+    
     private var categoryTitle: String?
     
     private lazy var categoryNameTextField: TrackerTextField = {

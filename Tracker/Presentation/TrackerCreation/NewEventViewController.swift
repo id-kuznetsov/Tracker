@@ -309,7 +309,7 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.textLabel?.text = tableViewSelections[indexPath.row]
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
-       
+        
         return cell
     }
 }
@@ -389,7 +389,7 @@ extension NewEventViewController: UICollectionViewDelegate {
             selectedColorIndex = indexPath.item
             cell.makeColorCellSelected(isSelected: true, color: colors[indexPath.item])
         }
-
+        
         checkFieldsNotEmpty()
     }
     
@@ -416,7 +416,7 @@ extension NewEventViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewEventCollectionCell.reuseIdentifier, for: indexPath) as? NewEventCollectionCell else {
             return UICollectionViewCell()
         }
-
+        
         if let section = SectionInCollection(rawValue: indexPath.section) {
             switch section {
             case .emoji:
@@ -425,7 +425,7 @@ extension NewEventViewController: UICollectionViewDataSource {
                 cell.configureCell(color: colors[indexPath.item])
             }
         }
-
+        
         return cell
     }
     
@@ -437,7 +437,7 @@ extension NewEventViewController: UICollectionViewDataSource {
         ) as? NewEventCollectionHeader else {
             return UICollectionReusableView()
         }
-
+        
         let title = SectionInCollection(rawValue: indexPath.section) == .emoji ? SectionInCollection.emoji.title : SectionInCollection.colors.title
         header.configure(with: title)
         return header
@@ -528,7 +528,7 @@ private extension NewEventViewController {
     enum SectionInCollection: Int, CaseIterable {
         case emoji
         case colors
-
+        
         var title: String {
             switch self {
             case .emoji:
@@ -539,5 +539,3 @@ private extension NewEventViewController {
         }
     }
 }
-
-

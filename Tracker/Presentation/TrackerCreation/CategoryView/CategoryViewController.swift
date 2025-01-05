@@ -64,7 +64,6 @@ final class CategoryViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -182,6 +181,12 @@ extension CategoryViewController: UITableViewDataSource  {
         
         cell.textLabel?.text = viewModel.getCategoryTitle(at: indexPath)
         
+        if viewModel.getCategoryTitle(at: indexPath) == viewModel.getSelectedCategoryTitle() {
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
+        
         cell.backgroundColor = .ypBackground
         return cell
     }
@@ -191,13 +196,19 @@ extension CategoryViewController: UITableViewDataSource  {
 
 extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        for row in 0..<viewModel.getCategoriesCount() {
+            let currentIndexPath = IndexPath(row: row, section: 0)
+            tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
+         }
+        
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
         
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
-        delegate?.showSelectedCategory(category: cell.textLabel?.text ?? "Без категории")
-        
+        if let categoryTitle = viewModel.getCategoryTitle(at: indexPath) {
+            viewModel.saveLastSelectedCategoryTitle(categoryTitle)
+            delegate?.showSelectedCategory(category: categoryTitle)
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
         }

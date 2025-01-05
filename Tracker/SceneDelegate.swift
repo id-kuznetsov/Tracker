@@ -10,19 +10,6 @@ import UIKit
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-    private enum Keys: String {
-        case isFirstLaunch
-    }
-    
-    private var isFirstLaunch: Bool {
-        get {
-            return !UserDefaults.standard.bool(forKey: Keys.isFirstLaunch.rawValue)
-        }
-        set {
-            UserDefaults.standard.set(!newValue, forKey: Keys.isFirstLaunch.rawValue)
-        }
-    }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
@@ -30,10 +17,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = TabBarController()
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
-//        UserDefaults.standard.removeObject(forKey: Keys.isFirstLaunch.rawValue)
         
-        if isFirstLaunch {
-            isFirstLaunch = false
+        if AppStateManager.isFirstLaunch {
+            AppStateManager.isFirstLaunch = false
             showOnboarding(tabBarController: tabBarController)
         }
     }

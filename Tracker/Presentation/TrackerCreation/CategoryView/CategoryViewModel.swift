@@ -14,6 +14,8 @@ protocol CategoryViewModelProtocol {
     func getCategoriesCount() -> Int
     func addCategory(_ newCategory: TrackerCategory)
     func getCategoryTitle(at indexPath: IndexPath) -> String?
+    func getSelectedCategoryTitle() -> String? 
+    func saveLastSelectedCategoryTitle(_ title: String?)
 }
 
 final class CategoryViewModel: CategoryViewModelProtocol {
@@ -21,7 +23,7 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     // MARK: - Public Properties
     
     var categoriesDidChange: Binding<[TrackerCategory]>?
-
+    
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
@@ -50,6 +52,14 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     func getCategoryTitle(at indexPath: IndexPath) -> String? {
         guard indexPath.row < categories.count else { return nil }
         return categories[indexPath.row].title
+    }
+    
+    func getSelectedCategoryTitle() -> String? {
+        AppStateManager.lastSelectedCategory
+    }
+    
+    func saveLastSelectedCategoryTitle(_ title: String?) {
+        AppStateManager.lastSelectedCategory = title
     }
 }
 

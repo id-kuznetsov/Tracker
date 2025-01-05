@@ -15,7 +15,7 @@ final class TrackerRecordStore {
     }
     
     private let context: NSManagedObjectContext
-
+    
     convenience init() {
         let context = CoreDataManager.shared.viewContext
         self.init(context: context)
@@ -55,7 +55,6 @@ final class TrackerRecordStore {
         let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: record.date)
-        
         
         fetchRequest.predicate = NSPredicate(format: "id == %@ AND date == %@", record.id as CVarArg, startOfDay as CVarArg)
         
