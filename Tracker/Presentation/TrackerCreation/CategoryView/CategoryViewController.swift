@@ -92,9 +92,8 @@ final class CategoryViewController: UIViewController {
     }
     
     private func checkCategories() {
-        let hasCategories = viewModel.getCategoriesCount() > 0
-        tableView.isHidden = !hasCategories
-        isShownEmptyPlaceholderView(!hasCategories)
+        tableView.isHidden = viewModel.shouldShowPlaceholder()
+        isShownEmptyPlaceholderView(viewModel.shouldShowPlaceholder())
     }
     
     private func isShownEmptyPlaceholderView(_ isShown: Bool) {

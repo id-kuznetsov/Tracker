@@ -9,7 +9,9 @@ import Foundation
 
 final class AppStateManager {
 
-    static var isFirstLaunch: Bool {
+    static let shared = AppStateManager()
+    
+    var isFirstLaunch: Bool {
         get {
             return !UserDefaults.standard.bool(forKey: Keys.isFirstLaunch.rawValue)
         }
@@ -18,7 +20,7 @@ final class AppStateManager {
         }
     }
     
-    static var lastSelectedCategory: String? {
+    var lastSelectedCategory: String? {
         get {
             UserDefaults.standard.string(forKey: Keys.lastSelectedCategory.rawValue)
         }
@@ -31,4 +33,6 @@ final class AppStateManager {
         case isFirstLaunch
         case lastSelectedCategory
     }
+    
+    private init() {}
 }

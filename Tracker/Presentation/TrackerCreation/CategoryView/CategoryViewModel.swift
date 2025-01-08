@@ -16,6 +16,7 @@ protocol CategoryViewModelProtocol {
     func getCategoryTitle(at indexPath: IndexPath) -> String?
     func getSelectedCategoryTitle() -> String? 
     func saveLastSelectedCategoryTitle(_ title: String?)
+    func shouldShowPlaceholder() -> Bool
 }
 
 final class CategoryViewModel: CategoryViewModelProtocol {
@@ -55,11 +56,15 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     }
     
     func getSelectedCategoryTitle() -> String? {
-        AppStateManager.lastSelectedCategory
+        AppStateManager.shared.lastSelectedCategory
     }
     
     func saveLastSelectedCategoryTitle(_ title: String?) {
-        AppStateManager.lastSelectedCategory = title
+        AppStateManager.shared.lastSelectedCategory = title
+    }
+    
+    func shouldShowPlaceholder() -> Bool {
+        categories.isEmpty
     }
 }
 

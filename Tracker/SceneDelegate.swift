@@ -18,8 +18,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
-        if AppStateManager.isFirstLaunch {
-            AppStateManager.isFirstLaunch = false
+        if AppStateManager.shared.isFirstLaunch {
+            AppStateManager.shared.isFirstLaunch = false
             showOnboarding(tabBarController: tabBarController)
         }
     }
