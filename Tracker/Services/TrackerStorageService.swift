@@ -50,11 +50,15 @@ final class TrackerStorageService: NSObject {
     // MARK: - Public Methods
     
     func getCategoriesCount() -> Int {
-        1 // TODO: fetchedResultsController.sections?.count ?? 0
+        trackerCategoryStore.fetchCategories().count
     }
     
-    func getCategory(at indexPath: IndexPath) -> String? {
-        trackerCategoryStore.fetchCategories()[indexPath.row].title
+    func getCategories() -> [TrackerCategory] {
+        trackerCategoryStore.fetchCategories()
+    }
+    
+    func getCategory(at index: Int) -> String? {
+        trackerCategoryStore.fetchCategories()[index].title
     }
     
     func createCategory(_ category: TrackerCategory) {
@@ -110,6 +114,7 @@ final class TrackerStorageService: NSObject {
                 trackers: filteredTrackers
             )
         }
+        
     }
     
     func addRecord(_ trackerRecord: TrackerRecord) {
@@ -160,9 +165,7 @@ final class TrackerStorageService: NSObject {
 // MARK: - Extensions
 
 extension TrackerStorageService: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
-    }
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {}
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         NotificationCenter.default.post(
@@ -171,9 +174,5 @@ extension TrackerStorageService: NSFetchedResultsControllerDelegate {
         )
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        
-    }
-    
-    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {}
 }

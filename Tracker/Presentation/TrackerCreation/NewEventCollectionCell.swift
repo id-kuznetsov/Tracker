@@ -77,11 +77,11 @@ final class NewEventCollectionCell: UICollectionViewCell {
         } else {
             contentView.layer.borderColor = color.cgColor
         }
-
+        
     }
     
     // MARK: - Private Methods
-
+    
     private func setCellUI() {
         contentView.addSubviews([emojiLabel, colorView])
         
@@ -90,7 +90,6 @@ final class NewEventCollectionCell: UICollectionViewCell {
             colorViewConstraints()
         )
     }
-
     
     private func emojiLabelConstraints() -> [NSLayoutConstraint] {
         [ emojiLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),

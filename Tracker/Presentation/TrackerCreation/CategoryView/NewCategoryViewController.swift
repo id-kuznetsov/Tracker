@@ -9,9 +9,13 @@ import UIKit
 
 final class NewCategoryViewController: UIViewController {
     
+    // MARK: - Public Properties
+    
+    weak var delegate: NewCategoryViewControllerDelegate?
+    
     // MARK: - Private Properties
-    private let trackerStorage = TrackerStorageService.shared
-    private var categoryName: String?
+    
+    private var categoryTitle: String?
     
     private lazy var categoryNameTextField: TrackerTextField = {
         let textField = TrackerTextField(backgroundText: "Введите название категории")
@@ -57,17 +61,13 @@ final class NewCategoryViewController: UIViewController {
     
     @objc
     private func didTapDoneButton() {
-        guard let categoryName else {
+        
+        guard let categoryTitle else {
             return print("Missing data")
         }
+        delegate?.didTapDoneButton(categoryTitle: categoryTitle)
         
-        let newCategory = TrackerCategory(title: categoryName, trackers: [])
-        
-        trackerStorage.createCategory(newCategory)
-        
-        let categoryViewController = CategoryViewController()
-        let navigationController = UINavigationController(rootViewController: categoryViewController)
-        present(navigationController, animated: true)
+        dismiss(animated: true)
     }
     
     // MARK: - Private Methods
@@ -75,7 +75,7 @@ final class NewCategoryViewController: UIViewController {
     private func setupUI() {
         title = "Новая категория"
         view.backgroundColor = .ypWhite
-        showWarningLabel(false)
+        isShownWarningLabel(false)
         setCreateButtonEnabled(status: false)
         view.addSubviews([categoryNameStackView, doneButton])
         [categoryNameStackView, doneButton].forEach{
@@ -88,13 +88,13 @@ final class NewCategoryViewController: UIViewController {
         )
     }
     
-    private func showWarningLabel(_ status:Bool) {
+    private func isShownWarningLabel(_ status:Bool) {
         warningLabel.isHidden = !status
     }
     
     private func checkFieldNotEmpty() {
-        guard let categoryName else { return }
-        if !categoryName.isEmpty  {
+        guard let categoryTitle else { return }
+        if !categoryTitle.isEmpty  {
             setCreateButtonEnabled(status: true)
         }
     }
@@ -132,12 +132,12 @@ extension NewCategoryViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = textField.text ?? ""
         let newText = text.count + string.count - range.length
-        categoryName = text
+        categoryTitle = text
         if newText > 38 {
-            showWarningLabel(true)
+            isShownWarningLabel(true)
             return false
         } else {
-            showWarningLabel(false)
+            isShownWarningLabel(false)
         }
         return true
     }
@@ -145,7 +145,7 @@ extension NewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.endEditing(true)
         if let text = textField.text {
-            categoryName = text
+            categoryTitle = text
             textField.resignFirstResponder()
             checkFieldNotEmpty()
             return true

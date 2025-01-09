@@ -26,7 +26,6 @@ final class PlaceholderView: UIView {
         return label
     }()
     
-    
     // MARK: - Initialiser
     
     init(imageName: String, message: String) {

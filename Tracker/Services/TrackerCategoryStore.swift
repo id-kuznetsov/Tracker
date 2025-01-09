@@ -70,5 +70,4 @@ final class TrackerCategoryStore {
         
         return newCategory
     }
-    
 }
