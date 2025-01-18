@@ -12,8 +12,8 @@ final class TabBarController: UITabBarController {
     // MARK: Constants
     
     enum Constants {
-        static let trackerTitle = "Трекеры"
-        static let statisticTitle = "Статистика"
+        static let trackerTitle = L10n.trackers
+        static let statisticTitle = L10n.statistics
     }
     
     // MARK: - Lifecycle

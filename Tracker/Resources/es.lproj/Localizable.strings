@@ -1,0 +1,55 @@
+/* 
+ Localizable.strings
+ Tracker
+ 
+ Created by Ilya Kuznetsov on 18.01.2025.
+ 
+ */
+
+"addCategoryButton" = "Añadir categoría";
+"category" = "Categoría";
+"categoryCreation.title" = "Nueva categoría";
+"categoryCreation.placeholderTitle" = "Introduzca el nombre de la categoría";
+"categoryCreation.emptyPlaceholderTitle" = "Hábitos y eventos pueden\n combinar en sentido";
+
+"newHabit.title" = "Nuevo hábito";
+"newIrregularEvent.title" = "Nuevo evento irregular";
+
+"onboarding.buttonTitle" = "¡Estas son las tecnologías!";
+"onboarding.firstPageText" = "Sigue solo\n lo que quieras";
+"onboarding.secondPageText" = "Incluso si no es\n litros de agua y yoga";
+
+"readyButton" = "Listo";
+"schedule" = "Horario";
+"searchPlaceholderText" = "Buscar";
+"statistic.emptyState.title" = "Aún no hay nada que analizar";
+"statistics" = "Estadísticas";
+"trackerCreation.cancelButtonTitle" = "Cancelar";
+"trackerCreation.colorSectionTitle" = "Color";
+"trackerCreation.createButtonTitle" = "Crear";
+"trackerCreation.everyDay" = "Cada día";
+"trackerCreation.placeholderText" = "Introduce el nombre del rastreador";
+"trackerCreation.titleLimitText" = "Límite de 38 caracteres";
+
+"trackers" = "Rastreadores";
+"trackers.emptySearchState.title" = "No se encontraron resultados";
+"trackers.emptyState.title" = "¿Qué vamos a rastrear?";
+"trackerType.habit" = "Hábito";
+"trackerType.irregularEvent" = "Evento irregular";
+"trackerType.title" = "Creación de rastreador";
+
+"weekDayFull.monday" = "Lunes";
+"weekDayFull.tuesday" = "Martes";
+"weekDayFull.wednesday" = "Miércoles";
+"weekDayFull.thursday" = "Jueves";
+"weekDayFull.friday" = "Viernes";
+"weekDayFull.saturday" = "Sábado";
+"weekDayFull.sunday" = "Domingo";
+
+"weekDayShort.monday" = "Lun";
+"weekDayShort.tuesday" = "Mar";
+"weekDayShort.wednesday" = "Mié";
+"weekDayShort.thursday" = "Jue";
+"weekDayShort.friday" = "Vie";
+"weekDayShort.saturday" = "Sáb";
+"weekDayShort.sunday" = "Dom";

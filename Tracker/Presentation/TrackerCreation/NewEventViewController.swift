@@ -11,7 +11,7 @@ final class NewEventViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private let tableViewSelections = ["Категория", "Расписание"]
+    private let tableViewSelections = [L10n.category, L10n.schedule]
     private let trackerStorage = TrackerStorageService.shared
     private let emojis = Emojis.emojis
     private let colors = ColorPicker.colors
@@ -25,7 +25,7 @@ final class NewEventViewController: UIViewController {
     private var selectedColorIndex: Int?
     
     private lazy var trackerNameTextField: TrackerTextField = {
-        let textField = TrackerTextField(backgroundText: "Введите название трекера")
+        let textField = TrackerTextField(backgroundText: L10n.TrackerCreation.placeholderText)
         textField.delegate = self
         return textField
     }()
@@ -35,7 +35,7 @@ final class NewEventViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypRed
         label.textAlignment = .center
-        label.text = "Ограничение 38 символов"
+        label.text = L10n.TrackerCreation.titleLimitText
         return label
     }()
     
@@ -58,7 +58,7 @@ final class NewEventViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.TrackerCreation.cancelButtonTitle, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypWhite
@@ -73,7 +73,7 @@ final class NewEventViewController: UIViewController {
     private lazy var createTrackerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(L10n.TrackerCreation.createButtonTitle, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGrey
@@ -175,7 +175,7 @@ final class NewEventViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = isHabitEvent ? "Новая привычка" : "Новое нерегулярное событие"
+        title = isHabitEvent ? L10n.NewHabit.title : L10n.NewIrregularEvent.title
         view.backgroundColor = .ypWhite
         
         view.addSubview(scrollView)
@@ -497,7 +497,7 @@ extension NewEventViewController: ScheduleViewControllerDelegate {
             if receivedDays.count != 7 {
                 cell.detailTextLabel?.text = receivedDays.joined(separator: ", ")
             } else {
-                cell.detailTextLabel?.text = "Каждый день"
+                cell.detailTextLabel?.text = L10n.TrackerCreation.everyDay
             }
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
@@ -534,7 +534,7 @@ private extension NewEventViewController {
             case .emoji:
                 return "Emoji"
             case .colors:
-                return "Цвет"
+                return L10n.TrackerCreation.colorSectionTitle
             }
         }
     }

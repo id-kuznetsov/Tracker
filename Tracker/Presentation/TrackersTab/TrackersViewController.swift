@@ -24,7 +24,7 @@ final class TrackersViewController: UIViewController {
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = .current
         datePicker.widthAnchor.constraint(equalToConstant: 120).isActive = true
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return datePicker
@@ -51,7 +51,7 @@ final class TrackersViewController: UIViewController {
     private lazy var trackersIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Tracker Placeholder",
-            message: "Что будем отслеживать?"
+            message: L10n.Trackers.EmptyState.title
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
@@ -60,7 +60,7 @@ final class TrackersViewController: UIViewController {
     private lazy var searchIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Search Placeholder",
-            message: "Ничего не найдено"
+            message: L10n.Trackers.EmptySearchState.title
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
@@ -158,8 +158,8 @@ final class TrackersViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
         navigationItem.searchController = searchController
-        searchController.searchBar.placeholder = "Поиск"
-        searchController.searchBar.setValue("Отмена", forKey: "cancelButtonText")
+        searchController.searchBar.placeholder = L10n.searchPlaceholderText
+        searchController.searchBar.setValue(L10n.TrackerCreation.cancelButtonTitle, forKey: "cancelButtonText")
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }

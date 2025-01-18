@@ -20,10 +20,7 @@ final class CategoryViewController: UIViewController {
     private lazy var categoriesIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Tracker Placeholder",
-            message: """
-                Привычки и события можно
-                объединить по смыслу
-                """
+            message: L10n.CategoryCreation.emptyPlaceholderTitle
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
@@ -41,7 +38,7 @@ final class CategoryViewController: UIViewController {
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(L10n.addCategoryButton, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -115,7 +112,7 @@ final class CategoryViewController: UIViewController {
         }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
-        title = "Категория"
+        title = L10n.category
         
         checkCategories()
         

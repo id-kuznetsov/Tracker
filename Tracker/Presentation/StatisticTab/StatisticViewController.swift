@@ -18,7 +18,7 @@ final class StatisticViewController: UIViewController {
     private lazy var placeholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Statictic Placeholder",
-            message: "Анализировать пока нечего"
+            message: L10n.Statistic.EmptyState.title
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView

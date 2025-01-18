@@ -22,7 +22,7 @@ final class OnboardingPageViewController: UIViewController {
     private lazy var onboardingTitleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypBlack
-        label.numberOfLines = 2
+        label.numberOfLines = 3
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
         return label

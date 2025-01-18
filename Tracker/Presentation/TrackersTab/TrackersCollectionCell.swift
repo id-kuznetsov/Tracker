@@ -115,11 +115,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     func configureCellCounter(doneCount: Int) {
-        let localizedString = String.localizedStringWithFormat(
-            NSLocalizedString("%d days", comment: "Количество дней"),
-            doneCount
-        )
-        return trackerCountLabel.text = localizedString
+        trackerCountLabel.text = L10n.dDays(doneCount)
     }
     
     // MARK: - Private Methods

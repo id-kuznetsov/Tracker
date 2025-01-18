@@ -18,7 +18,7 @@ final class NewCategoryViewController: UIViewController {
     private var categoryTitle: String?
     
     private lazy var categoryNameTextField: TrackerTextField = {
-        let textField = TrackerTextField(backgroundText: "Введите название категории")
+        let textField = TrackerTextField(backgroundText: L10n.CategoryCreation.placeholderTitle)
         textField.delegate = self
         return textField
     }()
@@ -28,7 +28,7 @@ final class NewCategoryViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypRed
         label.textAlignment = .center
-        label.text = "Ограничение 38 символов"
+        label.text = L10n.TrackerCreation.titleLimitText
         return label
     }()
     
@@ -41,7 +41,7 @@ final class NewCategoryViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(L10n.readyButton, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
@@ -73,7 +73,7 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = "Новая категория"
+        title = L10n.CategoryCreation.title 
         view.backgroundColor = .ypWhite
         isShownWarningLabel(false)
         setCreateButtonEnabled(status: false)
