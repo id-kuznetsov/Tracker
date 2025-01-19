@@ -30,7 +30,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var emojiBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .ypWhite.withAlphaComponent(0.3)
+        view.backgroundColor = .white.withAlphaComponent(0.3)
         view.frame.size = CGSize(width: 24, height: 24)
         view.layer.cornerRadius = view.frame.size.width / 2
         view.layer.masksToBounds = true
@@ -41,7 +41,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
-        label.textColor = .ypWhite
+        label.textColor = .white
         return label
     }()
     

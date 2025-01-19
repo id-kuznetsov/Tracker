@@ -74,7 +74,7 @@ final class NewEventViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(L10n.TrackerCreation.createButtonTitle, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGrey
         button.layer.cornerRadius = 16
@@ -227,6 +227,7 @@ final class NewEventViewController: UIViewController {
         if status {
             createTrackerButton.backgroundColor = .ypBlack
             createTrackerButton.isEnabled = status
+            createTrackerButton.setTitleColor(.ypWhite, for: .normal)
         } else {
             createTrackerButton.backgroundColor = .ypGrey
             createTrackerButton.isEnabled = status

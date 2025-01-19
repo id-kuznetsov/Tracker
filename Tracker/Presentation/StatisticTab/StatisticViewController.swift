@@ -38,6 +38,7 @@ final class StatisticViewController: UIViewController {
     
     private func setupUI() {
         view.addSubview(placeholderView)
+        view.backgroundColor = .ypWhite
         
         NSLayoutConstraint.activate([
             placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),

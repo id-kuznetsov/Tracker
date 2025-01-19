@@ -48,6 +48,7 @@ final class TabBarController: UITabBarController {
         appearance.configureWithOpaqueBackground()
         appearance.stackedLayoutAppearance.selected.iconColor = .ypBlue
         appearance.shadowColor = .ypGrey
+        appearance.backgroundColor = .ypWhite
         tabBar.standardAppearance = appearance
     }
 }

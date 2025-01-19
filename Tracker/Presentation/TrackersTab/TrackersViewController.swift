@@ -119,6 +119,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupUI() {
+        view.backgroundColor = .ypWhite
         setupNavigationBar()
         setupCollectionView()
         checkTrackersCategories()
