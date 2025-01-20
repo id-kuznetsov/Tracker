@@ -76,6 +76,12 @@ final class TrackersViewController: UIViewController {
         setupUI()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // TODO: send event
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -129,10 +135,10 @@ final class TrackersViewController: UIViewController {
         let hasTrackers = categories.contains { !$0.trackers.isEmpty }
         
         if hasTrackers {
-            isShownEmptyPlaceholderView(false)
+            togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
             collectionView.isHidden = false
         } else {
-            isShownEmptyPlaceholderView(true)
+            togglePlaceholderView(isShown: true, for: trackersIsEmptyPlaceholderView)
             collectionView.isHidden = true
         }
     }
@@ -165,21 +171,21 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
     }
     
-    private func isShownEmptyPlaceholderView(_ isShown: Bool) {
+    private func togglePlaceholderView(isShown: Bool, for placeholderView: PlaceholderView) {
         if isShown {
-            view.addSubview(trackersIsEmptyPlaceholderView)
+            view.addSubview(placeholderView)
             NSLayoutConstraint.activate(
-                placeholderViewConstraints()
+                placeholderViewConstraints(for: placeholderView)
             )
-            trackersIsEmptyPlaceholderView.isHidden = false
+            placeholderView.isHidden = false
         } else {
-            trackersIsEmptyPlaceholderView.isHidden = true
+            placeholderView.isHidden = true
         }
     }
     
-    private func placeholderViewConstraints() -> [NSLayoutConstraint] {
-        [trackersIsEmptyPlaceholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-         trackersIsEmptyPlaceholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+    private func placeholderViewConstraints(for placeholderView: PlaceholderView) -> [NSLayoutConstraint] {
+        [placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+         placeholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ]
     }
     
@@ -280,7 +286,29 @@ extension TrackersViewController {
 
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        // TODO: search settings
+        guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {
+            updateCollectionForSelectedDate(date: selectedDate)
+            togglePlaceholderView(isShown: false, for: searchIsEmptyPlaceholderView)
+            return
+        }
+        let text = searchText.lowercased()
+        let startOfDay = calendar.startOfDay(for: selectedDate)
+        let fetchedCategories = trackerStorage.getTrackersForDate(startOfDay, completedTrackers: completedTrackers)
+        let filteredCategories = fetchedCategories.compactMap { category in
+            let filteredTrackers = category.trackers.filter { tracker in
+                return tracker.name.lowercased().contains(text)
+            }
+            
+            return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }
+        categories = filteredCategories
+        collectionView.reloadData()
+        
+        if categories.isEmpty {
+            togglePlaceholderView(isShown: true, for: searchIsEmptyPlaceholderView)
+        } else {
+            togglePlaceholderView(isShown: false, for: searchIsEmptyPlaceholderView)
+        }
     }
 }
 
