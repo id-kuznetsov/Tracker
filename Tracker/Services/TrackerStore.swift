@@ -61,7 +61,7 @@ final class TrackerStore {
         }
     }
     
-    func deleteTracker(_ tracker: Tracker, from categoryTitle: String) {
+    func deleteTracker(_ tracker: Tracker) {
         let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
         

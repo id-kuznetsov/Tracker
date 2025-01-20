@@ -244,7 +244,45 @@ extension TrackersViewController: UICollectionViewDataSource {
 // MARK: UICollectionViewDelegate
 
 extension TrackersViewController: UICollectionViewDelegate {
-    // TODO: contextMenu
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let indexPath = indexPaths.first else { return nil }
+        
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let pinAction = UIAction(
+                title: "Закрепить"
+            ) {_ in
+                // TODO: pin and unpin
+            }
+            
+            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { _ in
+                // TODO: edit action
+            }
+            
+            let deleteAction = UIAction(
+                title: L10n.Trackers.MenuDelete.title,
+                attributes: .destructive
+            ) { [weak self] _ in
+                let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
+                let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+                    self?.trackerStorage.deleteTracker(tracker)
+                }
+                
+                let cancelAction = UIAlertAction(title: "Отменить", style: .cancel) { [weak self] _ in
+                    self?.dismiss(animated: true)
+                }
+                
+                alert.addAction(deleteAction)
+                alert.addAction(cancelAction)
+                self?.present(alert, animated: true)
+            }
+            
+            
+            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+            
+        }
+    }
 }
 
 // MARK: UICollectionViewDelegateFlowLayout

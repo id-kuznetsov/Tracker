@@ -34,6 +34,11 @@
 "trackers" = "Rastreadores";
 "trackers.emptySearchState.title" = "No se encontraron resultados";
 "trackers.emptyState.title" = "¿Qué vamos a rastrear?";
+"trackers.menuPin.title" = "Fijar";
+"trackers.menuUnpin.title" = "Desfijar";
+"trackers.menuEdit.title" = "Editar";
+"trackers.menuDelete.title" = "Eliminar";
+
 "trackerType.habit" = "Hábito";
 "trackerType.irregularEvent" = "Evento irregular";
 "trackerType.title" = "Creación de rastreador";

@@ -36,6 +36,10 @@
 "trackers" = "Trackers";
 "trackers.emptySearchState.title" = "Nothing was found";
 "trackers.emptyState.title" = "What are we going to track?";
+"trackers.menuPin.title" = "Pin";
+"trackers.menuUnpin.title" = "Unpin";
+"trackers.menuEdit.title" = "Edit";
+"trackers.menuDelete.title" = "Delete";
 
 "trackerType.habit" = "Habit";
 "trackerType.irregularEvent" = "Irregular event";

@@ -34,6 +34,11 @@
 "trackers" = "Трекеры";
 "trackers.emptySearchState.title" = "Ничего не найдено";
 "trackers.emptyState.title" = "Что будем отслеживать?";
+"trackers.menuPin.title" = "Закрепить";
+"trackers.menuUnpin.title" = "Открепить";
+"trackers.menuEdit.title" = "Редактировать";
+"trackers.menuDelete.title" = "Удалить";
+
 "trackerType.habit" = "Привычка";
 "trackerType.irregularEvent" = "Нерегулярное событие";
 "trackerType.title" = "Создание трекера";

@@ -86,8 +86,8 @@ final class TrackerStorageService: NSObject {
         }
     }
     
-    func deleteTracker(_ tracker: Tracker, from categoryTitle: String) {
-        trackerStore.deleteTracker(tracker, from: categoryTitle)
+    func deleteTracker(_ tracker: Tracker) {
+        trackerStore.deleteTracker(tracker)
     }
     
     func getTrackersForDate(_ date: Date, completedTrackers: Set<TrackerRecord>) -> [TrackerCategory] {
