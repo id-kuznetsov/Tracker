@@ -37,6 +37,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    private lazy var pinImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "pin")
+        imageView.tintColor = .white
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
@@ -131,7 +139,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     private func setCellUI() {
-        let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton]
+        let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton, pinImageView]
         subviews.forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -144,7 +152,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             emojiLabelConstraints() +
             titleLabelConstraints() +
             trackerCountLabelConstraints() +
-            trackerButtonConstraints()
+            trackerButtonConstraints() +
+            pinImageViewConstraints()
         )
     }
     
@@ -161,6 +170,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
           emojiBackgroundView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constraints.leading),
           emojiBackgroundView.heightAnchor.constraint(equalToConstant: Constraints.emojiViewHeight),
           emojiBackgroundView.widthAnchor.constraint(equalTo: emojiBackgroundView.heightAnchor)
+        ]
+    }
+    
+    private func pinImageViewConstraints() -> [NSLayoutConstraint] {
+        [ pinImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Constraints.trailing),
+          pinImageView.centerYAnchor.constraint(equalTo: emojiLabel.centerYAnchor)
         ]
     }
     

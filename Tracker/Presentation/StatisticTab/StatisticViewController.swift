@@ -45,13 +45,12 @@ final class StatisticViewController: UIViewController {
         super.viewDidLoad()
         checkCategories()
         setupUI()
+        setupBindings()
     }
     
     init (viewModel: StatisticViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        setupBindings()
-        
     }
     
     required init?(coder: NSCoder) {
