@@ -34,7 +34,8 @@ final class TabBarController: UITabBarController {
         trackersViewController.tabBarItem.image = UIImage(systemName: "record.circle.fill")
         trackersViewController.navigationController?.navigationBar.prefersLargeTitles = true
         
-        let statisticViewController = StatisticViewController()
+        let statisticViewModel = StatisticViewModel()
+        let statisticViewController = StatisticViewController(viewModel: statisticViewModel)
         let statisticNavigationController = UINavigationController(rootViewController: statisticViewController)
         statisticViewController.title = Constants.statisticTitle
         statisticViewController.tabBarItem.image = UIImage(systemName: "hare.fill")

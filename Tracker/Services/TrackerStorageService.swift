@@ -120,6 +120,10 @@ final class TrackerStorageService: NSObject {
     func addRecord(_ trackerRecord: TrackerRecord) {
         do {
             try trackerRecordStore.addRecord(trackerRecord)
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
         } catch {
             print("Error adding record: \(error) in file: \(#file), \(#line)")
         }
@@ -128,6 +132,10 @@ final class TrackerStorageService: NSObject {
     func removeRecord(_ trackerRecord: TrackerRecord) {
         do {
             try trackerRecordStore.removeRecord(trackerRecord)
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
         } catch {
             print("Error removing record: \(error) in file: \(#file), \(#line)")
         }
@@ -140,6 +148,15 @@ final class TrackerStorageService: NSObject {
             print("Error get records: \(error) in file: \(#file), \(#line)")
             return []
         }
+    }
+    
+    func calculateStatistic() -> TrackersStatistics {
+        return TrackersStatistics(
+            bestPeriod: 1, // TODO: calculate stat
+            perfectDays: 2,
+            trackersCompleted: 3,
+            averageValue: 4
+        )
     }
     
     // MARK: - Private Methods

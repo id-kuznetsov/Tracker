@@ -125,7 +125,7 @@ final class CategoryViewController: UIViewController {
     // MARK: Constraints
     
     private func tableViewConstraints() -> [NSLayoutConstraint] {
-        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 75 * CGFloat(viewModel.getCategoriesCount()))
+        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 75 * CGFloat(viewModel.categoriesCount))
         heightConstraint.priority = .defaultLow
         
         let bottomConstraint = tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24)
@@ -156,7 +156,7 @@ final class CategoryViewController: UIViewController {
     
     private func updateTableViewHeight() {
         if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height }) {
-            heightConstraint.constant = CGFloat(viewModel.getCategoriesCount()) * 75
+            heightConstraint.constant = CGFloat(viewModel.categoriesCount) * 75
         }
         view.layoutIfNeeded()
     }
@@ -168,7 +168,7 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.getCategoriesCount()
+        viewModel.categoriesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -192,7 +192,7 @@ extension CategoryViewController: UITableViewDataSource  {
 
 extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        for row in 0..<viewModel.getCategoriesCount() {
+        for row in 0..<viewModel.categoriesCount {
             let currentIndexPath = IndexPath(row: row, section: 0)
             tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
          }

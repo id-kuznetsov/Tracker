@@ -38,6 +38,8 @@
 "trackers.menuUnpin.title" = "Открепить";
 "trackers.menuEdit.title" = "Редактировать";
 "trackers.menuDelete.title" = "Удалить";
+"trackers.menuDelete.message" = "Уверены что хотите удалить трекер?";
+"trackers.menuDelete.cancel" = "Отменить";
 
 "trackerType.habit" = "Привычка";
 "trackerType.irregularEvent" = "Нерегулярное событие";

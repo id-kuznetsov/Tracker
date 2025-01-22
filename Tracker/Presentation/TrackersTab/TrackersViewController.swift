@@ -251,7 +251,7 @@ extension TrackersViewController: UICollectionViewDelegate {
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let pinAction = UIAction(
-                title: "Закрепить"
+                title: L10n.Trackers.MenuPin.title
             ) {_ in
                 // TODO: pin and unpin
             }
@@ -263,7 +263,7 @@ extension TrackersViewController: UICollectionViewDelegate {
             let deleteAction = UIAction(
                 title: L10n.Trackers.MenuDelete.title,
                 attributes: .destructive
-            ) { [weak self] _ in
+            ) { [weak self] _ in // TODO: add localisation 
                 let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
                 let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
                     self?.trackerStorage.deleteTracker(tracker)

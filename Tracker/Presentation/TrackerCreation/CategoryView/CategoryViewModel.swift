@@ -9,9 +9,9 @@ import Foundation
 
 protocol CategoryViewModelProtocol {
     var categoriesDidChange: Binding<[TrackerCategory]>? { get set }
+    var categoriesCount: Int { get }
     
     func loadCategories()
-    func getCategoriesCount() -> Int
     func addCategory(_ newCategory: TrackerCategory)
     func getCategoryTitle(at indexPath: IndexPath) -> String?
     func getSelectedCategoryTitle() -> String? 
@@ -24,6 +24,9 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     // MARK: - Public Properties
     
     var categoriesDidChange: Binding<[TrackerCategory]>?
+    var categoriesCount: Int {
+        categories.count
+    }
     
     // MARK: - Private Properties
     
@@ -39,10 +42,6 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     
     func loadCategories() {
         categories = trackerStorage.getCategories()
-    }
-    
-    func getCategoriesCount() -> Int {
-        categories.count
     }
     
     func addCategory(_ newCategory: TrackerCategory) {

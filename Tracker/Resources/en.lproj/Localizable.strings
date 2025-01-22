@@ -25,6 +25,10 @@
 
 "statistics" = "Statistics";
 "statistic.emptyState.title" = "There is nothing to analyze yet";
+"statistic.bestPeriod" = "Best period";
+"statistic.perfectDays" = "Perfect days";
+"statistic.trackersCompleted" = "Trackers completed";
+"statistic.averageValue" = "Average value";
 
 "trackerCreation.cancelButtonTitle" = "Cancel";
 "trackerCreation.colorSectionTitle" = "Color";
@@ -40,6 +44,8 @@
 "trackers.menuUnpin.title" = "Unpin";
 "trackers.menuEdit.title" = "Edit";
 "trackers.menuDelete.title" = "Delete";
+"trackers.menuDelete.message" = "Are you sure you want to delete the tracker?";
+"trackers.menuDelete.cancel" = "Cancel";
 
 "trackerType.habit" = "Habit";
 "trackerType.irregularEvent" = "Irregular event";

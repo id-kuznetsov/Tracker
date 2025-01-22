@@ -38,6 +38,8 @@
 "trackers.menuUnpin.title" = "Desfijar";
 "trackers.menuEdit.title" = "Editar";
 "trackers.menuDelete.title" = "Eliminar";
+"trackers.menuDelete.message" = "Está seguro de que desea eliminar el rastreador?";
+"trackers.menuDelete.cancel" = "Cancelar";
 
 "trackerType.habit" = "Hábito";
 "trackerType.irregularEvent" = "Evento irregular";

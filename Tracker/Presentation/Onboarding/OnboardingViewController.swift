@@ -43,7 +43,7 @@ final class OnboardingViewController: UIPageViewController {
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.backgroundColor = .ypBlack
+        button.backgroundColor = .ypBlack // TODO: сделать черной для темной темы
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()
