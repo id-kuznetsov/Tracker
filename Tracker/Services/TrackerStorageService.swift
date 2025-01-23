@@ -20,6 +20,7 @@ final class TrackerStorageService: NSObject {
     private let trackerStore = TrackerStore()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
+    private let statisticStore = StatisticStore()
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
@@ -151,12 +152,25 @@ final class TrackerStorageService: NSObject {
     }
     
     func calculateStatistic() -> TrackersStatistics {
-        return TrackersStatistics(
-            bestPeriod: 1, // TODO: calculate stat
-            perfectDays: 2,
-            trackersCompleted: 3,
-            averageValue: 4
+        let bestPeriod = 0 // TODO: calculate stat
+        let perfectDays = 0
+        let trackersCompleted = getAllRecords().count
+        let averageValue = 0
+        
+        let statistic = TrackersStatistics(
+            bestPeriod: bestPeriod,
+            perfectDays: perfectDays,
+            trackersCompleted: trackersCompleted,
+            averageValue: averageValue
         )
+        
+        do {
+            try statisticStore.saveStatistic(statistic)
+        } catch {
+            print("Error saving statistic: \(error) in file: \(#file), \(#line)")
+        }
+        
+        return statistic
     }
     
     // MARK: - Private Methods
@@ -176,6 +190,11 @@ final class TrackerStorageService: NSObject {
             }
             return isCompletedOnDate || completedTrackers.allSatisfy { $0.id != tracker.id }
         }
+    }
+    
+    private func calculateBestPeriod() -> Int {
+        let trackerRecords = getAllRecords()
+        return 0
     }
 }
 

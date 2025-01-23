@@ -71,7 +71,6 @@ final class StatisticViewController: UIViewController {
     private func checkCategories() {
         isShownEmptyPlaceholderView(viewModel.shouldShowPlaceholder())
         statisticTableView.isHidden = viewModel.shouldShowPlaceholder()
-        print(viewModel.shouldShowPlaceholder())
     }
     
     private func isShownEmptyPlaceholderView(_ isShown: Bool) {

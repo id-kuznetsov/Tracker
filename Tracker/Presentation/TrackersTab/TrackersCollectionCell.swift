@@ -138,6 +138,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         trackerButton.isHidden = date > Date() ? true : false
     }
     
+    private func isPinnedCell(_ state: Bool) {
+        pinImageView.isHidden = !state
+    }
+    
     private func setCellUI() {
         let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton, pinImageView]
         subviews.forEach{

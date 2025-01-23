@@ -26,11 +26,13 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
+    private var trackerStatistic: TrackersStatistics?
     
     // MARK: - Initializer
     
     init() {
         setupBindings()
+        updateStatistics()
     }
     
     deinit {
@@ -44,7 +46,9 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     }
     
     func getStatisticCard(at index: Int) -> StatisticsCard {
-        let trackerStatistic = getStatisticValue()
+        guard let trackerStatistic else {
+            return StatisticsCard(title: "", value: 0)
+        }
         return StatisticsCard(
             title: StatisticType.allCases[index].title,
             value: trackerStatistic.value(for: StatisticType.allCases[index])
@@ -53,9 +57,12 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     
     // MARK: - Private Methods
     
-    private func getStatisticValue() -> TrackersStatistics {
-        trackerStorage.calculateStatistic()
-    }
+    private func updateStatistics() {
+        trackerStatistic = trackerStorage.calculateStatistic()
+        if let trackerStatistic = trackerStatistic {
+            statisticDidChange?(trackerStatistic)
+        }
+      }
     
     private func setupBindings() {
         NotificationCenter.default.addObserver(
@@ -67,7 +74,8 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     }
     
     @objc private func handleDataChanged() {
-        let trackerStatistic = getStatisticValue() 
+        updateStatistics()
+        guard let trackerStatistic = trackerStatistic else { return }
         statisticDidChange?(trackerStatistic)
     }
     
