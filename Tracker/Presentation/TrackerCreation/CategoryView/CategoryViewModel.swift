@@ -13,6 +13,7 @@ protocol CategoryViewModelProtocol {
     
     func loadCategories()
     func addCategory(_ newCategory: TrackerCategory)
+    func deleteCategory(at indexPath: IndexPath)
     func getCategoryTitle(at indexPath: IndexPath) -> String?
     func getSelectedCategoryTitle() -> String? 
     func saveLastSelectedCategoryTitle(_ title: String?)
@@ -46,6 +47,12 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     
     func addCategory(_ newCategory: TrackerCategory) {
         trackerStorage.createCategory(newCategory)
+        loadCategories()
+    }
+    
+    func deleteCategory(at indexPath: IndexPath) {
+        let categoryToDelete = categories[indexPath.row]
+        trackerStorage.deleteCategory(categoryToDelete)
         loadCategories()
     }
     

@@ -209,6 +209,33 @@ extension CategoryViewController: UITableViewDelegate  {
             self?.dismiss(animated: true)
         }
     }
+    
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSIndexPath,
+            previewProvider: nil
+        ) { actions in
+            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
+//                let categoryToEdit = self?.viewModel.getCategoryTitle(at: indexPath)
+                // TODO: navigation to edit category VC
+            }
+            let deleteAction = UIAction(title: L10n.Trackers.MenuDelete.title, attributes: .destructive) { [weak self] _ in
+                let alert = UIAlertController(title: nil, message: L10n.CategoryCreation.MenuDelete.message, preferredStyle: .actionSheet)
+                let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
+                        self?.viewModel.deleteCategory(at: indexPath)
+                    }
+                let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) {_ in }
+                    alert.addAction(deleteAction)
+                    alert.addAction(cancelAction)
+                    self?.present(alert, animated: true)
+            }
+            return UIMenu(title: "", children: [editAction, deleteAction])
+        }
+    }
 }
 
 extension CategoryViewController: NewCategoryViewControllerDelegate {

@@ -11,6 +11,7 @@
 "categoryCreation.title" = "Nueva categoría";
 "categoryCreation.placeholderTitle" = "Introduzca el nombre de la categoría";
 "categoryCreation.emptyPlaceholderTitle" = "Hábitos y eventos pueden\n combinar en sentido";
+"categoryCreation.menuDelete.message" = "Are you sure you want to delete the category?";
 
 "newHabit.title" = "Nuevo hábito";
 "newIrregularEvent.title" = "Nuevo evento irregular";
@@ -22,8 +23,14 @@
 "readyButton" = "Listo";
 "schedule" = "Horario";
 "searchPlaceholderText" = "Buscar";
+
+"statistics" = "Statistics";
 "statistic.emptyState.title" = "Aún no hay nada que analizar";
-"statistics" = "Estadísticas";
+"statistics.bestPeriod" = "Mejor período";
+"statistics.perfectDays" = "Días perfectos";
+"statistics.trackersCompleted" = "Rastreadores completados";
+"statistics.averageValue" = "Valor promedio";
+
 "trackerCreation.cancelButtonTitle" = "Cancelar";
 "trackerCreation.colorSectionTitle" = "Color";
 "trackerCreation.createButtonTitle" = "Crear";
@@ -40,6 +47,11 @@
 "trackers.menuDelete.title" = "Eliminar";
 "trackers.menuDelete.message" = "Está seguro de que desea eliminar el rastreador?";
 "trackers.menuDelete.cancel" = "Cancelar";
+"trackers.filters" = "Filtros";
+"trackers.filters.allTrackers" = "Todos los rastreadores";
+"trackers.filters.forToday" = "Para hoy";
+"trackers.filters.completed" = "Completados";
+"trackers.filters.uncompleted" = "No completados";
 
 "trackerType.habit" = "Hábito";
 "trackerType.irregularEvent" = "Evento irregular";

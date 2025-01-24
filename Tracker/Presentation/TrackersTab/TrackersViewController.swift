@@ -18,6 +18,7 @@ final class TrackersViewController: UIViewController {
     
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
+    private var filterTrackers = TrackersFilter.allTrackers
     
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -42,9 +43,10 @@ final class TrackersViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        
+        collectionView.isScrollEnabled = true
         collectionView.backgroundColor = .ypWhite
-        
+//        collectionView.alwaysBounceVertical = true  // Включаем оверскролл по вертикали
+        collectionView.bounces = true
         return collectionView
     }()
     
@@ -64,6 +66,18 @@ final class TrackersViewController: UIViewController {
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
+    }()
+    
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .ypBlue
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(L10n.Trackers.filters, for: .normal)
+        button.layer.cornerRadius = 16
+        button.layer.masksToBounds = true
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        return button
     }()
     
     // MARK: - Lifecycle
@@ -103,6 +117,14 @@ final class TrackersViewController: UIViewController {
         updateCollectionForSelectedDate(date: selectedDate)
     }
     
+    @objc
+    private func didTapFilterButton() {
+        let filterViewController = FilterViewController()
+        filterViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: filterViewController)
+        present(navigationController, animated: true)
+    }
+    
     // MARK: - Private Methods
     
     private func addNotificationObserver() {
@@ -127,7 +149,7 @@ final class TrackersViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .ypWhite
         setupNavigationBar()
-        setupCollectionView()
+        setupCollectionViewAndFilterButton()
         checkTrackersCategories()
     }
     
@@ -137,17 +159,20 @@ final class TrackersViewController: UIViewController {
         if hasTrackers {
             togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
             collectionView.isHidden = false
+            filterButton.isHidden = false
         } else {
             togglePlaceholderView(isShown: true, for: trackersIsEmptyPlaceholderView)
             collectionView.isHidden = true
+            filterButton.isHidden = true
         }
     }
     
-    private func setupCollectionView() {
-        view.addSubview(collectionView)
-        
+    private func setupCollectionViewAndFilterButton() {
+        view.addSubviews([collectionView, filterButton])
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 66, right: 0)
         NSLayoutConstraint.activate(
-            collectionViewConstraints()
+            collectionViewConstraints() +
+            filterButtonConstraints()
         )
     }
     
@@ -164,6 +189,7 @@ final class TrackersViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
+        navigationItem.largeTitleDisplayMode = .always
         navigationItem.searchController = searchController
         searchController.searchBar.placeholder = L10n.searchPlaceholderText
         searchController.searchBar.setValue(L10n.TrackerCreation.cancelButtonTitle, forKey: "cancelButtonText")
@@ -194,6 +220,14 @@ final class TrackersViewController: UIViewController {
          collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
          collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
          collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ]
+    }
+    
+    private func filterButtonConstraints() -> [NSLayoutConstraint] {
+        [filterButton.heightAnchor.constraint(equalToConstant: 50),
+         filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+         filterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 130),
+         filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ]
     }
 }
@@ -371,5 +405,12 @@ extension TrackersViewController: TrackerCellDelegate {
         completedTrackers = trackerStorage.getAllRecords()
         let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
         cell.configureCellCounter(doneCount: doneCount)
+    }
+}
+
+extension TrackersViewController: FilterViewControllerDelegate {
+    func updateFilter(_ filter: TrackersFilter) {
+        filterTrackers = filter
+        
     }
 }

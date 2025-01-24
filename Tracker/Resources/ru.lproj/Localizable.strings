@@ -11,6 +11,7 @@
 "categoryCreation.title" = "Новая категория";
 "categoryCreation.placeholderTitle" = "Введите название категории";
 "categoryCreation.emptyPlaceholderTitle" = "Привычки и события можно\n объединить по смыслу";
+"categoryCreation.menuDelete.message" = "Эта категория точно не нужна?";
 
 "newHabit.title" = "Новая привычка";
 "newIrregularEvent.title" = "Новое нерегулярное событие";
@@ -22,8 +23,14 @@
 "readyButton" = "Готово";
 "schedule" = "Расписание";
 "searchPlaceholderText" = "Поиск";
-"statistic.emptyState.title" = "Анализировать пока нечего";
+
 "statistics" = "Статистика";
+"statistic.emptyState.title" = "Анализировать пока нечего";
+"statistics.bestPeriod" = "Лучший период";
+"statistics.perfectDays" = "Идеальные дни";
+"statistics.trackersCompleted" = "Трекеров завершено";
+"statistics.averageValue" = "Среднее значение";
+
 "trackerCreation.cancelButtonTitle" = "Отменить";
 "trackerCreation.colorSectionTitle" = "Цвет";
 "trackerCreation.createButtonTitle" = "Создать";
@@ -40,6 +47,11 @@
 "trackers.menuDelete.title" = "Удалить";
 "trackers.menuDelete.message" = "Уверены что хотите удалить трекер?";
 "trackers.menuDelete.cancel" = "Отменить";
+"trackers.filters" = "Фильтры";
+"trackers.filters.allTrackers" = "Все трекеры";
+"trackers.filters.forToday" = "На сегодня";
+"trackers.filters.completed" = "Завершенные";
+"trackers.filters.uncompleted" = "Не завершенные";
 
 "trackerType.habit" = "Привычка";
 "trackerType.irregularEvent" = "Нерегулярное событие";

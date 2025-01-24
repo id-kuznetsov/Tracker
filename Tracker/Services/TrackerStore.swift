@@ -33,8 +33,12 @@ final class TrackerStore {
         
         do {
             let trackerCoreDataArray = try context.fetch(fetchRequest)
+            for tracker in trackerCoreDataArray {
+                print("Tracker: \(tracker.name ?? ""), Category: \(tracker.category?.title ?? "Unknown")")
+            }
             return trackerCoreDataArray.map { trackerCoreData in
                 Tracker(from: trackerCoreData)
+                
             }
         } catch {
             print("Error fetching trackers: \(error)")
@@ -53,7 +57,7 @@ final class TrackerStore {
         trackerCoreData.schedule = weekDayConverter.convert(from: tracker.schedule)
         trackerCoreData.isHabit = tracker.isHabit
         trackerCoreData.category = trackerCategoryCoreData
-        
+        print("Tracker added to category: \(trackerCategoryCoreData.title ?? "Unknown")")
         do {
             try context.save()
         } catch {

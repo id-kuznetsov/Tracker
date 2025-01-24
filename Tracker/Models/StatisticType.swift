@@ -16,13 +16,13 @@ enum StatisticType: CaseIterable {
     var title: String {
         switch self {
         case .bestPeriod:
-            return "Лучший период" // TODO: локаль!
+            return L10n.Statistics.bestPeriod
         case .perfectDays:
-            return "Идеальные дни"
+            return L10n.Statistics.perfectDays
         case .trackersCompleted:
-            return "Трекеров завершено"
+            return L10n.Statistics.trackersCompleted
         case .averageValue:
-            return "Среднее значение"
+            return L10n.Statistics.averageValue
         }
     }
 }

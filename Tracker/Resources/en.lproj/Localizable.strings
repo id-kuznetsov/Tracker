@@ -11,6 +11,7 @@
 "categoryCreation.title" = "New Category";
 "categoryCreation.placeholderTitle" = "Enter the name of the category";
 "categoryCreation.emptyPlaceholderTitle" = "Habits and events can be\n combine by meaning";
+"categoryCreation.menuDelete.message" = "Are you sure you want to delete the category?";
 
 "newHabit.title" = "New habit";
 "newIrregularEvent.title" = "New irregular event";
@@ -25,10 +26,10 @@
 
 "statistics" = "Statistics";
 "statistic.emptyState.title" = "There is nothing to analyze yet";
-"statistic.bestPeriod" = "Best period";
-"statistic.perfectDays" = "Perfect days";
-"statistic.trackersCompleted" = "Trackers completed";
-"statistic.averageValue" = "Average value";
+"statistics.bestPeriod" = "Best period";
+"statistics.perfectDays" = "Perfect days";
+"statistics.trackersCompleted" = "Trackers completed";
+"statistics.averageValue" = "Average value";
 
 "trackerCreation.cancelButtonTitle" = "Cancel";
 "trackerCreation.colorSectionTitle" = "Color";
@@ -46,6 +47,12 @@
 "trackers.menuDelete.title" = "Delete";
 "trackers.menuDelete.message" = "Are you sure you want to delete the tracker?";
 "trackers.menuDelete.cancel" = "Cancel";
+"trackers.filters" = "Filters";
+"trackers.filters.allTrackers" = "All trackers";
+"trackers.filters.forToday" = "For today";
+"trackers.filters.completed" = "Completed";
+"trackers.filters.uncompleted" = "Uncompleted";
+
 
 "trackerType.habit" = "Habit";
 "trackerType.irregularEvent" = "Irregular event";

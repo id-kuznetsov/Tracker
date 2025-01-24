@@ -68,4 +68,20 @@ final class TrackerRecordStore {
             throw TrackerRecordStoreError.failedToRemoveRecord
         }
     }
+    
+    func removeAllRecords(for recordID: UUID) throws {
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(format: "id == %@", recordID as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for trackerRecordCoreData in results {
+                context.delete(trackerRecordCoreData)
+                try context.save()
+            }
+        } catch {
+            throw TrackerRecordStoreError.failedToRemoveRecord
+        }
+    }
 }

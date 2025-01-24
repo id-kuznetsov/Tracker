@@ -24,7 +24,7 @@ final class TrackerStorageService: NSObject {
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        fetchRequest.sortDescriptors = []
         
         let controller = NSFetchedResultsController(
             fetchRequest: fetchRequest,
@@ -89,6 +89,7 @@ final class TrackerStorageService: NSObject {
     
     func deleteTracker(_ tracker: Tracker) {
         trackerStore.deleteTracker(tracker)
+        removeAllRecords(tracker.id)
     }
     
     func getTrackersForDate(_ date: Date, completedTrackers: Set<TrackerRecord>) -> [TrackerCategory] {
@@ -98,18 +99,30 @@ final class TrackerStorageService: NSObject {
         guard let selectedWeekday = WeekDay(rawValue: selectedWeekday) else {
             return []
         }
+        trackerStore.fetchTrackers() // TODO: тут норм, переписать с этого метода
+        
+        // Получаем все трекеры
+        let allTrackers = trackerStore.fetchTrackers()
+        guard !allTrackers.isEmpty else { return [] }
         
         guard let sections = fetchedResultsController.sections else {
             return []
         }
+        
         return sections.compactMap { section in
-            let trackers = (section.objects as? [TrackerCoreData] ?? []).map { Tracker(from: $0) }
+            print("Processing section: \(section.name)")
+            let trackers = (section.objects as? [TrackerCoreData] ?? []).map {
+                Tracker(from: $0)
+            }
+            print("Total trackers in section: \(trackers.count)")
             let filteredTrackers = filterTrackers(
                 trackers,
                 for: date,
                 completedTrackers: completedTrackers,
                 weekday: selectedWeekday
             )
+            
+            guard section.name == trackers.first?. else { return nil }
             return filteredTrackers.isEmpty ? nil : TrackerCategory(
                 title: section.name,
                 trackers: filteredTrackers
@@ -152,10 +165,10 @@ final class TrackerStorageService: NSObject {
     }
     
     func calculateStatistic() -> TrackersStatistics {
-        let bestPeriod = 0 // TODO: calculate stat
-        let perfectDays = 0
+        let bestPeriod = calculateBestPeriod() // TODO: calculate stat
+        let perfectDays = calculatePerfectDays()
         let trackersCompleted = getAllRecords().count
-        let averageValue = 0
+        let averageValue = calculateAverageValue()
         
         let statistic = TrackersStatistics(
             bestPeriod: bestPeriod,
@@ -192,9 +205,82 @@ final class TrackerStorageService: NSObject {
         }
     }
     
+    
+    private func removeAllRecords(_ trackerRecordID: UUID) {
+        do {
+            try trackerRecordStore.removeAllRecords(for: trackerRecordID)
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
+        } catch {
+            print("Error removing record: \(error) in file: \(#file), \(#line)")
+        }
+    }
+    
     private func calculateBestPeriod() -> Int {
-        let trackerRecords = getAllRecords()
-        return 0
+        let records = getAllRecords().sorted(by: { $0.date < $1.date })
+        guard !records.isEmpty else { return 0 }
+        
+        let calendar = Calendar.current
+        var maxStreak = 0
+        var currentStreak = 1
+        
+        for i in 1..<records.count {
+            let previousDate = records[i - 1].date
+            let currentDate = records[i].date
+            
+            if calendar.isDate(currentDate, inSameDayAs: calendar.date(byAdding: .day, value: 1, to: previousDate)!) {
+                currentStreak += 1
+                maxStreak = max(maxStreak, currentStreak)
+            } else {
+                currentStreak = 1
+            }
+        }
+        
+        return max(maxStreak, currentStreak)
+    }
+    
+    private func calculatePerfectDays() -> Int {
+        let records = getAllRecords()
+        guard !records.isEmpty else { return 0 }
+        
+        let allTrackers = trackerStore.fetchTrackers()
+        guard !allTrackers.isEmpty else { return 0 }
+        
+        let calendar = Calendar.current
+       
+        let groupedByDate = Dictionary(grouping: records, by: { calendar.startOfDay(for: $0.date) })
+        
+        var perfectDaysCount = 0
+        
+        for (date, dailyRecords) in groupedByDate {
+            let completedTrackerIDs = Set(dailyRecords.map { $0.id })
+
+            let weekday = calendar.component(.weekday, from: date)
+            guard let selectedWeekday = WeekDay(rawValue: weekday == 1 ? 7 : weekday - 1) else {
+                continue
+            }
+            let plannedTrackers = allTrackers.filter { $0.schedule.contains(selectedWeekday) }
+            let plannedTrackerIDs = Set(plannedTrackers.map { $0.id })
+
+            if plannedTrackerIDs.isSubset(of: completedTrackerIDs) {
+                perfectDaysCount += 1
+            }
+        }
+        return perfectDaysCount
+    }
+    
+    private func calculateAverageValue() -> Int {
+        let records = getAllRecords()
+        guard !records.isEmpty else { return 0 }
+        
+        let calendar = Calendar.current
+        let groupedByDate = Dictionary(grouping: records, by: { calendar.startOfDay(for: $0.date) })
+        let totalDays = groupedByDate.count
+        let totalRecords = records.count
+        
+        return totalDays > 0 ? totalRecords / totalDays : 0
     }
 }
 

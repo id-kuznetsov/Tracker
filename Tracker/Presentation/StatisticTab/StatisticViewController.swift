@@ -76,9 +76,11 @@ final class StatisticViewController: UIViewController {
     private func isShownEmptyPlaceholderView(_ isShown: Bool) {
         if isShown {
             setupPlaceholderView()
-            statisticTableView.isHidden = true
+            statisticTableView.isHidden = isShown
+            placeholderView.isHidden = !isShown
         } else {
-            statisticTableView.isHidden = false
+            statisticTableView.isHidden = isShown
+            placeholderView.isHidden = !isShown
         }
     }
     
