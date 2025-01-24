@@ -68,7 +68,7 @@ final class StatisticViewModel: StatisticViewModelProtocol {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleDataChanged),
-            name: TrackerStorageService.didChangeNotification,
+            name: TrackerStorageService.didChangeRecord,
             object: nil
         )
     }

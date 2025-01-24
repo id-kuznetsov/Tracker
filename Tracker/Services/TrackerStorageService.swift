@@ -13,6 +13,7 @@ final class TrackerStorageService: NSObject {
     
     static let shared = TrackerStorageService()
     static let didChangeNotification = Notification.Name(rawValue: "TrackerStorageServiceDidChange")
+    static let didChangeRecord = Notification.Name(rawValue: "TrackerStorageServiceDidChangeRecord")
     
     // MARK: - Private Properties
     
@@ -96,46 +97,33 @@ final class TrackerStorageService: NSObject {
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: date)
         let selectedWeekday = weekday == 1 ? 7 : weekday - 1
-        guard let selectedWeekday = WeekDay(rawValue: selectedWeekday) else {
-            return []
-        }
-        trackerStore.fetchTrackers() // TODO: тут норм, переписать с этого метода
-        
-        // Получаем все трекеры
-        let allTrackers = trackerStore.fetchTrackers()
-        guard !allTrackers.isEmpty else { return [] }
-        
-        guard let sections = fetchedResultsController.sections else {
+        guard let rawSelectedWeekday = WeekDay(rawValue: selectedWeekday) else {
             return []
         }
         
-        return sections.compactMap { section in
-            print("Processing section: \(section.name)")
-            let trackers = (section.objects as? [TrackerCoreData] ?? []).map {
-                Tracker(from: $0)
-            }
-            print("Total trackers in section: \(trackers.count)")
-            let filteredTrackers = filterTrackers(
-                trackers,
-                for: date,
-                completedTrackers: completedTrackers,
-                weekday: selectedWeekday
-            )
+        let trackersWithCategory = trackerStore.fetchTrackersWithCategory(for: selectedWeekday)
+        
+        return trackersWithCategory.compactMap { category in
             
-            guard section.name == trackers.first?. else { return nil }
-            return filteredTrackers.isEmpty ? nil : TrackerCategory(
-                title: section.name,
-                trackers: filteredTrackers
-            )
-        }
-        
+            let filteredTrackers = filterTrackers(
+                category.trackers,
+                 for: date,
+                 completedTrackers: completedTrackers,
+                 weekday: rawSelectedWeekday
+             )
+         
+             return filteredTrackers.isEmpty ? nil : TrackerCategory(
+                 title: category.title,
+                 trackers: filteredTrackers
+             )
+         }
     }
     
     func addRecord(_ trackerRecord: TrackerRecord) {
         do {
             try trackerRecordStore.addRecord(trackerRecord)
             NotificationCenter.default.post(
-                name: TrackerStorageService.didChangeNotification,
+                name: TrackerStorageService.didChangeRecord,
                 object: nil
             )
         } catch {
@@ -147,7 +135,7 @@ final class TrackerStorageService: NSObject {
         do {
             try trackerRecordStore.removeRecord(trackerRecord)
             NotificationCenter.default.post(
-                name: TrackerStorageService.didChangeNotification,
+                name: TrackerStorageService.didChangeRecord,
                 object: nil
             )
         } catch {
@@ -249,21 +237,21 @@ final class TrackerStorageService: NSObject {
         guard !allTrackers.isEmpty else { return 0 }
         
         let calendar = Calendar.current
-       
+        
         let groupedByDate = Dictionary(grouping: records, by: { calendar.startOfDay(for: $0.date) })
         
         var perfectDaysCount = 0
         
         for (date, dailyRecords) in groupedByDate {
             let completedTrackerIDs = Set(dailyRecords.map { $0.id })
-
+            
             let weekday = calendar.component(.weekday, from: date)
             guard let selectedWeekday = WeekDay(rawValue: weekday == 1 ? 7 : weekday - 1) else {
                 continue
             }
             let plannedTrackers = allTrackers.filter { $0.schedule.contains(selectedWeekday) }
             let plannedTrackerIDs = Set(plannedTrackers.map { $0.id })
-
+            
             if plannedTrackerIDs.isSubset(of: completedTrackerIDs) {
                 perfectDaysCount += 1
             }

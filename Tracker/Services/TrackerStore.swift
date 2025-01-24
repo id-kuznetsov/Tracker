@@ -33,15 +33,37 @@ final class TrackerStore {
         
         do {
             let trackerCoreDataArray = try context.fetch(fetchRequest)
-            for tracker in trackerCoreDataArray {
-                print("Tracker: \(tracker.name ?? ""), Category: \(tracker.category?.title ?? "Unknown")")
-            }
+            
             return trackerCoreDataArray.map { trackerCoreData in
                 Tracker(from: trackerCoreData)
                 
             }
         } catch {
             print("Error fetching trackers: \(error)")
+            return []
+        }
+    }
+    
+    func fetchTrackersWithCategory(for weekDay: Int) -> [TrackerCategory] {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(format: "schedule CONTAINS %d", weekDay)
+        
+        do {
+            let trackerCoreDataArray = try context.fetch(fetchRequest)
+            for tracker in trackerCoreDataArray {
+                print("Tracker: \(tracker.name ?? ""), Category: \(tracker.category?.title ?? "Unknown")")
+            }
+            let groupedTrackers = Dictionary(grouping: trackerCoreDataArray, by: { $0.category?.title ?? "Unknown" })
+            
+            return groupedTrackers.map { (categoryTitle, trackersCoreData) in
+                let trackers = trackersCoreData.map { Tracker(from: $0) }
+                
+                return TrackerCategory(title: categoryTitle, trackers: trackers)
+            }
+            
+        } catch {
+            print("Error fetching trackers with category: \(error)")
             return []
         }
     }
