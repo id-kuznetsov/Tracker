@@ -144,7 +144,7 @@ final class TrackersViewController: UIViewController {
         
         categories = filteredCategories(from: allCategories, for: startOfDay)
         
-        checkTrackersCategories()
+        checkTrackersCategories(isFiltering: !allCategories.isEmpty)
         filterButton.isHidden = allCategories.isEmpty
         collectionView.reloadData()
     }
@@ -186,18 +186,24 @@ final class TrackersViewController: UIViewController {
         view.backgroundColor = .ypWhite
         setupNavigationBar()
         setupCollectionViewAndFilterButton()
-        checkTrackersCategories()
+        checkTrackersCategories(isFiltering: false)
     }
     
-    private func checkTrackersCategories() {
+    private func checkTrackersCategories(isFiltering: Bool) {
         let hasTrackers = categories.contains { !$0.trackers.isEmpty }
         
-        if hasTrackers {
+        if hasTrackers && filterTrackers == .allTrackers {
             togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
+            togglePlaceholderView(isShown: false, for: searchIsEmptyPlaceholderView)
             collectionView.isHidden = false
+            filterButton.isHidden = false
+        } else if isFiltering {
+            togglePlaceholderView(isShown: true, for: searchIsEmptyPlaceholderView)
+            togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
             filterButton.isHidden = false
         } else {
             togglePlaceholderView(isShown: true, for: trackersIsEmptyPlaceholderView)
+            togglePlaceholderView(isShown: false, for: searchIsEmptyPlaceholderView)
             collectionView.isHidden = true
             filterButton.isHidden = true
         }
