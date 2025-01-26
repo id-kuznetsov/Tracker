@@ -1,21 +1,22 @@
 //
-//  NewCategoryViewController.swift
+//  EditCategoryViewController.swift
 //  Tracker
 //
-//  Created by Ilya Kuznetsov on 29.11.2024.
+//  Created by Ilya Kuznetsov on 26.01.2025.
 //
 
 import UIKit
 
-final class NewCategoryViewController: UIViewController {
+final class EditCategoryViewController: UIViewController {
     
     // MARK: - Public Properties
     
-    weak var delegate: NewCategoryViewControllerDelegate?
+    weak var delegate: EditCategoryViewControllerDelegate?
     
     // MARK: - Private Properties
     
     private var categoryTitle: String?
+    private var previousCategoryTitle: String?
     
     private lazy var categoryNameTextField: TrackerTextField = {
         let textField = TrackerTextField(backgroundText: L10n.CategoryCreation.placeholderTitle)
@@ -51,6 +52,17 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Lifecycle
     
+    init(categoryToEdit: String) {
+        super.init(nibName: nil, bundle: nil)
+        categoryTitle = categoryToEdit
+        previousCategoryTitle = categoryToEdit
+        setCategoryName(categoryToEdit)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,18 +73,18 @@ final class NewCategoryViewController: UIViewController {
     
     @objc
     private func didTapDoneButton() {
-        guard let categoryTitle else {
+        guard let categoryTitle, let previousCategoryTitle else {
             return print("Missing data")
         }
-        delegate?.didTapDoneButton(categoryTitle: categoryTitle)
+        delegate?.didTapDoneButton(newCategoryTitle: categoryTitle, perviousCategoryTitle: previousCategoryTitle)
         
         dismiss(animated: true)
     }
-    
+
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = L10n.CategoryCreation.title 
+        title = "Редактирование категории"
         view.backgroundColor = .ypWhite
         isShownWarningLabel(false)
         setCreateButtonEnabled(status: false)
@@ -85,6 +97,10 @@ final class NewCategoryViewController: UIViewController {
             trackerNameStackViewConstraints() +
             doneButtonConstraints()
         )
+    }
+    
+    private func setCategoryName(_ name: String?) {
+        categoryNameTextField.text = name
     }
     
     private func isShownWarningLabel(_ status:Bool) {
@@ -128,7 +144,7 @@ final class NewCategoryViewController: UIViewController {
 
 // MARK: UITextFieldDelegate
 
-extension NewCategoryViewController: UITextFieldDelegate {
+extension EditCategoryViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = textField.text ?? ""
         let newText = text.count + string.count - range.length

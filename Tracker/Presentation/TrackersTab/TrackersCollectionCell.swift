@@ -25,6 +25,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = .ypWhite
+        label.textAlignment = .center
         return label
     }()
     

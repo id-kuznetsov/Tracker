@@ -71,6 +71,14 @@ final class TrackerStorageService: NSObject {
         }
     }
     
+    func editCategory(_ category: String, with newTitle: String) {
+        do {
+            try trackerCategoryStore.updateCategory(oldTitle: category, newTitle: newTitle)
+        } catch {
+            print("Error editing category: \(error) in file: \(#file), \(#line)")
+        }
+    }
+    
     func deleteCategory(_ category: TrackerCategory) {
         do {
             try trackerCategoryStore.deleteCategory(category)

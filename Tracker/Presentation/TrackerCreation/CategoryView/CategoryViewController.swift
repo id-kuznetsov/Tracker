@@ -195,7 +195,7 @@ extension CategoryViewController: UITableViewDelegate  {
         for row in 0..<viewModel.categoriesCount {
             let currentIndexPath = IndexPath(row: row, section: 0)
             tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
-         }
+        }
         
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
@@ -204,7 +204,7 @@ extension CategoryViewController: UITableViewDelegate  {
             viewModel.saveLastSelectedCategoryTitle(categoryTitle)
             delegate?.showSelectedCategory(category: categoryTitle)
         }
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
         }
@@ -220,23 +220,30 @@ extension CategoryViewController: UITableViewDelegate  {
             previewProvider: nil
         ) { actions in
             let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
-//                let categoryToEdit = self?.viewModel.getCategoryTitle(at: indexPath)
-                // TODO: navigation to edit category VC
+                guard let self else { return }
+                let categoryToEdit = self.viewModel.getCategoryTitle(at: indexPath) ?? ""
+                let editCategoryViewController = EditCategoryViewController(categoryToEdit: categoryToEdit)
+                editCategoryViewController.delegate = self
+                let navigationController = UINavigationController(rootViewController: editCategoryViewController)
+                self.present(navigationController, animated: true)
+                
             }
             let deleteAction = UIAction(title: L10n.Trackers.MenuDelete.title, attributes: .destructive) { [weak self] _ in
                 let alert = UIAlertController(title: nil, message: L10n.CategoryCreation.MenuDelete.message, preferredStyle: .actionSheet)
                 let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
-                        self?.viewModel.deleteCategory(at: indexPath)
-                    }
+                    self?.viewModel.deleteCategory(at: indexPath)
+                }
                 let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) {_ in }
-                    alert.addAction(deleteAction)
-                    alert.addAction(cancelAction)
-                    self?.present(alert, animated: true)
+                alert.addAction(deleteAction)
+                alert.addAction(cancelAction)
+                self?.present(alert, animated: true)
             }
             return UIMenu(title: "", children: [editAction, deleteAction])
         }
     }
 }
+
+// MARK: NewCategoryViewControllerDelegate
 
 extension CategoryViewController: NewCategoryViewControllerDelegate {
     func didTapDoneButton(categoryTitle: String) {
@@ -248,3 +255,14 @@ extension CategoryViewController: NewCategoryViewControllerDelegate {
         updateTableViewHeight()
     }
 }
+
+// MARK: NewCategoryViewControllerDelegate
+
+extension CategoryViewController: EditCategoryViewControllerDelegate {
+    func didTapDoneButton(newCategoryTitle: String, perviousCategoryTitle: String) {
+        viewModel.editCategory(perviousCategoryTitle, with: newCategoryTitle)
+        checkCategories()
+        updateTableViewHeight()
+    }
+}
+

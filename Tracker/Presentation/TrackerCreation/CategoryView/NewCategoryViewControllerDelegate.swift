@@ -10,3 +10,7 @@ import Foundation
 protocol NewCategoryViewControllerDelegate: AnyObject {
     func didTapDoneButton(categoryTitle: String)
 }
+
+protocol EditCategoryViewControllerDelegate: AnyObject {
+    func didTapDoneButton(newCategoryTitle: String, perviousCategoryTitle: String)
+}

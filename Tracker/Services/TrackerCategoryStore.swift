@@ -89,4 +89,28 @@ final class TrackerCategoryStore {
             throw TrackerCategoryStoreError.failedToDeleteCategory
         }
     }
+    
+    func updateCategory(oldTitle: String, newTitle: String) throws {
+        if try fetchCategory(by: newTitle) != nil {
+            throw TrackerCategoryStoreError.failedToCreateCategory
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", oldTitle)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            guard let trackerCategoryCoreData = results.first else {
+                throw TrackerCategoryStoreError.failedToFetchCategory
+            }
+
+            trackerCategoryCoreData.title = newTitle
+           
+            try context.save()
+        } catch {
+            print("Error updating category: \(error)")
+            throw TrackerCategoryStoreError.failedToFetchCategory
+        }
+    }
 }
