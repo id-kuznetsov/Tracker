@@ -72,7 +72,11 @@ final class TrackerStorageService: NSObject {
     }
     
     func deleteCategory(_ category: TrackerCategory) {
-        // TODO: delete category
+        do {
+            try trackerCategoryStore.deleteCategory(category)
+        } catch {
+            print("Error deleting category: \(error) in file: \(#file), \(#line)")
+        }
     }
     
     func addTracker(_ tracker: Tracker, to categoryTitle: String) {
@@ -107,16 +111,16 @@ final class TrackerStorageService: NSObject {
             
             let filteredTrackers = filterTrackers(
                 category.trackers,
-                 for: date,
-                 completedTrackers: completedTrackers,
-                 weekday: rawSelectedWeekday
-             )
-         
-             return filteredTrackers.isEmpty ? nil : TrackerCategory(
-                 title: category.title,
-                 trackers: filteredTrackers
-             )
-         }
+                for: date,
+                completedTrackers: completedTrackers,
+                weekday: rawSelectedWeekday
+            )
+            
+            return filteredTrackers.isEmpty ? nil : TrackerCategory(
+                title: category.title,
+                trackers: filteredTrackers
+            )
+        }
     }
     
     func addRecord(_ trackerRecord: TrackerRecord) {
@@ -153,7 +157,7 @@ final class TrackerStorageService: NSObject {
     }
     
     func calculateStatistic() -> TrackersStatistics {
-        let bestPeriod = calculateBestPeriod() // TODO: calculate stat
+        let bestPeriod = calculateBestPeriod()
         let perfectDays = calculatePerfectDays()
         let trackersCompleted = getAllRecords().count
         let averageValue = calculateAverageValue()
@@ -232,12 +236,10 @@ final class TrackerStorageService: NSObject {
     private func calculatePerfectDays() -> Int {
         let records = getAllRecords()
         guard !records.isEmpty else { return 0 }
-        
         let allTrackers = trackerStore.fetchTrackers()
         guard !allTrackers.isEmpty else { return 0 }
         
         let calendar = Calendar.current
-        
         let groupedByDate = Dictionary(grouping: records, by: { calendar.startOfDay(for: $0.date) })
         
         var perfectDaysCount = 0
@@ -249,7 +251,8 @@ final class TrackerStorageService: NSObject {
             guard let selectedWeekday = WeekDay(rawValue: weekday == 1 ? 7 : weekday - 1) else {
                 continue
             }
-            let plannedTrackers = allTrackers.filter { $0.schedule.contains(selectedWeekday) }
+ 
+            let plannedTrackers = allTrackers.filter { $0.schedule.contains(selectedWeekday) && $0.isHabit }
             let plannedTrackerIDs = Set(plannedTrackers.map { $0.id })
             
             if plannedTrackerIDs.isSubset(of: completedTrackerIDs) {

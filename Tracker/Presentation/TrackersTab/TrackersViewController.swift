@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-
+    
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
@@ -45,7 +45,7 @@ final class TrackersViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isScrollEnabled = true
         collectionView.backgroundColor = .ypWhite
-//        collectionView.alwaysBounceVertical = true  // Включаем оверскролл по вертикали
+        //        collectionView.alwaysBounceVertical = true  // Включаем оверскролл по вертикали
         collectionView.bounces = true
         return collectionView
     }()
@@ -169,7 +169,7 @@ final class TrackersViewController: UIViewController {
     
     private func setupCollectionViewAndFilterButton() {
         view.addSubviews([collectionView, filterButton])
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 66, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 75, right: 0)
         NSLayoutConstraint.activate(
             collectionViewConstraints() +
             filterButtonConstraints()
@@ -204,8 +204,23 @@ final class TrackersViewController: UIViewController {
                 placeholderViewConstraints(for: placeholderView)
             )
             placeholderView.isHidden = false
+            filterButton.isHidden = true
         } else {
             placeholderView.isHidden = true
+            filterButton.isHidden = false
+        }
+    }
+    
+    private func showFilterIsActive(filter: TrackersFilter) {
+        switch filter {
+        case .allTrackers:
+            filterButton.titleLabel?.textColor = .ypWhite
+        case .forToday:
+            filterButton.titleLabel?.textColor = .ypWhite
+        case .completed:
+            filterButton.titleLabel?.textColor = .green
+        case .uncompleted:
+            filterButton.titleLabel?.textColor = .ypRed
         }
     }
     
@@ -297,13 +312,13 @@ extension TrackersViewController: UICollectionViewDelegate {
             let deleteAction = UIAction(
                 title: L10n.Trackers.MenuDelete.title,
                 attributes: .destructive
-            ) { [weak self] _ in // TODO: add localisation 
-                let alert = UIAlertController(title: nil, message: "Уверены что хотите удалить трекер?", preferredStyle: .actionSheet)
-                let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            ) { [weak self] _ in
+                let alert = UIAlertController(title: nil, message: L10n.Trackers.MenuDelete.message, preferredStyle: .actionSheet)
+                let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
                     self?.trackerStorage.deleteTracker(tracker)
                 }
                 
-                let cancelAction = UIAlertAction(title: "Отменить", style: .cancel) { [weak self] _ in
+                let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) { [weak self] _ in
                     self?.dismiss(animated: true)
                 }
                 
@@ -411,6 +426,21 @@ extension TrackersViewController: TrackerCellDelegate {
 extension TrackersViewController: FilterViewControllerDelegate {
     func updateFilter(_ filter: TrackersFilter) {
         filterTrackers = filter
-        
+        showFilterIsActive(filter: filter)
+        switch filter {
+        case .allTrackers:
+            updateCollectionForSelectedDate(date: selectedDate)
+            // TODO:
+        case .forToday:
+            selectedDate = Date()
+            datePicker.date = selectedDate
+            datePickerValueChanged(datePicker)
+        case .completed:
+            break
+            // TODO:
+        case .uncompleted:
+            break
+            // TODO:
+        }
     }
 }

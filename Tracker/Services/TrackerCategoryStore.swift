@@ -12,6 +12,7 @@ final class TrackerCategoryStore {
     enum TrackerCategoryStoreError: Error {
         case failedToFetchCategory
         case failedToCreateCategory
+        case failedToDeleteCategory
     }
     
     private let context: NSManagedObjectContext
@@ -69,5 +70,23 @@ final class TrackerCategoryStore {
         }
         
         return newCategory
+    }
+    
+    func deleteCategory(_ category: TrackerCategory) throws {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", category.title)
+        do {
+            let results = try context.fetch(fetchRequest)
+            guard let trackerCategoryCoreData = results.first else {
+                print("Category not found: \(category.title)")
+                return
+            }
+            
+            context.delete(trackerCategoryCoreData)
+            try context.save()
+        } catch {
+            print("Error deleting category: \(error)")
+            throw TrackerCategoryStoreError.failedToDeleteCategory
+        }
     }
 }
