@@ -105,6 +105,14 @@ final class TrackerStorageService: NSObject {
         removeAllRecords(tracker.id)
     }
     
+    func setPinnedTracker(_ tracker: Tracker, isPinned: Bool) {
+        trackerStore.setPinnedTracker(tracker, isPinned: isPinned)
+        NotificationCenter.default.post(
+            name: TrackerStorageService.didChangeNotification,
+            object: nil
+        )
+    }
+    
     func getTrackersForDate(_ date: Date, completedTrackers: Set<TrackerRecord>) -> [TrackerCategory] {
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: date)
@@ -115,7 +123,9 @@ final class TrackerStorageService: NSObject {
         
         let trackersWithCategory = trackerStore.fetchTrackersWithCategory(for: selectedWeekday)
         
-        return trackersWithCategory.compactMap { category in
+        var pinnedTrackers: [Tracker] = []
+        
+        var categories: [TrackerCategory] = trackersWithCategory.compactMap { category in
             
             let filteredTrackers = filterTrackers(
                 category.trackers,
@@ -123,12 +133,20 @@ final class TrackerStorageService: NSObject {
                 completedTrackers: completedTrackers,
                 weekday: rawSelectedWeekday
             )
+            pinnedTrackers.append(contentsOf: filteredTrackers.filter { $0.isPinned })
+
+            let nonPinnedTrackers = filteredTrackers.filter { !$0.isPinned }
             
-            return filteredTrackers.isEmpty ? nil : TrackerCategory(
+            return nonPinnedTrackers.isEmpty ? nil : TrackerCategory(
                 title: category.title,
-                trackers: filteredTrackers
+                trackers: nonPinnedTrackers
             )
         }
+        if !pinnedTrackers.isEmpty {
+            let pinnedCategory = TrackerCategory(title: "Закрепленные", trackers: pinnedTrackers)
+            categories.insert(pinnedCategory, at: 0)
+        }
+        return categories
     }
     
     func addRecord(_ trackerRecord: TrackerRecord) {

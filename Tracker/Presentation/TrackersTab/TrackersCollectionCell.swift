@@ -121,6 +121,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         changeButtonIcon(isDone: isDone)
         configureCellCounter(doneCount: doneCount)
         hideTrackerButtonThenDateInFuture(selectedDate)
+        isPinnedCell(tracker.isPinned)
     }
     
     func configureCellCounter(doneCount: Int) {

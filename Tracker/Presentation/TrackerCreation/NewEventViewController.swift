@@ -164,7 +164,8 @@ final class NewEventViewController: UIViewController {
             color: selectedColor,
             emoji: selectedEmoji,
             schedule: isHabitEvent ? selectedDays : WeekDay.allCases,
-            isHabit: isHabitEvent
+            isHabit: isHabitEvent,
+            isPinned: false
         )
         
         trackerStorage.addTracker(newTracker, to: selectedCategory)

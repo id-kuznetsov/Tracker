@@ -41,6 +41,7 @@
 "trackers" = "Трекеры";
 "trackers.emptySearchState.title" = "Ничего не найдено";
 "trackers.emptyState.title" = "Что будем отслеживать?";
+"trackers.pinned" = "Закрепленные";
 "trackers.menuPin.title" = "Закрепить";
 "trackers.menuUnpin.title" = "Открепить";
 "trackers.menuEdit.title" = "Редактировать";

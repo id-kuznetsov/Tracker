@@ -36,7 +36,6 @@ final class TrackerStore {
             
             return trackerCoreDataArray.map { trackerCoreData in
                 Tracker(from: trackerCoreData)
-                
             }
         } catch {
             print("Error fetching trackers: \(error)")
@@ -51,17 +50,13 @@ final class TrackerStore {
         
         do {
             let trackerCoreDataArray = try context.fetch(fetchRequest)
-            for tracker in trackerCoreDataArray {
-                print("Tracker: \(tracker.name ?? ""), Category: \(tracker.category?.title ?? "Unknown")")
-            }
+            
             let groupedTrackers = Dictionary(grouping: trackerCoreDataArray, by: { $0.category?.title ?? "Unknown" })
             
             return groupedTrackers.map { (categoryTitle, trackersCoreData) in
                 let trackers = trackersCoreData.map { Tracker(from: $0) }
-                
                 return TrackerCategory(title: categoryTitle, trackers: trackers)
             }
-            
         } catch {
             print("Error fetching trackers with category: \(error)")
             return []
@@ -79,7 +74,6 @@ final class TrackerStore {
         trackerCoreData.schedule = weekDayConverter.convert(from: tracker.schedule)
         trackerCoreData.isHabit = tracker.isHabit
         trackerCoreData.category = trackerCategoryCoreData
-        print("Tracker added to category: \(trackerCategoryCoreData.title ?? "Unknown")")
         do {
             try context.save()
         } catch {
@@ -99,6 +93,21 @@ final class TrackerStore {
             }
         } catch {
             print("Error deleting tracker: \(error)")
+        }
+    }
+    
+    func setPinnedTracker(_ tracker: Tracker, isPinned: Bool) {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let trackerCoreData = results.first {
+                trackerCoreData.isPinned = isPinned
+                try context.save()
+            }
+        } catch {
+            print("Error updating pinned state for tracker: \(error)")
         }
     }
 }

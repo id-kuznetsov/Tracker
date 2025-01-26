@@ -333,10 +333,11 @@ extension TrackersViewController: UICollectionViewDelegate {
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let pinMessage = tracker.isPinned ? L10n.Trackers.MenuUnpin.title : L10n.Trackers.MenuPin.title
             let pinAction = UIAction(
-                title: L10n.Trackers.MenuPin.title
-            ) {_ in
-                // TODO: pin and unpin
+                title: pinMessage
+            ) { [weak self] _ in
+                self?.trackerStorage.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
             }
             
             let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { _ in

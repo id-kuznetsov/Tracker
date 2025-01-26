@@ -41,6 +41,7 @@
 "trackers" = "Trackers";
 "trackers.emptySearchState.title" = "Nothing was found";
 "trackers.emptyState.title" = "What are we going to track?";
+"trackers.pinned" = "Pinned";
 "trackers.menuPin.title" = "Pin";
 "trackers.menuUnpin.title" = "Unpin";
 "trackers.menuEdit.title" = "Edit";
