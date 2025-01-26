@@ -17,7 +17,6 @@ protocol StatisticViewModelProtocol {
 
 final class StatisticViewModel: StatisticViewModelProtocol {
     
-    
     // MARK: - Public Properties
     
     let statisticItemsCount: Int = StatisticType.allCases.count

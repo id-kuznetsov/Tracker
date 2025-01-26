@@ -36,7 +36,6 @@ final class FilterViewController: UIViewController {
         
         setupUI()
     }
-
     
     // MARK: - Private Methods
 
@@ -101,12 +100,9 @@ extension FilterViewController: UITableViewDelegate  {
         tableView.allowsSelection = false
 
         delegate?.updateFilter(allFilters[indexPath.row])
-        print(allFilters[indexPath.row])
-
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
         }
     }
 }
-

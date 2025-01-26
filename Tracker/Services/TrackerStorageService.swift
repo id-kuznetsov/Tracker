@@ -205,7 +205,6 @@ final class TrackerStorageService: NSObject {
         }
     }
     
-    
     private func removeAllRecords(_ trackerRecordID: UUID) {
         do {
             try trackerRecordStore.removeAllRecords(for: trackerRecordID)

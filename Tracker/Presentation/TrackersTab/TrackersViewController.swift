@@ -45,7 +45,6 @@ final class TrackersViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isScrollEnabled = true
         collectionView.backgroundColor = .ypWhite
-        //        collectionView.alwaysBounceVertical = true  // Включаем оверскролл по вертикали
         collectionView.bounces = true
         return collectionView
     }()
@@ -141,9 +140,46 @@ final class TrackersViewController: UIViewController {
     private func updateCollectionForSelectedDate(date: Date) {
         let startOfDay = calendar.startOfDay(for: date)
         completedTrackers = trackerStorage.getAllRecords()
-        categories = trackerStorage.getTrackersForDate(startOfDay, completedTrackers: completedTrackers)
+        let allCategories = trackerStorage.getTrackersForDate(startOfDay, completedTrackers: completedTrackers)
+        
+        categories = filteredCategories(from: allCategories, for: startOfDay)
+        
         checkTrackersCategories()
+        filterButton.isHidden = allCategories.isEmpty
         collectionView.reloadData()
+    }
+    
+    private func filteredCategories(from allCategories: [TrackerCategory], for startOfDay: Date) -> [TrackerCategory] {
+        switch filterTrackers {
+        case .allTrackers, .forToday:
+            return allCategories
+        case .completed:
+            return filterCompletedCategories(from: allCategories, for: startOfDay)
+        case .uncompleted:
+            return filterUncompletedCategories(from: allCategories, for: startOfDay)
+        }
+    }
+    
+    private func filterCompletedCategories(from allCategories: [TrackerCategory], for startOfDay: Date) -> [TrackerCategory] {
+        return allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackers: category.trackers.filter { tracker in
+                    completedTrackers.contains { $0.id == tracker.id && $0.date == startOfDay }
+                }
+            )
+        }.filter { !$0.trackers.isEmpty }
+    }
+    
+    private func filterUncompletedCategories(from allCategories: [TrackerCategory], for startOfDay: Date) -> [TrackerCategory] {
+        return allCategories.map { category in
+            TrackerCategory(
+                title: category.title,
+                trackers: category.trackers.filter { tracker in
+                    !completedTrackers.contains { $0.id == tracker.id && $0.date == startOfDay }
+                }
+            )
+        }.filter { !$0.trackers.isEmpty }
     }
     
     private func setupUI() {
@@ -204,10 +240,8 @@ final class TrackersViewController: UIViewController {
                 placeholderViewConstraints(for: placeholderView)
             )
             placeholderView.isHidden = false
-            filterButton.isHidden = true
         } else {
             placeholderView.isHidden = true
-            filterButton.isHidden = false
         }
     }
     
@@ -327,7 +361,6 @@ extension TrackersViewController: UICollectionViewDelegate {
                 self?.present(alert, animated: true)
             }
             
-            
             return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
             
         }
@@ -427,20 +460,12 @@ extension TrackersViewController: FilterViewControllerDelegate {
     func updateFilter(_ filter: TrackersFilter) {
         filterTrackers = filter
         showFilterIsActive(filter: filter)
-        switch filter {
-        case .allTrackers:
-            updateCollectionForSelectedDate(date: selectedDate)
-            // TODO:
-        case .forToday:
+        if filterTrackers == .forToday {
             selectedDate = Date()
             datePicker.date = selectedDate
-            datePickerValueChanged(datePicker)
-        case .completed:
-            break
-            // TODO:
-        case .uncompleted:
-            break
-            // TODO:
+            updateCollectionForSelectedDate(date: selectedDate)
+        } else {
+            updateCollectionForSelectedDate(date: selectedDate)
         }
     }
 }

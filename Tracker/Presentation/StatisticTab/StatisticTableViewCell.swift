@@ -15,7 +15,6 @@ final class StatisticTableViewCell: UITableViewCell {
     
     // MARK: - Private Properties
     
-    
     private lazy var valueLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 34, weight: .bold)
@@ -116,7 +115,6 @@ final class StatisticTableViewCell: UITableViewCell {
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
         gradientLayer.cornerRadius = Constants.cornerRadius
-        
         
         let shape = CAShapeLayer()
         shape.lineWidth = Constants.borderWidth

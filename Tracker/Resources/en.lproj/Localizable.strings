@@ -53,7 +53,6 @@
 "trackers.filters.completed" = "Completed";
 "trackers.filters.uncompleted" = "Uncompleted";
 
-
 "trackerType.habit" = "Habit";
 "trackerType.irregularEvent" = "Irregular event";
 "trackerType.title" = "Tracker creation";
