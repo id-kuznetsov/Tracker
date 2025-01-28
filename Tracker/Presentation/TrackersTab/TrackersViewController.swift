@@ -12,6 +12,7 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private Properties
     
     private let trackerStorage = TrackerStorageService.shared
+    private let analyticsService = AppMetricaService()
     
     private let calendar = Calendar.current
     private var selectedDate = Date()
@@ -92,7 +93,13 @@ final class TrackersViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        // TODO: send event
+        analyticsService.report(event: .open, screen: .main)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        analyticsService.report(event: .close, screen: .main)
     }
     
     deinit {
@@ -103,6 +110,7 @@ final class TrackersViewController: UIViewController {
     
     @objc
     private func didTapPlusButton() {
+        analyticsService.report(event: .click, screen: .main, item: .addTrack)
         let createNewTracker = TrackerTypeSelectionViewController()
         let navigationController = UINavigationController(rootViewController: createNewTracker)
         present(navigationController, animated: true)
@@ -118,6 +126,7 @@ final class TrackersViewController: UIViewController {
     
     @objc
     private func didTapFilterButton() {
+        analyticsService.report(event: .click, screen: .main, item: .filter)
         let filterViewController = FilterViewController()
         filterViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: filterViewController)
@@ -191,13 +200,14 @@ final class TrackersViewController: UIViewController {
     
     private func checkTrackersCategories(isFiltering: Bool) {
         let hasTrackers = categories.contains { !$0.trackers.isEmpty }
+        let isSearchEmpty = isFiltering && categories.isEmpty
         
-        if hasTrackers && filterTrackers == .allTrackers {
+        if hasTrackers {
             togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
             togglePlaceholderView(isShown: false, for: searchIsEmptyPlaceholderView)
             collectionView.isHidden = false
             filterButton.isHidden = false
-        } else if isFiltering {
+        } else if isSearchEmpty {
             togglePlaceholderView(isShown: true, for: searchIsEmptyPlaceholderView)
             togglePlaceholderView(isShown: false, for: trackersIsEmptyPlaceholderView)
             filterButton.isHidden = false
@@ -348,6 +358,7 @@ extension TrackersViewController: UICollectionViewDelegate {
             
             let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
                 guard let self else { return }
+                analyticsService.report(event: .click, screen: .main, item: .edit)
                 let category = trackerStorage.getCategory(for: tracker) ?? ""
                 let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
                 let editTrackerViewController = NewEventViewController(isEditing: true, tracker: tracker, selectedCategory: category, doneCount: doneCount)
@@ -359,6 +370,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                 title: L10n.Trackers.MenuDelete.title,
                 attributes: .destructive
             ) { [weak self] _ in
+                self?.analyticsService.report(event: .click, screen: .main, item: .delete)
                 let alert = UIAlertController(title: nil, message: L10n.Trackers.MenuDelete.message, preferredStyle: .actionSheet)
                 let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
                     self?.trackerStorage.deleteTracker(tracker)
@@ -452,7 +464,7 @@ extension TrackersViewController: TrackerCellDelegate {
         if selectedDate > Date() {
             return
         }
-        
+        analyticsService.report(event: .click, screen: .main, item: .addTrack)
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         let startOfDay = calendar.startOfDay(for: selectedDate)
         let trackerRecord = TrackerRecord(id: tracker.id, date: startOfDay)
