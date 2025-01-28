@@ -50,10 +50,7 @@ final class TrackerStorageService: NSObject {
     }
     
     // MARK: - Public Methods
-    
-    func getCategoriesCount() -> Int {
-        trackerCategoryStore.fetchCategories().count
-    }
+
     
     func getCategories() -> [TrackerCategory] {
         trackerCategoryStore.fetchCategories()
@@ -61,6 +58,15 @@ final class TrackerStorageService: NSObject {
     
     func getCategory(at index: Int) -> String? {
         trackerCategoryStore.fetchCategories()[index].title
+    }
+    
+    func getCategory(for tracker: Tracker) -> String? {
+        do {
+            return try trackerCategoryStore.fetchCategory(for: tracker.id)
+        } catch {
+            print("Error getting category: \(error) in file: \(#file), \(#line)")
+        }
+        return nil
     }
     
     func createCategory(_ category: TrackerCategory) {
@@ -97,6 +103,19 @@ final class TrackerStorageService: NSObject {
             )
         } catch {
             print("Error adding tracker: \(error) in file: \(#file), \(#line)")
+        }
+    }
+    
+    func updateTracker(_ updatedTracker: Tracker, to categoryTitle: String) {
+        do {
+            try trackerStore.updateTracker(updatedTracker, to: categoryTitle)
+            
+            NotificationCenter.default.post(
+                name: TrackerStorageService.didChangeNotification,
+                object: nil
+            )
+        } catch {
+            print("Error editing tracker: \(error) in file: \(#file), \(#line)")
         }
     }
     

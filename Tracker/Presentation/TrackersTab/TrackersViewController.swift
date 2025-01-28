@@ -346,8 +346,13 @@ extension TrackersViewController: UICollectionViewDelegate {
                 self?.trackerStorage.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
             }
             
-            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { _ in
-                // TODO: edit action
+            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
+                guard let self else { return }
+                let category = trackerStorage.getCategory(for: tracker) ?? ""
+                let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
+                let editTrackerViewController = NewEventViewController(isEditing: true, tracker: tracker, selectedCategory: category, doneCount: doneCount)
+                let navigationController = UINavigationController(rootViewController: editTrackerViewController)
+                self.present(navigationController, animated: true)
             }
             
             let deleteAction = UIAction(

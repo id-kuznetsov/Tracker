@@ -113,4 +113,19 @@ final class TrackerCategoryStore {
             throw TrackerCategoryStoreError.failedToFetchCategory
         }
     }
+    
+    func fetchCategory(for trackerID: UUID) throws -> String {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerID as CVarArg)
+        
+        do {
+            let trackerCoreDataArray = try context.fetch(fetchRequest)
+            let categoryTitle = trackerCoreDataArray.first?.category?.title ?? "Unknown"
+            return categoryTitle
+        } catch {
+            print("Error fetching trackers with category: \(error)")
+            return ""
+        }
+    }
 }

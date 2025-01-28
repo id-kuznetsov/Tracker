@@ -11,6 +11,7 @@ final class TrackerStore {
     
     enum TrackerStoreError: Error {
         case failedToAddTracker
+        case failedToUpdateTracker
     }
     
     private let coreDataManager =  CoreDataManager.shared
@@ -108,6 +109,29 @@ final class TrackerStore {
             }
         } catch {
             print("Error updating pinned state for tracker: \(error)")
+        }
+    }
+    
+    func updateTracker(_ tracker: Tracker, to categoryTitle: String) throws {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let trackerCoreData = results.first {
+                trackerCoreData.name = tracker.name
+                trackerCoreData.color = colorMarshaller.hexString(from: tracker.color)
+                trackerCoreData.emoji = tracker.emoji
+                trackerCoreData.schedule = weekDayConverter.convert(from: tracker.schedule)
+                trackerCoreData.isHabit = tracker.isHabit
+                let trackerCategoryCoreData = try trackerCategoryStore.fetchOrCreateCategory(by: categoryTitle)
+                trackerCoreData.category = trackerCategoryCoreData
+                
+                try context.save()
+            }
+        } catch {
+            print("Error updating tracker: \(error)")
+            throw TrackerStoreError.failedToUpdateTracker
         }
     }
 }
