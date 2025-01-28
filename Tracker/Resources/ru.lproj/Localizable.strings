@@ -37,6 +37,9 @@
 "trackerCreation.everyDay" = "Каждый день";
 "trackerCreation.placeholderText" = "Введите название трекера";
 "trackerCreation.titleLimitText" = "Ограничение 38 символов";
+"trackerCreation.saveTittle" = "Сохранить";
+"trackerCreation.editHabitTittle"= "Редактирование привычки";
+"trackerCreation.editIrregularEventTittle"= "Редактирование нерегулярного события";
 
 "trackers" = "Трекеры";
 "trackers.emptySearchState.title" = "Ничего не найдено";

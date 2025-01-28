@@ -37,6 +37,9 @@
 "trackerCreation.everyDay" = "Every day";
 "trackerCreation.placeholderText" = "Enter the name of the tracker";
 "trackerCreation.titleLimitText" = "38 characters limit";
+"trackerCreation.saveTittle" = "Save";
+"trackerCreation.editHabitTittle" = "Edit Habit";
+"trackerCreation.editIrregularEventTittle" = "Edit Irregular Event";
 
 "trackers" = "Trackers";
 "trackers.emptySearchState.title" = "Nothing was found";

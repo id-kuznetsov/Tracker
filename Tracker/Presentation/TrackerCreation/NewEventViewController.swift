@@ -288,10 +288,10 @@ final class NewEventViewController: UIViewController {
         trackerNameTextField.text = trackerTitle
         guard let doneCount else { return }
         doneCountLabel.text = L10n.dDays(doneCount)
-        createTrackerButton.setTitle("Сохранить", for: .normal)
+        createTrackerButton.setTitle(L10n.TrackerCreation.saveTittle, for: .normal)
         setItemsSelected()
         
-        title = isHabitEvent ? "Редактирование привычки" : "Редактирование нерегулярного события"
+        title = isHabitEvent ? L10n.TrackerCreation.editHabitTittle : L10n.TrackerCreation.editIrregularEventTittle
         contentView.addSubview(doneCountLabel)
         NSLayoutConstraint.activate(doneCountLabelConstraints())
     }
@@ -396,7 +396,6 @@ final class NewEventViewController: UIViewController {
     private func updateCategoryInCell(with selectedCategory: String) {
         if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))  {
             cell.detailTextLabel?.text = selectedCategory
-            print(selectedCategory)
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
     }

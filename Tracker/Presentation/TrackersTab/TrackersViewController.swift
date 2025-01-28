@@ -428,6 +428,8 @@ extension TrackersViewController {
     }
 }
 
+// MARK: UISearchResultsUpdating
+
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {

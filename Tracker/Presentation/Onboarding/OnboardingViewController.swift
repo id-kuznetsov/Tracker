@@ -39,11 +39,11 @@ final class OnboardingViewController: UIPageViewController {
     private lazy var onboardingButton: UIButton = {
         let button = UIButton()
         button.setTitle(L10n.Onboarding.buttonTitle, for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.backgroundColor = .ypBlack // TODO: сделать черной для темной темы
+        button.backgroundColor = .black
         button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         return button
     }()

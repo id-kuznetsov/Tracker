@@ -37,11 +37,14 @@
 "trackerCreation.everyDay" = "Cada día";
 "trackerCreation.placeholderText" = "Introduce el nombre del rastreador";
 "trackerCreation.titleLimitText" = "Límite de 38 caracteres";
+"trackerCreation.saveTittle" = "Guardar";
+"trackerCreation.editHabitTittle" = "Editar Hábito";
+"trackerCreation.editIrregularEventTittle" = "Editar Evento Irregular";
 
 "trackers" = "Rastreadores";
 "trackers.emptySearchState.title" = "No se encontraron resultados";
 "trackers.emptyState.title" = "¿Qué vamos a rastrear?";
-"trackers.pinned" = "Закрепленные";
+"trackers.pinned" = "Consagrado";
 "trackers.menuPin.title" = "Fijar";
 "trackers.menuUnpin.title" = "Desfijar";
 "trackers.menuEdit.title" = "Editar";
