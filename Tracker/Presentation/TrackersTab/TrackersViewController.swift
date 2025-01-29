@@ -264,9 +264,9 @@ final class TrackersViewController: UIViewController {
     private func showFilterIsActive(filter: TrackersFilter) {
         switch filter {
         case .allTrackers:
-            filterButton.titleLabel?.textColor = .ypWhite
+            filterButton.titleLabel?.textColor = .white
         case .forToday:
-            filterButton.titleLabel?.textColor = .ypWhite
+            filterButton.titleLabel?.textColor = .white
         case .completed:
             filterButton.titleLabel?.textColor = .green
         case .uncompleted:
