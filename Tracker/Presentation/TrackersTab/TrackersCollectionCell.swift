@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-    
+
     // MARK: Constants
     
     static let reuseIdentifier = "TrackersCollectionViewCell"
@@ -19,6 +19,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Private Properties
     
+    private var tracker: Tracker?
     private var trackerIsDone = false
     
     private lazy var emojiLabel: UILabel = {
@@ -86,6 +87,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         setCellUI()
+        setupContextMenu()
     }
     
     required init?(coder: NSCoder) {
@@ -112,8 +114,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     // MARK: - Public Methods
     
     func configureCell(with tracker: Tracker, isDone: Bool, doneCount: Int, selectedDate: Date) {
+        self.tracker = tracker
         colorTrackerBackground.backgroundColor = tracker.color
-        
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.name
         trackerButton.backgroundColor = tracker.color
@@ -130,6 +132,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Private Methods
     
+    private func setupContextMenu() {
+        let interaction = UIContextMenuInteraction(delegate: self)
+        colorTrackerBackground.addInteraction(interaction)
+        
+    }
+    
     private func changeButtonIcon(isDone: Bool) {
         let image = isDone ? UIImage(named: "Done") : UIImage(systemName: "plus")
         trackerButton.setImage(image, for: .normal)
@@ -145,8 +153,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     private func setCellUI() {
-        let subviews = [colorTrackerBackground, emojiBackgroundView, emojiLabel, titleLabel, trackerCountLabel, trackerButton, pinImageView]
-        subviews.forEach{
+        let subviews = [colorTrackerBackground, trackerCountLabel, trackerButton]
+        let viewsForMenu = [emojiBackgroundView, emojiLabel, titleLabel, pinImageView]
+        colorTrackerBackground.addSubviews(viewsForMenu)
+        (subviews + viewsForMenu).forEach{
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -224,3 +234,34 @@ extension TrackersCollectionViewCell {
     }
 }
 
+// MARK: UIContextMenuInteractionDelegate
+
+extension TrackersCollectionViewCell: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let tracker = self.tracker else { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let pinMessage = tracker.isPinned ? L10n.Trackers.MenuUnpin.title : L10n.Trackers.MenuPin.title
+            let pinAction = UIAction(
+                title: pinMessage
+            ) { [weak self] _ in
+                guard let self else { return }
+                self.delegate?.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
+            }
+            
+            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
+                guard let self else { return }
+                self.delegate?.editTrackerAction(for: tracker)
+            }
+            
+            let deleteAction = UIAction(
+                title: L10n.Trackers.MenuDelete.title,
+                attributes: .destructive
+            ) { [weak self] _ in
+                guard let self else { return }
+                delegate?.deleteTrackerAction(for: tracker)
+            }
+            
+            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+        }
+    }
+}

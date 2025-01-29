@@ -342,54 +342,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 
 // MARK: UICollectionViewDelegate
 
-extension TrackersViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-        guard let indexPath = indexPaths.first else { return nil }
-        
-        let tracker = categories[indexPath.section].trackers[indexPath.row]
-        
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let pinMessage = tracker.isPinned ? L10n.Trackers.MenuUnpin.title : L10n.Trackers.MenuPin.title
-            let pinAction = UIAction(
-                title: pinMessage
-            ) { [weak self] _ in
-                self?.trackerStorage.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
-            }
-            
-            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
-                guard let self else { return }
-                analyticsService.report(event: .click, screen: .main, item: .edit)
-                let category = trackerStorage.getCategory(for: tracker) ?? ""
-                let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
-                let editTrackerViewController = NewEventViewController(isEditing: true, tracker: tracker, selectedCategory: category, doneCount: doneCount)
-                let navigationController = UINavigationController(rootViewController: editTrackerViewController)
-                self.present(navigationController, animated: true)
-            }
-            
-            let deleteAction = UIAction(
-                title: L10n.Trackers.MenuDelete.title,
-                attributes: .destructive
-            ) { [weak self] _ in
-                self?.analyticsService.report(event: .click, screen: .main, item: .delete)
-                let alert = UIAlertController(title: nil, message: L10n.Trackers.MenuDelete.message, preferredStyle: .actionSheet)
-                let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
-                    self?.trackerStorage.deleteTracker(tracker)
-                }
-                
-                let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) { [weak self] _ in
-                    self?.dismiss(animated: true)
-                }
-                
-                alert.addAction(deleteAction)
-                alert.addAction(cancelAction)
-                self?.present(alert, animated: true)
-            }
-            
-            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
-            
-        }
-    }
-}
+extension TrackersViewController: UICollectionViewDelegate {}
 
 // MARK: UICollectionViewDelegateFlowLayout
 
@@ -461,6 +414,36 @@ extension TrackersViewController: UISearchResultsUpdating {
 // MARK: TrackerCellDelegate
 
 extension TrackersViewController: TrackerCellDelegate {
+
+    func setPinnedTracker(_ tracker: Tracker, isPinned: Bool) {
+        trackerStorage.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
+    }
+    
+    func editTrackerAction(for tracker: Tracker) {
+        analyticsService.report(event: .click, screen: .main, item: .edit)
+        let category = trackerStorage.getCategory(for: tracker) ?? ""
+        let doneCount = completedTrackers.filter{ $0.id == tracker.id }.count
+        let editTrackerViewController = NewEventViewController(isEditing: true, tracker: tracker, selectedCategory: category, doneCount: doneCount)
+        let navigationController = UINavigationController(rootViewController: editTrackerViewController)
+        self.present(navigationController, animated: true)
+    }
+    
+    func deleteTrackerAction(for tracker: Tracker) {
+        analyticsService.report(event: .click, screen: .main, item: .delete)
+        let alert = UIAlertController(title: nil, message: L10n.Trackers.MenuDelete.message, preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
+            self?.trackerStorage.deleteTracker(tracker)
+        }
+        
+        let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) { [weak self] _ in
+            self?.dismiss(animated: true)
+        }
+        
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    
     func didTapTrackerButton(_ cell: TrackersCollectionViewCell) {
         guard let indexPath = collectionView.indexPath(for: cell) else { return }
         if selectedDate > Date() {
