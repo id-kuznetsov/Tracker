@@ -17,6 +17,7 @@ final class FilterViewController: UIViewController {
     
     private let allFilters = TrackersFilter.allCases
     private var lastSelectedFilter: TrackersFilter?
+    private var lastSelectedFilterTitle = AppStateManager.shared.selectedFilter
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
@@ -35,6 +36,7 @@ final class FilterViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        lastSelectedFilter = allFilters.first(where: { $0.title == lastSelectedFilterTitle })
     }
     
     // MARK: - Private Methods
@@ -74,9 +76,10 @@ extension FilterViewController: UITableViewDataSource  {
         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         cell.selectionStyle = .none
         
-        cell.textLabel?.text = allFilters[indexPath.row].title
+        let filter = allFilters[indexPath.row]
+        cell.textLabel?.text = filter.title
         
-        if allFilters[indexPath.row] == lastSelectedFilter {
+        if filter == lastSelectedFilter {
             cell.accessoryType = .checkmark
         } else {
             cell.accessoryType = .none
@@ -95,6 +98,9 @@ extension FilterViewController: UITableViewDelegate  {
             let currentIndexPath = IndexPath(row: row, section: 0)
             tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
          }
+        
+        let selectedFilter = allFilters[indexPath.row]
+        AppStateManager.shared.selectedFilter = selectedFilter.title
         
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
