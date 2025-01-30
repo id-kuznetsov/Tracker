@@ -12,6 +12,7 @@
 "categoryCreation.placeholderTitle" = "Введите название категории";
 "categoryCreation.emptyPlaceholderTitle" = "Привычки и события можно\n объединить по смыслу";
 "categoryCreation.menuDelete.message" = "Эта категория точно не нужна?";
+"categoryCreation.editTitle" = "Редактирование категории";
 
 "newHabit.title" = "Новая привычка";
 "newIrregularEvent.title" = "Новое нерегулярное событие";

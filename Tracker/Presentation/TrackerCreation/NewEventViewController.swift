@@ -16,7 +16,7 @@ final class NewEventViewController: UIViewController {
     private let emojis = Emojis.emojis
     private let colors = ColorPicker.colors
     private var isHabitEvent: Bool
-    private var isEdit: Bool?
+    private var isEdit: Bool = false
     private var trackerTitle: String?
     private var selectedCategory: String?
     private var selectedDays = [WeekDay]()
@@ -165,6 +165,7 @@ final class NewEventViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -336,7 +337,7 @@ final class NewEventViewController: UIViewController {
     }
     
     private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
-        if isEdit != nil {
+        if isEdit {
             [ trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
               trackerNameStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 102),
               trackerNameStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -542,12 +543,12 @@ extension NewEventViewController: UICollectionViewDataSource {
             switch section {
             case .emoji:
                 cell.configureCell(emoji: emojis[indexPath.item])
-                if isEdit ?? false && selectedEmojiIndex == indexPath.row  {
+                if isEdit && selectedEmojiIndex == indexPath.row  {
                     cell.makeEmojiCellSelected(true)
                 }
             case .colors:
                 cell.configureCell(color: colors[indexPath.item])
-                if isEdit ?? false && selectedColorIndex == indexPath.row  {
+                if isEdit && selectedColorIndex == indexPath.row  {
                     guard let selectedColor else { return cell }
                     cell.makeColorCellSelected(isSelected: true, color: selectedColor)
                 }

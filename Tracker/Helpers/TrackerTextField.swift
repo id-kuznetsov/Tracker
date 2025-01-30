@@ -22,6 +22,7 @@ final class TrackerTextField: UITextField {
         clearButtonMode = .whileEditing
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

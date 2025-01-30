@@ -12,6 +12,7 @@
 "categoryCreation.placeholderTitle" = "Introduzca el nombre de la categoría";
 "categoryCreation.emptyPlaceholderTitle" = "Hábitos y eventos pueden\n combinar en sentido";
 "categoryCreation.menuDelete.message" = "Are you sure you want to delete the category?";
+"categoryCreation.editTitle" = "Editar categoría";
 
 "newHabit.title" = "Nuevo hábito";
 "newIrregularEvent.title" = "Nuevo evento irregular";

@@ -59,6 +59,7 @@ final class EditCategoryViewController: UIViewController {
         setCategoryName(categoryToEdit)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -84,7 +85,7 @@ final class EditCategoryViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = "Редактирование категории"
+        title = L10n.CategoryCreation.editTitle
         view.backgroundColor = .ypWhite
         isShownWarningLabel(false)
         setCreateButtonEnabled(status: false)
@@ -126,18 +127,18 @@ final class EditCategoryViewController: UIViewController {
     }
     
     private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
-        [categoryNameTextField.heightAnchor.constraint(equalToConstant: 75),
-         categoryNameStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-         categoryNameStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-         categoryNameStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16)
+        [categoryNameTextField.heightAnchor.constraint(equalToConstant: Constants.textFieldHeight),
+         categoryNameStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.textFieldTopInset),
+         categoryNameStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: Constants.textFieldLeadingInset),
+         categoryNameStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: Constants.textFieldTrailingInset)
         ]
     }
     
     private func doneButtonConstraints() -> [NSLayoutConstraint] {
-        [doneButton.heightAnchor.constraint(equalToConstant: 60),
-         doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-         doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-         doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+        [doneButton.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
+         doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingButtonInset),
+         doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: Constants.trailingButtonInset),
+         doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: Constants.buttonBottomInset)
         ]
     }
 }
@@ -149,7 +150,7 @@ extension EditCategoryViewController: UITextFieldDelegate {
         let text = textField.text ?? ""
         let newText = text.count + string.count - range.length
         categoryTitle = text
-        if newText > 38 {
+        if newText > Constants.maxCategoryNameLength {
             isShownWarningLabel(true)
             return false
         } else {
@@ -168,6 +169,28 @@ extension EditCategoryViewController: UITextFieldDelegate {
         } else {
             return false
         }
+    }
+}
+
+private extension EditCategoryViewController {
+    struct Constants {
+        static let maxCategoryNameLength = 38
+        
+        static let buttonHeight: CGFloat = 60
+        static let leadingButtonInset: CGFloat = 20
+        static let trailingButtonInset: CGFloat = -20
+        static let buttonBottomInset: CGFloat = -16
+
+        static let textFieldTopInset: CGFloat = 24
+        static let textFieldHeight: CGFloat = 75
+        static let textFieldLeadingInset: CGFloat = 16
+        static let textFieldTrailingInset: CGFloat = -16
+//        static let headerHeight: CGFloat = 39
+//        static let cellSpacing: CGFloat = 5
+//        static let leftInset: CGFloat = 18
+//        static let rightInset: CGFloat = 18
+//        static let topInset: CGFloat = 24
+//        static let bottomInset: CGFloat = 24
     }
 }
 

@@ -21,6 +21,7 @@ final class FilterViewController: UIViewController {
     
     private lazy var tableView: TrackerTableView = {
         let tableView = TrackerTableView()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
@@ -29,7 +30,7 @@ final class FilterViewController: UIViewController {
         tableView.isScrollEnabled = true
         return tableView
     }()
-
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -40,7 +41,7 @@ final class FilterViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-
+    
     private func setupUI() {
         view.addSubview(tableView)
         view.backgroundColor = .ypWhite
@@ -73,7 +74,12 @@ extension FilterViewController: UITableViewDataSource  {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
+        
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "cell",
+            for: indexPath
+        )
+        
         cell.selectionStyle = .none
         
         let filter = allFilters[indexPath.row]
@@ -97,16 +103,16 @@ extension FilterViewController: UITableViewDelegate  {
         for row in 0..<allFilters.count {
             let currentIndexPath = IndexPath(row: row, section: 0)
             tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
-         }
+        }
         
         let selectedFilter = allFilters[indexPath.row]
         AppStateManager.shared.selectedFilter = selectedFilter.title
         
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
-
+        
         delegate?.updateFilter(allFilters[indexPath.row])
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
         }

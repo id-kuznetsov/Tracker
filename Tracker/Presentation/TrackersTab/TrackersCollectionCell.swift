@@ -90,6 +90,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         setupContextMenu()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -244,21 +245,18 @@ extension TrackersCollectionViewCell: UIContextMenuInteractionDelegate {
             let pinAction = UIAction(
                 title: pinMessage
             ) { [weak self] _ in
-                guard let self else { return }
-                self.delegate?.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
+                self?.delegate?.setPinnedTracker(tracker, isPinned: !tracker.isPinned)
             }
             
             let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
-                guard let self else { return }
-                self.delegate?.editTrackerAction(for: tracker)
+                self?.delegate?.editTrackerAction(for: tracker)
             }
             
             let deleteAction = UIAction(
                 title: L10n.Trackers.MenuDelete.title,
                 attributes: .destructive
             ) { [weak self] _ in
-                guard let self else { return }
-                delegate?.deleteTrackerAction(for: tracker)
+                self?.delegate?.deleteTrackerAction(for: tracker)
             }
             
             return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
