@@ -21,8 +21,8 @@ final class OnboardingPageViewController: UIViewController {
     
     private lazy var onboardingTitleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .ypBlack
-        label.numberOfLines = 2
+        label.textColor = .black
+        label.numberOfLines = 3
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
         return label
@@ -36,6 +36,7 @@ final class OnboardingPageViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

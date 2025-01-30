@@ -14,19 +14,22 @@ struct Tracker {
     let emoji: String
     let schedule: [WeekDay]
     let isHabit: Bool
+    let isPinned: Bool
     
     init(id: UUID,
          name: String,
          color: UIColor,
          emoji: String,
          schedule: [WeekDay],
-         isHabit: Bool) {
+         isHabit: Bool,
+         isPinned: Bool) {
         self.id = id
         self.name = name
         self.color = color
         self.emoji = emoji
         self.schedule = schedule
         self.isHabit = isHabit
+        self.isPinned = isPinned
     }
     
     init(from coreData: TrackerCoreData) {
@@ -36,5 +39,6 @@ struct Tracker {
         self.emoji = coreData.emoji ?? ""
         self.schedule = WeekDayConverter().convert(from: coreData.schedule ?? "")
         self.isHabit = coreData.isHabit
+        self.isPinned = coreData.isPinned
     }
 }

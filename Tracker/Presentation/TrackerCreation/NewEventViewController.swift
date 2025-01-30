@@ -11,11 +11,12 @@ final class NewEventViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private let tableViewSelections = ["Категория", "Расписание"]
+    private let tableViewSelections = [L10n.category, L10n.schedule]
     private let trackerStorage = TrackerStorageService.shared
     private let emojis = Emojis.emojis
     private let colors = ColorPicker.colors
     private var isHabitEvent: Bool
+    private var isEdit: Bool = false
     private var trackerTitle: String?
     private var selectedCategory: String?
     private var selectedDays = [WeekDay]()
@@ -23,9 +24,11 @@ final class NewEventViewController: UIViewController {
     private var selectedEmojiIndex: Int?
     private var selectedColor: UIColor?
     private var selectedColorIndex: Int?
+    private var doneCount: Int?
+    private var previousTracker: Tracker?
     
     private lazy var trackerNameTextField: TrackerTextField = {
-        let textField = TrackerTextField(backgroundText: "Введите название трекера")
+        let textField = TrackerTextField(backgroundText: L10n.TrackerCreation.placeholderText)
         textField.delegate = self
         return textField
     }()
@@ -35,12 +38,21 @@ final class NewEventViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypRed
         label.textAlignment = .center
-        label.text = "Ограничение 38 символов"
+        label.text = L10n.TrackerCreation.titleLimitText
+        return label
+    }()
+    
+    private lazy var doneCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = .ypBlack
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var trackerNameStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [trackerNameTextField, warningLabel])
+        let stackView = UIStackView(arrangedSubviews: [doneCountLabel, trackerNameTextField, warningLabel])
         stackView.axis = .vertical
         stackView.spacing = 8
         return stackView
@@ -58,7 +70,7 @@ final class NewEventViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(L10n.TrackerCreation.cancelButtonTitle, for: .normal)
         button.setTitleColor(.ypRed, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypWhite
@@ -73,8 +85,8 @@ final class NewEventViewController: UIViewController {
     private lazy var createTrackerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Создать", for: .normal)
-        button.setTitleColor(.ypWhite, for: .normal)
+        button.setTitle(L10n.TrackerCreation.createButtonTitle, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGrey
         button.layer.cornerRadius = 16
@@ -133,6 +145,27 @@ final class NewEventViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    init (
+        isEditing: Bool,
+        tracker: Tracker,
+        selectedCategory: String,
+        doneCount: Int
+    ) {
+        self.previousTracker = tracker
+        self.isEdit = isEditing
+        self.trackerTitle = tracker.name
+        self.selectedCategory = selectedCategory
+        self.selectedColor = tracker.color
+        self.selectedEmoji = tracker.emoji
+        self.isHabitEvent = tracker.isHabit
+        self.selectedDays = tracker.schedule
+        self.selectedEmojiIndex = emojis.firstIndex(of: tracker.emoji)
+        self.selectedColorIndex = colors.firstIndex(where: { $0.isEqualToColor(tracker.color)})
+        self.doneCount = doneCount
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -143,6 +176,9 @@ final class NewEventViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
+        if isEdit == true {
+            setupEditMode()
+        }
     }
     
     // MARK: - Actions
@@ -157,17 +193,31 @@ final class NewEventViewController: UIViewController {
         guard let trackerTitle, let selectedCategory, let selectedEmoji, let selectedColor else {
             return print("Missing data")
         }
+        let schedule = isHabitEvent ? selectedDays : WeekDay.allCases
         
-        let newTracker = Tracker(
-            id: UUID(),
-            name: trackerTitle,
-            color: selectedColor,
-            emoji: selectedEmoji,
-            schedule: isHabitEvent ? selectedDays : WeekDay.allCases,
-            isHabit: isHabitEvent
-        )
-        
-        trackerStorage.addTracker(newTracker, to: selectedCategory)
+        if let previousTracker {
+            let updatedTracker = Tracker(
+                id: previousTracker.id,
+                name: trackerTitle,
+                color: selectedColor,
+                emoji: selectedEmoji,
+                schedule: schedule,
+                isHabit: isHabitEvent,
+                isPinned: previousTracker.isPinned
+            )
+            trackerStorage.updateTracker(updatedTracker, to: selectedCategory) 
+        } else {
+            let newTracker = Tracker(
+                id: UUID(),
+                name: trackerTitle,
+                color: selectedColor,
+                emoji: selectedEmoji,
+                schedule: schedule,
+                isHabit: isHabitEvent,
+                isPinned: false
+            )
+            trackerStorage.addTracker(newTracker, to: selectedCategory)
+        }
         
         view.window?.rootViewController?.dismiss(animated: true)
     }
@@ -175,7 +225,7 @@ final class NewEventViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = isHabitEvent ? "Новая привычка" : "Новое нерегулярное событие"
+        title = isHabitEvent ? L10n.NewHabit.title : L10n.NewIrregularEvent.title
         view.backgroundColor = .ypWhite
         
         view.addSubview(scrollView)
@@ -183,6 +233,7 @@ final class NewEventViewController: UIViewController {
         setupScrollView()
         
         showWarningLabel(false)
+        
         
         NSLayoutConstraint.activate(
             scrollViewConstraints() +
@@ -227,9 +278,34 @@ final class NewEventViewController: UIViewController {
         if status {
             createTrackerButton.backgroundColor = .ypBlack
             createTrackerButton.isEnabled = status
+            createTrackerButton.setTitleColor(.ypWhite, for: .normal)
         } else {
             createTrackerButton.backgroundColor = .ypGrey
             createTrackerButton.isEnabled = status
+        }
+    }
+    
+    private func setupEditMode() {
+        trackerNameTextField.text = trackerTitle
+        guard let doneCount else { return }
+        doneCountLabel.text = L10n.dDays(doneCount)
+        createTrackerButton.setTitle(L10n.TrackerCreation.saveTittle, for: .normal)
+        setItemsSelected()
+        
+        title = isHabitEvent ? L10n.TrackerCreation.editHabitTittle : L10n.TrackerCreation.editIrregularEventTittle
+        contentView.addSubview(doneCountLabel)
+        NSLayoutConstraint.activate(doneCountLabelConstraints())
+    }
+    
+    private func setItemsSelected() {
+        if let selectedEmojiIndex {
+            let emojiIndexPath = IndexPath(row: selectedEmojiIndex, section: SectionInCollection.emoji.rawValue)
+            emojiAndColorCollectionView.selectItem(at: emojiIndexPath, animated: false, scrollPosition: .init())
+        }
+        
+        if let selectedColorIndex {
+            let colorIndexPath = IndexPath(row: selectedColorIndex, section: SectionInCollection.colors.rawValue)
+            emojiAndColorCollectionView.selectItem(at: colorIndexPath, animated: false, scrollPosition: .init())
         }
     }
     
@@ -254,12 +330,26 @@ final class NewEventViewController: UIViewController {
         ]
     }
     
-    private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
-        [trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
-         trackerNameStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-         trackerNameStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-         trackerNameStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+    private func doneCountLabelConstraints() -> [NSLayoutConstraint] {
+        [doneCountLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+         doneCountLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ]
+    }
+    
+    private func trackerNameStackViewConstraints() -> [NSLayoutConstraint] {
+        if isEdit {
+            [ trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
+              trackerNameStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 102),
+              trackerNameStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+              trackerNameStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            ]
+        } else {
+            [trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
+             trackerNameStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+             trackerNameStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+             trackerNameStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            ]
+        }
     }
     
     private func tableViewSelectionsConstraints() -> [NSLayoutConstraint] {
@@ -291,6 +381,25 @@ final class NewEventViewController: UIViewController {
                 emojiAndColorCollectionView.heightAnchor.constraint(equalToConstant: collectionHeight)
         ]
     }
+    
+    private func updateScheduleInCell(with days: [WeekDay] ) {
+        let receivedDays = days.map{ $0.shortName }
+        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0))  {
+            if receivedDays.count != 7 {
+                cell.detailTextLabel?.text = receivedDays.joined(separator: ", ")
+            } else {
+                cell.detailTextLabel?.text = L10n.TrackerCreation.everyDay
+            }
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        }
+    }
+    
+    private func updateCategoryInCell(with selectedCategory: String) {
+        if let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0))  {
+            cell.detailTextLabel?.text = selectedCategory
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        }
+    }
 }
 
 // MARK: - Extensions
@@ -309,7 +418,20 @@ extension NewEventViewController: UITableViewDataSource  {
         cell.textLabel?.text = tableViewSelections[indexPath.row]
         cell.backgroundColor = .ypBackground
         cell.detailTextLabel?.textColor = .ypGrey
-        
+        if indexPath.row == 0 {
+            cell.detailTextLabel?.text = selectedCategory
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        } else {
+            let receivedDays = selectedDays.map{ $0.shortName }
+            
+            if receivedDays.count != 7 {
+                cell.detailTextLabel?.text = receivedDays.joined(separator: ", ")
+            } else {
+                cell.detailTextLabel?.text = L10n.TrackerCreation.everyDay
+            }
+            cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+            
+        }
         return cell
     }
 }
@@ -421,8 +543,15 @@ extension NewEventViewController: UICollectionViewDataSource {
             switch section {
             case .emoji:
                 cell.configureCell(emoji: emojis[indexPath.item])
+                if isEdit && selectedEmojiIndex == indexPath.row  {
+                    cell.makeEmojiCellSelected(true)
+                }
             case .colors:
                 cell.configureCell(color: colors[indexPath.item])
+                if isEdit && selectedColorIndex == indexPath.row  {
+                    guard let selectedColor else { return cell }
+                    cell.makeColorCellSelected(isSelected: true, color: selectedColor)
+                }
             }
         }
         
@@ -497,7 +626,7 @@ extension NewEventViewController: ScheduleViewControllerDelegate {
             if receivedDays.count != 7 {
                 cell.detailTextLabel?.text = receivedDays.joined(separator: ", ")
             } else {
-                cell.detailTextLabel?.text = "Каждый день"
+                cell.detailTextLabel?.text = L10n.TrackerCreation.everyDay
             }
             cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         }
@@ -534,7 +663,7 @@ private extension NewEventViewController {
             case .emoji:
                 return "Emoji"
             case .colors:
-                return "Цвет"
+                return L10n.TrackerCreation.colorSectionTitle
             }
         }
     }

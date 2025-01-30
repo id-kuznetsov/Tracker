@@ -1,0 +1,79 @@
+/* 
+ Localizable.strings
+ Tracker
+ 
+ Created by Ilya Kuznetsov on 18.01.2025.
+ 
+ */
+
+"addCategoryButton" = "Añadir categoría";
+"category" = "Categoría";
+"categoryCreation.title" = "Nueva categoría";
+"categoryCreation.placeholderTitle" = "Introduzca el nombre de la categoría";
+"categoryCreation.emptyPlaceholderTitle" = "Hábitos y eventos pueden\n combinar en sentido";
+"categoryCreation.menuDelete.message" = "Are you sure you want to delete the category?";
+"categoryCreation.editTitle" = "Editar categoría";
+
+"newHabit.title" = "Nuevo hábito";
+"newIrregularEvent.title" = "Nuevo evento irregular";
+
+"onboarding.buttonTitle" = "¡Estas son las tecnologías!";
+"onboarding.firstPageText" = "Sigue solo\n lo que quieras";
+"onboarding.secondPageText" = "Incluso si no es\n litros de agua y yoga";
+
+"readyButton" = "Listo";
+"schedule" = "Horario";
+"searchPlaceholderText" = "Buscar";
+
+"statistics" = "Statistics";
+"statistic.emptyState.title" = "Aún no hay nada que analizar";
+"statistics.bestPeriod" = "Mejor período";
+"statistics.perfectDays" = "Días perfectos";
+"statistics.trackersCompleted" = "Rastreadores completados";
+"statistics.averageValue" = "Valor promedio";
+
+"trackerCreation.cancelButtonTitle" = "Cancelar";
+"trackerCreation.colorSectionTitle" = "Color";
+"trackerCreation.createButtonTitle" = "Crear";
+"trackerCreation.everyDay" = "Cada día";
+"trackerCreation.placeholderText" = "Introduce el nombre del rastreador";
+"trackerCreation.titleLimitText" = "Límite de 38 caracteres";
+"trackerCreation.saveTittle" = "Guardar";
+"trackerCreation.editHabitTittle" = "Editar Hábito";
+"trackerCreation.editIrregularEventTittle" = "Editar Evento Irregular";
+
+"trackers" = "Rastreadores";
+"trackers.emptySearchState.title" = "No se encontraron resultados";
+"trackers.emptyState.title" = "¿Qué vamos a rastrear?";
+"trackers.pinned" = "Consagrado";
+"trackers.menuPin.title" = "Fijar";
+"trackers.menuUnpin.title" = "Desfijar";
+"trackers.menuEdit.title" = "Editar";
+"trackers.menuDelete.title" = "Eliminar";
+"trackers.menuDelete.message" = "Está seguro de que desea eliminar el rastreador?";
+"trackers.menuDelete.cancel" = "Cancelar";
+"trackers.filters" = "Filtros";
+"trackers.filters.allTrackers" = "Todos los rastreadores";
+"trackers.filters.forToday" = "Para hoy";
+"trackers.filters.completed" = "Completados";
+"trackers.filters.uncompleted" = "No completados";
+
+"trackerType.habit" = "Hábito";
+"trackerType.irregularEvent" = "Evento irregular";
+"trackerType.title" = "Creación de rastreador";
+
+"weekDayFull.monday" = "Lunes";
+"weekDayFull.tuesday" = "Martes";
+"weekDayFull.wednesday" = "Miércoles";
+"weekDayFull.thursday" = "Jueves";
+"weekDayFull.friday" = "Viernes";
+"weekDayFull.saturday" = "Sábado";
+"weekDayFull.sunday" = "Domingo";
+
+"weekDayShort.monday" = "Lun";
+"weekDayShort.tuesday" = "Mar";
+"weekDayShort.wednesday" = "Mié";
+"weekDayShort.thursday" = "Jue";
+"weekDayShort.friday" = "Vie";
+"weekDayShort.saturday" = "Sáb";
+"weekDayShort.sunday" = "Dom";

@@ -12,8 +12,8 @@ final class TabBarController: UITabBarController {
     // MARK: Constants
     
     enum Constants {
-        static let trackerTitle = "Трекеры"
-        static let statisticTitle = "Статистика"
+        static let trackerTitle = L10n.trackers
+        static let statisticTitle = L10n.statistics
     }
     
     // MARK: - Lifecycle
@@ -34,7 +34,8 @@ final class TabBarController: UITabBarController {
         trackersViewController.tabBarItem.image = UIImage(systemName: "record.circle.fill")
         trackersViewController.navigationController?.navigationBar.prefersLargeTitles = true
         
-        let statisticViewController = StatisticViewController()
+        let statisticViewModel = StatisticViewModel()
+        let statisticViewController = StatisticViewController(viewModel: statisticViewModel)
         let statisticNavigationController = UINavigationController(rootViewController: statisticViewController)
         statisticViewController.title = Constants.statisticTitle
         statisticViewController.tabBarItem.image = UIImage(systemName: "hare.fill")
@@ -47,7 +48,11 @@ final class TabBarController: UITabBarController {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.stackedLayoutAppearance.selected.iconColor = .ypBlue
-        appearance.shadowColor = .ypGrey
+        appearance.backgroundColor = .ypWhite
+        tabBar.layer.borderWidth = 1
+        appearance.shadowColor = .ypTabBarBorder
+        tabBar.layer.borderColor = UIColor.ypTabBarBorder.cgColor
+        appearance.backgroundColor = .ypWhite
         tabBar.standardAppearance = appearance
     }
 }

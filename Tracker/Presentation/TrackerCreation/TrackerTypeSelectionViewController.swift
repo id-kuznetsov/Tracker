@@ -14,7 +14,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     private lazy var newHabitButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle(L10n.TrackerType.habit, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -27,7 +27,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     private lazy var newIrregularEventButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Нерегулярное событие", for: .normal)
+        button.setTitle(L10n.TrackerType.irregularEvent, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -72,7 +72,7 @@ final class TrackerTypeSelectionViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupUI() {
-        title = "Создание трекера"
+        title = L10n.TrackerType.title
         addButtonsInStackView()
         view.addSubview(stackView)
         view.backgroundColor = .ypWhite

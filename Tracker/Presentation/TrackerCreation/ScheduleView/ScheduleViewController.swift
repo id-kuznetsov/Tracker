@@ -31,7 +31,7 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(L10n.readyButton, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -71,7 +71,7 @@ final class ScheduleViewController: UIViewController {
         }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypWhite
-        title = "Расписание"
+        title = L10n.schedule
         
         NSLayoutConstraint.activate(
             tableViewConstraints() +

@@ -20,10 +20,7 @@ final class CategoryViewController: UIViewController {
     private lazy var categoriesIsEmptyPlaceholderView: PlaceholderView = {
         let placeholderView = PlaceholderView(
             imageName: "Tracker Placeholder",
-            message: """
-                Привычки и события можно
-                объединить по смыслу
-                """
+            message: L10n.CategoryCreation.emptyPlaceholderTitle
         )
         placeholderView.translatesAutoresizingMaskIntoConstraints = false
         return placeholderView
@@ -41,7 +38,7 @@ final class CategoryViewController: UIViewController {
     
     private lazy var addCategoryButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(L10n.addCategoryButton, for: .normal)
         button.setTitleColor(.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -60,6 +57,7 @@ final class CategoryViewController: UIViewController {
         viewModel.loadCategories()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -115,7 +113,7 @@ final class CategoryViewController: UIViewController {
         }
         view.backgroundColor = .ypWhite
         tableView.backgroundColor = .ypBackground
-        title = "Категория"
+        title = L10n.category
         
         checkCategories()
         
@@ -128,7 +126,7 @@ final class CategoryViewController: UIViewController {
     // MARK: Constraints
     
     private func tableViewConstraints() -> [NSLayoutConstraint] {
-        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 75 * CGFloat(viewModel.getCategoriesCount()))
+        let heightConstraint = tableView.heightAnchor.constraint(lessThanOrEqualToConstant: 75 * CGFloat(viewModel.categoriesCount))
         heightConstraint.priority = .defaultLow
         
         let bottomConstraint = tableView.bottomAnchor.constraint(equalTo: addCategoryButton.topAnchor, constant: -24)
@@ -159,7 +157,7 @@ final class CategoryViewController: UIViewController {
     
     private func updateTableViewHeight() {
         if let heightConstraint = tableView.constraints.first(where: { $0.firstAttribute == .height }) {
-            heightConstraint.constant = CGFloat(viewModel.getCategoriesCount()) * 75
+            heightConstraint.constant = CGFloat(viewModel.categoriesCount) * 75
         }
         view.layoutIfNeeded()
     }
@@ -171,7 +169,7 @@ final class CategoryViewController: UIViewController {
 
 extension CategoryViewController: UITableViewDataSource  {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.getCategoriesCount()
+        viewModel.categoriesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -195,10 +193,10 @@ extension CategoryViewController: UITableViewDataSource  {
 
 extension CategoryViewController: UITableViewDelegate  {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        for row in 0..<viewModel.getCategoriesCount() {
+        for row in 0..<viewModel.categoriesCount {
             let currentIndexPath = IndexPath(row: row, section: 0)
             tableView.cellForRow(at: currentIndexPath)?.accessoryType = .none
-         }
+        }
         
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         tableView.allowsSelection = false
@@ -207,12 +205,46 @@ extension CategoryViewController: UITableViewDelegate  {
             viewModel.saveLastSelectedCategoryTitle(categoryTitle)
             delegate?.showSelectedCategory(category: categoryTitle)
         }
-
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.dismiss(animated: true)
         }
     }
+    
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSIndexPath,
+            previewProvider: nil
+        ) { actions in
+            let editAction = UIAction(title: L10n.Trackers.MenuEdit.title) { [weak self] _ in
+                guard let self else { return }
+                let categoryToEdit = self.viewModel.getCategoryTitle(at: indexPath) ?? ""
+                let editCategoryViewController = EditCategoryViewController(categoryToEdit: categoryToEdit)
+                editCategoryViewController.delegate = self
+                let navigationController = UINavigationController(rootViewController: editCategoryViewController)
+                self.present(navigationController, animated: true)
+                
+            }
+            let deleteAction = UIAction(title: L10n.Trackers.MenuDelete.title, attributes: .destructive) { [weak self] _ in
+                let alert = UIAlertController(title: nil, message: L10n.CategoryCreation.MenuDelete.message, preferredStyle: .actionSheet)
+                let deleteAction = UIAlertAction(title: L10n.Trackers.MenuDelete.title, style: .destructive) { [weak self] _ in
+                    self?.viewModel.deleteCategory(at: indexPath)
+                }
+                let cancelAction = UIAlertAction(title: L10n.Trackers.MenuDelete.cancel, style: .cancel) {_ in }
+                alert.addAction(deleteAction)
+                alert.addAction(cancelAction)
+                self?.present(alert, animated: true)
+            }
+            return UIMenu(title: "", children: [editAction, deleteAction])
+        }
+    }
 }
+
+// MARK: NewCategoryViewControllerDelegate
 
 extension CategoryViewController: NewCategoryViewControllerDelegate {
     func didTapDoneButton(categoryTitle: String) {
@@ -224,3 +256,14 @@ extension CategoryViewController: NewCategoryViewControllerDelegate {
         updateTableViewHeight()
     }
 }
+
+// MARK: NewCategoryViewControllerDelegate
+
+extension CategoryViewController: EditCategoryViewControllerDelegate {
+    func didTapDoneButton(newCategoryTitle: String, perviousCategoryTitle: String) {
+        viewModel.editCategory(perviousCategoryTitle, with: newCategoryTitle)
+        checkCategories()
+        updateTableViewHeight()
+    }
+}
+

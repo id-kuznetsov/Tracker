@@ -9,10 +9,12 @@ import Foundation
 
 protocol CategoryViewModelProtocol {
     var categoriesDidChange: Binding<[TrackerCategory]>? { get set }
+    var categoriesCount: Int { get }
     
     func loadCategories()
-    func getCategoriesCount() -> Int
     func addCategory(_ newCategory: TrackerCategory)
+    func deleteCategory(at indexPath: IndexPath)
+    func editCategory(_ categoryToEdit: String, with newTitle: String)
     func getCategoryTitle(at indexPath: IndexPath) -> String?
     func getSelectedCategoryTitle() -> String? 
     func saveLastSelectedCategoryTitle(_ title: String?)
@@ -24,6 +26,9 @@ final class CategoryViewModel: CategoryViewModelProtocol {
     // MARK: - Public Properties
     
     var categoriesDidChange: Binding<[TrackerCategory]>?
+    var categoriesCount: Int {
+        categories.count
+    }
     
     // MARK: - Private Properties
     
@@ -41,12 +46,22 @@ final class CategoryViewModel: CategoryViewModelProtocol {
         categories = trackerStorage.getCategories()
     }
     
-    func getCategoriesCount() -> Int {
-        categories.count
-    }
-    
     func addCategory(_ newCategory: TrackerCategory) {
         trackerStorage.createCategory(newCategory)
+        loadCategories()
+    }
+    
+    func editCategory(
+        _ categoryToEdit: String,
+        with newTitle: String
+    ) {
+        trackerStorage.editCategory(categoryToEdit, with: newTitle)
+        loadCategories()
+    }
+    
+    func deleteCategory(at indexPath: IndexPath) {
+        let categoryToDelete = categories[indexPath.row]
+        trackerStorage.deleteCategory(categoryToDelete)
         loadCategories()
     }
     

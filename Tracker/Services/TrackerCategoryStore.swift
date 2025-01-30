@@ -12,6 +12,7 @@ final class TrackerCategoryStore {
     enum TrackerCategoryStoreError: Error {
         case failedToFetchCategory
         case failedToCreateCategory
+        case failedToDeleteCategory
     }
     
     private let context: NSManagedObjectContext
@@ -69,5 +70,62 @@ final class TrackerCategoryStore {
         }
         
         return newCategory
+    }
+    
+    func deleteCategory(_ category: TrackerCategory) throws {
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", category.title)
+        do {
+            let results = try context.fetch(fetchRequest)
+            guard let trackerCategoryCoreData = results.first else {
+                print("Category not found: \(category.title)")
+                return
+            }
+            
+            context.delete(trackerCategoryCoreData)
+            try context.save()
+        } catch {
+            print("Error deleting category: \(error)")
+            throw TrackerCategoryStoreError.failedToDeleteCategory
+        }
+    }
+    
+    func updateCategory(oldTitle: String, newTitle: String) throws {
+        if try fetchCategory(by: newTitle) != nil {
+            throw TrackerCategoryStoreError.failedToCreateCategory
+        }
+        
+        let fetchRequest: NSFetchRequest<TrackerCategoryCoreData> = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "title == %@", oldTitle)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            guard let trackerCategoryCoreData = results.first else {
+                throw TrackerCategoryStoreError.failedToFetchCategory
+            }
+
+            trackerCategoryCoreData.title = newTitle
+           
+            try context.save()
+        } catch {
+            print("Error updating category: \(error)")
+            throw TrackerCategoryStoreError.failedToFetchCategory
+        }
+    }
+    
+    func fetchCategory(for trackerID: UUID) throws -> String {
+        let fetchRequest: NSFetchRequest<TrackerCoreData> = TrackerCoreData.fetchRequest()
+        
+        fetchRequest.predicate = NSPredicate(format: "id == %@", trackerID as CVarArg)
+        
+        do {
+            let trackerCoreDataArray = try context.fetch(fetchRequest)
+            let categoryTitle = trackerCoreDataArray.first?.category?.title ?? "Unknown"
+            return categoryTitle
+        } catch {
+            print("Error fetching trackers with category: \(error)")
+            return ""
+        }
     }
 }
